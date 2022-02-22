@@ -2,24 +2,32 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+
     .board-zone {
         border-collapse: collapse;
+
+        /*to center the whole table:*/
+        margin-left: auto;
+        margin-right: auto;
     }
+
         .board-zone th {
             padding: .5em;
             font-size: large;
             text-align: center;
         }
-        .board-zone td{
+
+        .board-zone td {
+            width: 50px;
+            height: 50px;
             padding: 0;
         }
+
     .rank-number {
     }
-    .square-image
-    {
-        width: 100px;
+
+    .file-letter {
     }
-    .file-letter{}
 </style>
 
 @{
@@ -46,26 +54,29 @@
 
                     @for (int j = 0; j < boardsquares.GetLength(1); j++)
                     {
-                        <td>
-                            @{
-                                var square = boardsquares[i, j].SquareColor;
+                        var square = boardsquares[i, j].SquareColor;
+                        var squareColor = (i + j) % 2 == 0 ? "#aaa" : "#eee";
 
-                                <img class="square-image" src="~/img/@squareImgNames[(int)square]">
+                        <td style="background: @squareColor; ">
 
-                                if (boardsquares[i, j].IsOccupied)
-                                {
+                            @if (boardsquares[i, j].IsOccupied)
+                            {
 
-                                    var piece = boardsquares[i, j].CurrentPiece;
+                                var piece = boardsquares[i, j].CurrentPiece;
 
-                                    //if (piece is Knight)
-                                    //    Console.Write("N ");
-                                    //else
-                                    //    Console.Write(piece.Name[0] + " ");
-                                }
+                                string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
+                                string pieceClass = piece.GetType().Name;
+                                string fileType = ".png";
+
+                                <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+
                             }
                         </td>
+
+
+
+
                     }
-                    @*<div class="line-break"></div>*@
 
                 </tr>
 
