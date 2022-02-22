@@ -1,0 +1,86 @@
+﻿@model ChessWebApp.Board
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    .board-zone {
+        border-collapse: collapse;
+    }
+        .board-zone th {
+            padding: .5em;
+            font-size: large;
+            text-align: center;
+        }
+        .board-zone td{
+            padding: 0;
+        }
+    .rank-number {
+    }
+    .square-image
+    {
+        width: 100px;
+    }
+    .file-letter{}
+</style>
+
+@{
+    ViewData["Title"] = "Index";
+
+    Square[,] boardsquares = Model.BoardSquares;
+    string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
+}
+
+<form>
+
+    <table class="board-zone">
+        <tbody>
+
+            @for (int i = 0; i < boardsquares.GetLength(0); i++)
+            {
+                <tr>
+
+                    @{
+                        var rank = Board.BoardLength - i + " ";
+                    }
+
+                    <th class="rank-number">@rank</th>
+
+                    @for (int j = 0; j < boardsquares.GetLength(1); j++)
+                    {
+                        <td>
+                            @{
+                                var square = boardsquares[i, j].SquareColor;
+
+                                <img class="square-image" src="~/img/@squareImgNames[(int)square]">
+
+                                if (boardsquares[i, j].IsOccupied)
+                                {
+
+                                    var piece = boardsquares[i, j].CurrentPiece;
+
+                                    //if (piece is Knight)
+                                    //    Console.Write("N ");
+                                    //else
+                                    //    Console.Write(piece.Name[0] + " ");
+                                }
+                            }
+                        </td>
+                    }
+                    @*<div class="line-break"></div>*@
+
+                </tr>
+
+            }
+
+            <tr>
+                <th></th>
+                @foreach (var file in Enum.GetValues(typeof(File)))
+                {
+                    <th class="file-letter">@file</th>
+                }
+            </tr>
+
+        </tbody>
+    </table>
+</form>
+
+
