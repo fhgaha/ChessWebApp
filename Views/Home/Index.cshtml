@@ -1,11 +1,10 @@
-﻿@model ChessWebApp.Board
+﻿@model ChessWebApp.Square[,]
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 
     .board-zone {
         border-collapse: collapse;
-
         /*to center the whole table:*/
         margin-left: auto;
         margin-right: auto;
@@ -23,6 +22,13 @@
             padding: 0;
         }
 
+        .board-zone button {
+            border: none;
+            background-color: transparent;
+            height: 100%;
+            width: 100%;
+        }
+
     .rank-number {
     }
 
@@ -33,7 +39,6 @@
 @{
     ViewData["Title"] = "Index";
 
-    Square[,] boardsquares = Model.BoardSquares;
     string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
 }
 
@@ -42,44 +47,38 @@
     <table class="board-zone">
         <tbody>
 
-            @for (int i = 0; i < boardsquares.GetLength(0); i++)
+            @for (int i = 0; i < Model.GetLength(0); i++)
             {
                 <tr>
 
-                    @{
-                        var rank = Board.BoardLength - i + " ";
-                    }
+                    @{ var rank = Board.BoardLength - i + " ";}
 
                     <th class="rank-number">@rank</th>
 
-                    @for (int j = 0; j < boardsquares.GetLength(1); j++)
+                    @for (int j = 0; j < Model.GetLength(1); j++)
                     {
-                        var square = boardsquares[i, j].SquareColor;
-                        var squareColor = (i + j) % 2 == 0 ? "#aaa" : "#eee";
+                        var square = Model[i, j].SquareColor;
+                        var squareColor = (i + j) % 2 == 0 ? "#eee" : "#aaa";
 
                         <td style="background: @squareColor; ">
 
-                            @if (boardsquares[i, j].IsOccupied)
-                            {
+                            <button class="square-button"  name="location" value="@Model[i, j].Location.ToString()"
+                                    asp-controller="Home" asp-action="HandleButtonClick">
+                                @if (Model[i, j].IsOccupied)
+                                {
 
-                                var piece = boardsquares[i, j].CurrentPiece;
+                                    var piece = Model[i, j].CurrentPiece;
 
-                                string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
-                                string pieceClass = piece.GetType().Name;
-                                string fileType = ".png";
+                                    string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
+                                    string pieceClass = piece.GetType().Name;
+                                    string fileType = ".png";
 
-                                <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-
-                            }
+                                    <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                }
+                            </button>
                         </td>
-
-
-
-
                     }
-
                 </tr>
-
             }
 
             <tr>

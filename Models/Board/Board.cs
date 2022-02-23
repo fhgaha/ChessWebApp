@@ -9,10 +9,10 @@ namespace ChessWebApp
     public class Board
     {
         public const int BoardLength = 8;
-        public Square[,] BoardSquares { get; private set; }
-        public Dictionary<Location, Square> LocationSquareMap { get; }
-        public List<AbstractPiece> LightPieces { get; private set; }
-        public List<AbstractPiece> DarkPieces { get; private set; }
+        public  Square[,] BoardSquares { get; private set; }
+        public Dictionary<Location, Square> LocationSquareMap { get; private set; }
+        public  List<AbstractPiece> LightPieces { get; private set; }
+        public  List<AbstractPiece> DarkPieces { get; private set; }
 
         public Board()
         {
@@ -41,10 +41,10 @@ namespace ChessWebApp
                         else DarkPieces.Add(piece);
                     }
                     BoardSquares[i, column] = newSquare;
+                    LocationSquareMap.Add(newSquare.Location, newSquare);
                     currentColor = currentColor == SquareColor.Light ? SquareColor.Dark : SquareColor.Light;
                     column++;
 
-                    LocationSquareMap.Add(newSquare.Location, newSquare);
                 }
             }
         }
