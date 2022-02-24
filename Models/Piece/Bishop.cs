@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ChessWebApp
 {
-    public class Bishop : AbstractPiece, IMovable
+    public class Bishop : AbstractPiece
     {
         public Bishop(PieceColor pieceColor) : base(pieceColor)
         {

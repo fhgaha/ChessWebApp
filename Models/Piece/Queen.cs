@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessWebApp
 {
-    public class Queen : AbstractPiece, IMovable
+    public class Queen : AbstractPiece
     {
         IMovable bishop, rook;
 

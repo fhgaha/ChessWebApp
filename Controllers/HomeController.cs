@@ -30,20 +30,37 @@ namespace ChessWebApp.Controllers
         {
             Location loc = board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
             Square square = board.LocationSquareMap[loc];
-            AbstractPiece piece = square.CurrentPiece;
 
-            if (piece != null)  //clicked on piece
+            Func<bool> FromSquareIsSelected = () => fromSquare != null && fromSquare.CurrentPiece != null;
+            Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
+            Func<bool> SelectedAndTargetPieceAreTheSamePiece = () 
+                => fromSquare == square && fromSquare.CurrentPiece != null;
+            Func<bool> SelectedAndTargetPieceColorsAreTheSame = () 
+                => fromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
+
+            if (!FromSquareIsSelected())
             {
                 fromSquare = square;
             }
-            else if (fromSquare.CurrentPiece != null)    //clicked on empty square
+            else
             {
-                fromSquare.CurrentPiece.MakeMove(square);
-                fromSquare.Reset();
-                board.LocationSquareMap[fromSquare.Location].Reset();
+                if (SelectedAndTargetPieceAreTheSamePiece())
+                {
+                    fromSquare = null;
+                }
+                else 
+                {
+                    if (!SquareIsEmpty() && SelectedAndTargetPieceColorsAreTheSame())
+                        fromSquare = square;
+                    else
+                    {
+                        fromSquare.CurrentPiece.MakeMove(square);
+                        //fromSquare.Reset();
+                        //board.LocationSquareMap[fromSquare.Location].Reset();
+                        fromSquare = null;
+                    }
+                }
             }
-
-
 
 
             return View("Index", board.BoardSquares);

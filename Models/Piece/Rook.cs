@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ChessWebApp
 {
-    public class Rook : AbstractPiece, IMovable
+    public class Rook : AbstractPiece
     {
         public bool IsFirstMove = true;
 

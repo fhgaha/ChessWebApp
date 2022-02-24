@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessWebApp
 {
-    public class Pawn : AbstractPiece, IMovable
+    public class Pawn : AbstractPiece
     {
         private bool isFirstMove = true;
 

@@ -2,7 +2,7 @@
 
 namespace ChessWebApp
 {
-    public class Knight : AbstractPiece, IMovable
+    public class Knight : AbstractPiece
     {
         public Knight(PieceColor pieceColor) : base(pieceColor)
         {
