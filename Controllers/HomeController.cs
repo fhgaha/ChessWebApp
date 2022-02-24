@@ -15,6 +15,7 @@ namespace ChessWebApp.Controllers
 
         private static Square fromSquare;
         private static Board board;
+        private static bool IsWhitesMove = true;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -23,7 +24,7 @@ namespace ChessWebApp.Controllers
         public IActionResult Index()
         {
             if (board == null) board = new Board();
-            return View(board.BoardSquares);
+            return View(board);
         }
 
         public IActionResult HandleButtonClick(string location)
@@ -33,37 +34,44 @@ namespace ChessWebApp.Controllers
 
             Func<bool> FromSquareIsSelected = () => fromSquare != null && fromSquare.CurrentPiece != null;
             Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
-            Func<bool> SelectedAndTargetPieceAreTheSamePiece = () 
+
+            Func<bool> SelectedAndTargetPieceAreTheSamePiece = ()
                 => fromSquare == square && fromSquare.CurrentPiece != null;
-            Func<bool> SelectedAndTargetPieceColorsAreTheSame = () 
+
+            Func<bool> SelectedAndTargetPieceColorsAreTheSame = ()
                 => fromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
+
+            Func<bool> MoveOrderIsWrong = ()
+                 => IsWhitesMove && fromSquare.CurrentPiece.PieceColor != PieceColor.Light
+                || !IsWhitesMove && fromSquare.CurrentPiece.PieceColor != PieceColor.Dark;
 
             if (!FromSquareIsSelected())
             {
                 fromSquare = square;
+
+                if (fromSquare.CurrentPiece != null && !MoveOrderIsWrong())
+                    board.UpdateValidSquares(fromSquare.CurrentPiece);
             }
             else
             {
-                if (SelectedAndTargetPieceAreTheSamePiece())
+                if (MoveOrderIsWrong())
                 {
                     fromSquare = null;
                 }
-                else 
+                else
                 {
-                    if (!SquareIsEmpty() && SelectedAndTargetPieceColorsAreTheSame())
-                        fromSquare = square;
-                    else
+                    board.UpdateValidSquares(fromSquare.CurrentPiece);
+
+                    if (board.ValidMoves.Contains(square.Location))
                     {
                         fromSquare.CurrentPiece.MakeMove(square);
-                        //fromSquare.Reset();
-                        //board.LocationSquareMap[fromSquare.Location].Reset();
-                        fromSquare = null;
+                        IsWhitesMove = !IsWhitesMove;
                     }
+                    fromSquare = null;
                 }
+                board.ValidMoves.Clear();
             }
-
-
-            return View("Index", board.BoardSquares);
+            return View("Index", board);
         }
 
         public IActionResult Privacy()

@@ -20,7 +20,12 @@ namespace ChessWebApp
             this.rook = rook;
         }
 
-        public List<Location> GetValidMoves(Board board)
+        public override List<Location> GetValidMoves(Board board, Square square)
+        {
+            return GetValidMoves(board);
+        }
+
+        public override List<Location> GetValidMoves(Board board)
         {
             var moveCandidates = new List<Location>();
             moveCandidates.AddRange(bishop.GetValidMoves(board, CurrentSquare));
@@ -33,11 +38,6 @@ namespace ChessWebApp
                 Math.Abs((int)candidate.File - (int)current.File) == 1 &&
                 Math.Abs(candidate.Rank - current.Rank) == 1
             ).ToList();
-        }
-
-        public List<Location> GetValidMoves(Board board, Square square)
-        {
-            return null;
         }
 
         public override void MakeMove(Square square)

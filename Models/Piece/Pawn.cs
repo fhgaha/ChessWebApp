@@ -14,35 +14,52 @@ namespace ChessWebApp
         {
             Name = "Pawn";
         }
+        public override List<Location> GetValidMoves(Board board, Square square)
+        {
+            return GetValidMoves(board);
+        }
 
-        public List<Location> GetValidMoves(Board board)
+        public override List<Location> GetValidMoves(Board board)
         {
             var moveCandidates = new List<Location>();
             var squareMap = board.LocationSquareMap;
 
-            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, 1));
+            if (PieceColor == PieceColor.Light)
+            {
+                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, 1));
+                if (isFirstMove) moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, 2));
+                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, 1));
+                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, 1));
+            }
+            else
+            {
+                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, -1));
+                if (isFirstMove) moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, -2));
+                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, -1));
+                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, -1));
+            }
 
-            if (isFirstMove)
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, 2));
-
-            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, 1));
-            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, 1));
 
             //need en passant logic
 
             return moveCandidates.Where(candidate =>
             {
-                //filter out locations that do not exist on the board
-                if (!squareMap.ContainsKey(candidate)) return false;
-                if (candidate.File == CurrentSquare.Location.File && squareMap[candidate].IsOccupied) return false;
-                //check if candidate can be captured
-                return squareMap[candidate].CurrentPiece.PieceColor != PieceColor;
-            }).ToList();
-        }
+                if (!squareMap.ContainsKey(candidate))
+                    return false;
+                else
+                    if (candidate.File == CurrentSquare.Location.File)
+                {
+                    if (squareMap[candidate].IsOccupied)
+                        return false;
+                }
+                else
+                        if (squareMap[candidate].CurrentPiece == null)
+                    return false;
+                else if (squareMap[candidate].CurrentPiece.PieceColor == PieceColor)
+                    return false;
 
-        public List<Location> GetValidMoves(Board board, Square square)
-        {
-            throw new NotImplementedException();
+                return true;
+            }).ToList();
         }
 
         public override void MakeMove(Square square)

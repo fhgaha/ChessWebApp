@@ -11,7 +11,13 @@ namespace ChessWebApp
             Name = "Bishop";
         }
 
-        public List<Location> GetValidMoves(Board board)
+        public override List<Location> GetValidMoves(Board board, Square square)
+        {
+            CurrentSquare = square;
+            return GetValidMoves(board);
+        }
+
+        public override List<Location> GetValidMoves(Board board)
         {
             var moveCandidates = new List<Location>();
             var squareMap = board.LocationSquareMap;
@@ -50,11 +56,7 @@ namespace ChessWebApp
             }
         }
 
-        public List<Location> GetValidMoves(Board board, Square square)
-        {
-            CurrentSquare = square;
-            return GetValidMoves(board);
-        }
+
 
         public override void MakeMove(Square square)
         {

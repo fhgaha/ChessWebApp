@@ -9,7 +9,12 @@ namespace ChessWebApp
             Name = "Knight";
         }
 
-        public List<Location> GetValidMoves(Board board)
+        public override List<Location> GetValidMoves(Board board, Square square)
+        {
+            return GetValidMoves(board);
+        }
+
+        public override List<Location> GetValidMoves(Board board)
         {
             var moveCandidates = new List<Location>();
             var squareMap = board.LocationSquareMap;
@@ -42,11 +47,6 @@ namespace ChessWebApp
                 }
                 moveCandidates.Add(next);
             }
-        }
-
-        public List<Location> GetValidMoves(Board board, Square square)
-        {
-            throw new System.NotImplementedException();
         }
 
         public override void MakeMove(Square square)

@@ -21,17 +21,17 @@ namespace ChessWebApp
             this.rook = rook;
         }
 
-        public List<Location> GetValidMoves(Board board)
+        public override List<Location> GetValidMoves(Board board, Square square)
+        {
+            return GetValidMoves(board);
+        }
+
+        public override List<Location> GetValidMoves(Board board)
         {
             var moveCandidates = new List<Location>();
             moveCandidates.AddRange(bishop.GetValidMoves(board, this.CurrentSquare));
             moveCandidates.AddRange(rook.GetValidMoves(board, this.CurrentSquare));
             return moveCandidates;
-        }
-
-        public List<Location> GetValidMoves(Board board, Square square)
-        {
-            return null;
         }
 
         public override void MakeMove(Square square)

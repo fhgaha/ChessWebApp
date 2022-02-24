@@ -8,18 +8,19 @@ namespace ChessWebApp
 {
     public class Board
     {
-        public const int BoardLength = 8;
+        
         public Square[,] BoardSquares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public List<AbstractPiece> LightPieces { get; private set; }
         public List<AbstractPiece> DarkPieces { get; private set; }
+        public List<Location> ValidMoves { get; private set; }
 
         public Board()
         {
-            BoardSquares = new Square[BoardLength, BoardLength];
+            BoardSquares = new Square[Constants.BoardLength, Constants.BoardLength];
             LightPieces = new List<AbstractPiece>();
             DarkPieces = new List<AbstractPiece>();
-
+            ValidMoves = new List<Location>();
             LocationSquareMap = new Dictionary<Location, Square>();
             var pieces = PieceFactory.GetPieces();
 
@@ -30,11 +31,13 @@ namespace ChessWebApp
 
                 foreach (File file in Enum.GetValues(typeof(File)))
                 {
-                    var newSquare = new Square(currentColor, new Location(file, BoardLength - i));
+                    var newSquare = new Square(currentColor, new Location(file, Constants.BoardLength - i));
                     if (pieces.ContainsKey(newSquare.Location))
                     {
                         var piece = pieces[newSquare.Location];
-                        RegisterPieceOnSquare(piece, newSquare);
+                        newSquare.CurrentPiece = piece;
+                        newSquare.IsOccupied = true;
+                        piece.CurrentSquare = newSquare;
 
                         if (piece.PieceColor == PieceColor.Light)
                             LightPieces.Add(piece);
@@ -49,11 +52,16 @@ namespace ChessWebApp
             }
         }
 
+        public void UpdateValidSquares(AbstractPiece piece)
+        {
+            ValidMoves = piece.GetValidMoves(this);
+        }
+
         public void PrintBoard()
         {
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
-                Console.Write(BoardLength - i + " ");
+                Console.Write(Constants.BoardLength - i + " ");
                 for (int j = 0; j < BoardSquares.GetLength(1); j++)
                 {
                     if (BoardSquares[i, j].IsOccupied)
@@ -71,21 +79,6 @@ namespace ChessWebApp
             foreach (var file in Enum.GetValues(typeof(File)))
                 Console.Write(file + " ");
             Console.WriteLine("\n");
-        }
-
-        private void RegisterPieceOnSquare(AbstractPiece piece, Square newSquare)
-        {
-            var previousSquare = piece.CurrentSquare;
-            if (previousSquare != null)
-            {
-                previousSquare.IsOccupied = false;
-                previousSquare.CurrentPiece = null;
-            }
-
-            newSquare.CurrentPiece = piece;
-            newSquare.IsOccupied = true;
-
-            piece.CurrentSquare = newSquare;
         }
     }
 }

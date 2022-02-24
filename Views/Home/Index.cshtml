@@ -1,4 +1,4 @@
-﻿@model ChessWebApp.Square[,]
+﻿@model ChessWebApp.Board
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -24,7 +24,7 @@
 
         .board-zone button {
             border: none;
-            background-color: transparent;
+            background-color:  transparent;
             height: 100%;
             width: 100%;
         }
@@ -40,6 +40,7 @@
     ViewData["Title"] = "Index";
 
     string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
+    var squares = Model.BoardSquares;
 }
 
 <form>
@@ -47,27 +48,31 @@
     <table class="board-zone">
         <tbody>
 
-            @for (int i = 0; i < Model.GetLength(0); i++)
+            @for (int i = 0; i < squares.GetLength(0); i++)
             {
                 <tr>
 
-                    @{ var rank = Board.BoardLength - i + " ";}
+                    @{ var rank = Constants.BoardLength - i + " ";}
 
                     <th class="rank-number">@rank</th>
 
-                    @for (int j = 0; j < Model.GetLength(1); j++)
+                    @for (int j = 0; j < squares.GetLength(1); j++)
                     {
-                        var square = Model[i, j].SquareColor;
                         var squareColor = (i + j) % 2 == 0 ? "#eee" : "#aaa";
+
+                        if(Model.ValidMoves.Contains(squares[i, j].Location))
+                        {
+                            squareColor = "#5c9c6f";
+                        }
 
                         <td style="background: @squareColor; ">
 
-                            <button class="square-button"  name="location" value="@Model[i, j].Location.ToString()"
+                            <button class="square-button"  name="location" value="@squares[i, j].Location.ToString()"
                                     asp-controller="Home" asp-action="HandleButtonClick">
-                                @if (Model[i, j].IsOccupied)
+                                @if (squares[i, j].IsOccupied)
                                 {
 
-                                    var piece = Model[i, j].CurrentPiece;
+                                    var piece = squares[i, j].CurrentPiece;
 
                                     string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
                                     string pieceClass = piece.GetType().Name;

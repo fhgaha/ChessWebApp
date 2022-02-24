@@ -26,19 +26,13 @@ namespace ChessWebApp
                 "}";
         }
 
-        public List<Location> GetValidMoves(Board board)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<Location> GetValidMoves(Board board);
 
-        public List<Location> GetValidMoves(Board board, Square square)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<Location> GetValidMoves(Board board, Square square);
 
         public virtual void MakeMove(Square square)
         {
-            
+
         }
     }
 }

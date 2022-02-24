@@ -13,7 +13,9 @@ namespace ChessWebApp
         public static Location Build(Location current, int fileOffset, int rankOffset)
         {
             int currentFile = (int)current.File;
-            return new Location(files[currentFile + fileOffset], current.Rank + rankOffset);
+            int newFileValue = Math.Clamp(currentFile + fileOffset, 0, Constants.BoardLength - 1);
+            int newRankValue = Math.Clamp(current.Rank + rankOffset, 0, Constants.BoardLength - 1);
+            return new Location(files[newFileValue], newRankValue);
         }
     }
 }
