@@ -9,7 +9,7 @@ namespace ChessWebApp
     public sealed class PieceFactory
     {
 
-        public static Dictionary<Location, AbstractPiece> GetPieces()
+        public static Dictionary<Location, AbstractPiece> GetStandartPiecePositions()
         {
             var pieces = new Dictionary<Location, AbstractPiece>();
 

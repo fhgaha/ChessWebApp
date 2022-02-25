@@ -13,9 +13,7 @@ namespace ChessWebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        private static Square fromSquare;
         private static Board board;
-        private static bool IsWhitesMove = true;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -31,60 +29,7 @@ namespace ChessWebApp.Controllers
         {
             Location loc = board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
             Square square = board.LocationSquareMap[loc];
-
-            Func<bool> FromSquareIsSelected = () => fromSquare != null && fromSquare.CurrentPiece != null;
-            Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
-
-            Func<bool> SelectedAndTargetPieceAreTheSamePiece = ()
-                => fromSquare == square && fromSquare.CurrentPiece != null;
-
-            Func<bool> SelectedAndTargetPieceColorsAreTheSame = ()
-                => fromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
-
-            Func<bool> MoveOrderIsWrong = ()
-                 => IsWhitesMove && fromSquare.CurrentPiece.PieceColor != PieceColor.Light
-                || !IsWhitesMove && fromSquare.CurrentPiece.PieceColor != PieceColor.Dark;
-
-            if (!FromSquareIsSelected())
-            {
-                fromSquare = square;
-
-                if (fromSquare.CurrentPiece != null && !MoveOrderIsWrong())
-                    board.UpdateValidSquares(fromSquare.CurrentPiece);
-            }
-            else
-            {
-                if (MoveOrderIsWrong())
-                {
-                    fromSquare = null;
-                }
-                else
-                {
-                    if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
-                    {
-                        fromSquare = null;
-                        board.ValidMoves.Clear();
-                        return View("Index", board);
-                    }
-
-                    if (!SquareIsEmpty() && SelectedAndTargetPieceColorsAreTheSame())
-                    {
-                        fromSquare = square;
-                        board.UpdateValidSquares(fromSquare.CurrentPiece);
-                        return View("Index", board);
-                    }
-
-                    board.UpdateValidSquares(fromSquare.CurrentPiece);
-
-                    if (board.ValidMoves.Contains(square.Location))
-                    {
-                        fromSquare.CurrentPiece.MakeMove(square);
-                        IsWhitesMove = !IsWhitesMove;
-                    }
-                    fromSquare = null;
-                }
-                board.ValidMoves.Clear();
-            }
+            MoveHandler.CalculateLegalMoves(board, square);
             return View("Index", board);
         }
 

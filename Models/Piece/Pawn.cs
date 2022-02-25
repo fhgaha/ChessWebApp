@@ -24,21 +24,12 @@ namespace ChessWebApp
             var moveCandidates = new List<Location>();
             var squareMap = board.LocationSquareMap;
 
-            if (PieceColor == PieceColor.Light)
-            {
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, 1));
-                if (isFirstMove) moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, 2));
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, 1));
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, 1));
-            }
-            else
-            {
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, -1));
-                if (isFirstMove) moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, -2));
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, -1));
-                moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, -1));
-            }
+            var rankOffset = PieceColor == PieceColor.Light ? 1 : -1;
 
+            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, rankOffset));
+            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, rankOffset));
+            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, rankOffset));
+            if (isFirstMove) moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, rankOffset * 2));
 
             //need en passant logic
 
@@ -46,14 +37,12 @@ namespace ChessWebApp
             {
                 if (!squareMap.ContainsKey(candidate))
                     return false;
-                else
-                    if (candidate.File == CurrentSquare.Location.File)
+                else if (candidate.File == CurrentSquare.Location.File)
                 {
                     if (squareMap[candidate].IsOccupied)
                         return false;
                 }
-                else
-                        if (squareMap[candidate].CurrentPiece == null)
+                else if (squareMap[candidate].CurrentPiece == null)
                     return false;
                 else if (squareMap[candidate].CurrentPiece.PieceColor == PieceColor)
                     return false;
@@ -69,6 +58,18 @@ namespace ChessWebApp
             square.CurrentPiece = this;
             CurrentSquare.Reset();
             CurrentSquare = square;
+        }
+
+        public override List<Location> GetLocationsAttackedByPiece()
+        {
+            List<Location> attackedLocations = new List<Location>();
+
+            var rankOffset = PieceColor == PieceColor.Light ? 1 : -1;
+
+            attackedLocations.Add(LocationFactory.Build(CurrentSquare.Location, -1, rankOffset));
+            attackedLocations.Add(LocationFactory.Build(CurrentSquare.Location, 1, rankOffset));
+
+            return attackedLocations.Where(l => l != null).ToList();
         }
     }
 }

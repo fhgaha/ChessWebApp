@@ -12,14 +12,15 @@ namespace ChessWebApp
         public Location Location { get; }
         public AbstractPiece CurrentPiece { get; set; }
         public bool IsOccupied { get; set; }
-        public bool IsValid { get; set; }
+        public List<AbstractPiece> AttackedByPieces { get; set; }
+
 
         public Square(SquareColor squareColor, Location location)
         {
             SquareColor = squareColor;
             Location = location;
             IsOccupied = false;
-            IsValid = false;
+            AttackedByPieces = new List<AbstractPiece>();
         }
 
         public void Reset()
@@ -34,7 +35,6 @@ namespace ChessWebApp
                 "squareColor = " + SquareColor +
                 ", location = " + Location +
                 ", isOccupied = " + IsOccupied +
-                ", isValid = " + IsValid + 
                 "}";
         }
     }

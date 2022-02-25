@@ -17,6 +17,11 @@ namespace ChessWebApp
             Name = "Queen";
         }
 
+        public override List<Location> GetLocationsAttackedByPiece()
+        {
+            throw new NotImplementedException();
+        }
+
         public override List<Location> GetValidMoves(Board board, Square square)
         {
             return GetValidMoves(board);

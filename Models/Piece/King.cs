@@ -16,6 +16,11 @@ namespace ChessWebApp
             Name = "King";
         }
 
+        public override List<Location> GetLocationsAttackedByPiece()
+        {
+            throw new NotImplementedException();
+        }
+
         public override List<Location> GetValidMoves(Board board, Square square)
         {
             return GetValidMoves(board);
@@ -29,6 +34,8 @@ namespace ChessWebApp
             var current = CurrentSquare.Location;
 
             //no move to under attack square logic
+            //if (PieceColor = PieceColor.Light)
+            //  moveCandidates.Where(c => Board.SquaresAttackedByBlack.Where(ac => ac == c).Contains(c))
 
             //need castle logic
 

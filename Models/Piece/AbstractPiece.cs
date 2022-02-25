@@ -30,9 +30,8 @@ namespace ChessWebApp
 
         public abstract List<Location> GetValidMoves(Board board, Square square);
 
-        public virtual void MakeMove(Square square)
-        {
+        public virtual void MakeMove(Square square) { }
 
-        }
+        public abstract List<Location> GetLocationsAttackedByPiece();
     }
 }

@@ -8,7 +8,7 @@ namespace ChessWebApp
 {
     public class Board
     {
-        
+
         public Square[,] BoardSquares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public List<AbstractPiece> LightPieces { get; private set; }
@@ -22,7 +22,8 @@ namespace ChessWebApp
             DarkPieces = new List<AbstractPiece>();
             ValidMoves = new List<Location>();
             LocationSquareMap = new Dictionary<Location, Square>();
-            var pieces = PieceFactory.GetPieces();
+
+            var pieces = PieceFactory.GetStandartPiecePositions();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
@@ -39,15 +40,13 @@ namespace ChessWebApp
                         newSquare.IsOccupied = true;
                         piece.CurrentSquare = newSquare;
 
-                        if (piece.PieceColor == PieceColor.Light)
-                            LightPieces.Add(piece);
+                        if (piece.PieceColor == PieceColor.Light) LightPieces.Add(piece);
                         else DarkPieces.Add(piece);
                     }
                     BoardSquares[i, column] = newSquare;
                     LocationSquareMap.Add(newSquare.Location, newSquare);
                     currentColor = currentColor == SquareColor.Light ? SquareColor.Dark : SquareColor.Light;
                     column++;
-
                 }
             }
         }

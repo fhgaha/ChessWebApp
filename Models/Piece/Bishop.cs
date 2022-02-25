@@ -63,5 +63,10 @@ namespace ChessWebApp
             CurrentSquare.Reset();
             CurrentSquare = square;
         }
+
+        public override List<Location> GetLocationsAttackedByPiece()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
