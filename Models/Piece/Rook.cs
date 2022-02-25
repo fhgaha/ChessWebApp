@@ -40,9 +40,9 @@ namespace ChessWebApp
             Location current,
             int offset)
         {
-            var next = LocationFactory.Build(current, (int)current.File, offset);
+            var next = LocationFactory.Build(current, 0, offset);
 
-            while (squareMap.ContainsKey(next))
+            while (next != null)    //(squareMap.ContainsKey(next))
             {
                 if (squareMap[next].IsOccupied)
                 {
@@ -52,7 +52,7 @@ namespace ChessWebApp
                     break;
                 }
                 moveCandidates.Add(next);
-                next = LocationFactory.Build(next, (int)next.File, offset);
+                next = LocationFactory.Build(next, 0, offset);
             }
         }
 
@@ -64,7 +64,7 @@ namespace ChessWebApp
         {
             var next = LocationFactory.Build(current, offset, 0);
 
-            while (squareMap.ContainsKey(next))
+            while (next != null)    //(squareMap.ContainsKey(next))
             {
                 if (squareMap[next].IsOccupied)
                 {

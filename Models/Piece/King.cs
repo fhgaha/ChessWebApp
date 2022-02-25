@@ -11,13 +11,9 @@ namespace ChessWebApp
 
         public King(PieceColor pieceColor) : base(pieceColor)
         {
+            bishop = new Bishop(pieceColor);
+            rook = new Rook(pieceColor);
             Name = "King";
-        }
-
-        public King(PieceColor pieceColor, IMovable bishop, IMovable rook) : this(pieceColor)
-        {
-            this.bishop = bishop;
-            this.rook = rook;
         }
 
         public override List<Location> GetValidMoves(Board board, Square square)
@@ -32,11 +28,13 @@ namespace ChessWebApp
             moveCandidates.AddRange(rook.GetValidMoves(board, CurrentSquare));
             var current = CurrentSquare.Location;
 
+            //no move to under attack square logic
+
             //need castle logic
 
             return moveCandidates.Where(candidate => 
-                Math.Abs((int)candidate.File - (int)current.File) == 1 &&
-                Math.Abs(candidate.Rank - current.Rank) == 1
+                Math.Abs((int)candidate.File - (int)current.File) < 2 &&
+                Math.Abs(candidate.Rank - current.Rank) < 2
             ).ToList();
         }
 

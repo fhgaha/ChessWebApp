@@ -20,9 +20,14 @@ namespace ChessWebApp
             var squareMap = board.LocationSquareMap;
             var current = CurrentSquare.Location;
             GetMoves(moveCandidates, squareMap, current, 2, 1);
-            GetMoves(moveCandidates, squareMap, current, -2, 1);
             GetMoves(moveCandidates, squareMap, current, 2, -1);
+            GetMoves(moveCandidates, squareMap, current, -2, 1);
             GetMoves(moveCandidates, squareMap, current, -2, -1);
+
+            GetMoves(moveCandidates, squareMap, current, 1, 2);
+            GetMoves(moveCandidates, squareMap, current, -1, 2);
+            GetMoves(moveCandidates, squareMap, current, 1, -2);
+            GetMoves(moveCandidates, squareMap, current, -1, -2);
 
             return moveCandidates;
         }
@@ -36,7 +41,7 @@ namespace ChessWebApp
         {
             var next = LocationFactory.Build(current, fileOffset, rankOffset);
 
-            if (squareMap.ContainsKey(next))
+            if (next != null)   //(squareMap.ContainsKey(next))
             {
                 if (squareMap[next].IsOccupied)
                 {

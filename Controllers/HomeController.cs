@@ -60,6 +60,20 @@ namespace ChessWebApp.Controllers
                 }
                 else
                 {
+                    if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
+                    {
+                        fromSquare = null;
+                        board.ValidMoves.Clear();
+                        return View("Index", board);
+                    }
+
+                    if (!SquareIsEmpty() && SelectedAndTargetPieceColorsAreTheSame())
+                    {
+                        fromSquare = square;
+                        board.UpdateValidSquares(fromSquare.CurrentPiece);
+                        return View("Index", board);
+                    }
+
                     board.UpdateValidSquares(fromSquare.CurrentPiece);
 
                     if (board.ValidMoves.Contains(square.Location))

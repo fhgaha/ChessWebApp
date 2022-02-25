@@ -42,7 +42,7 @@ namespace ChessWebApp
         {
             var next = LocationFactory.Build(current, fileOffset, rankOffset);
 
-            while (squareMap.ContainsKey(next))
+            while (next != null)    //(squareMap.ContainsKey(next))
             {
                 if (squareMap[next].IsOccupied)
                 {
@@ -55,8 +55,6 @@ namespace ChessWebApp
                 next = LocationFactory.Build(next, fileOffset, rankOffset);
             }
         }
-
-
 
         public override void MakeMove(Square square)
         {

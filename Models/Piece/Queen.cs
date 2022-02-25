@@ -12,13 +12,9 @@ namespace ChessWebApp
 
         public Queen(PieceColor pieceColor) : base(pieceColor)
         {
+            this.bishop = new Bishop(PieceColor);
+            this.rook = new Rook(PieceColor);
             Name = "Queen";
-        }
-
-        public Queen(PieceColor pieceColor, IMovable bishop, IMovable rook) : this(pieceColor)
-        {
-            this.bishop = bishop;
-            this.rook = rook;
         }
 
         public override List<Location> GetValidMoves(Board board, Square square)

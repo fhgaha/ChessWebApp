@@ -42,7 +42,7 @@ namespace ChessWebApp
 
             //need en passant logic
 
-            return moveCandidates.Where(candidate =>
+            return moveCandidates.Where(c => c != null).Where(candidate =>
             {
                 if (!squareMap.ContainsKey(candidate))
                     return false;
