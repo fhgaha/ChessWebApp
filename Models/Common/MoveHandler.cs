@@ -22,20 +22,23 @@ namespace ChessWebApp
             Func<bool> SelectedAndTargetPieceAreTheSameColor = ()
                 => fromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
 
-            Func<bool> MoveOrderIsWrong = ()
-                 => IsWhitesMove && fromSquare.CurrentPiece.PieceColor != PieceColor.Light
-                || !IsWhitesMove && fromSquare.CurrentPiece.PieceColor != PieceColor.Dark;
+            Func<Square, bool> MoveOrderIsWrong = sq
+                 => IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
+                || !IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Dark;
 
             if (!FromSquareIsSelected())
             {
-                fromSquare = square;
+                if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
+                {
+                    fromSquare = square;
 
-                if (fromSquare.CurrentPiece != null && !MoveOrderIsWrong())
-                    board.UpdateValidSquares(fromSquare.CurrentPiece);
+                    if (fromSquare.CurrentPiece != null && !MoveOrderIsWrong(fromSquare))
+                        board.UpdateValidSquares(fromSquare.CurrentPiece);
+                }
             }
             else
             {
-                if (MoveOrderIsWrong())
+                if (MoveOrderIsWrong(fromSquare))
                 {
                     fromSquare = null;
                 }
@@ -63,9 +66,9 @@ namespace ChessWebApp
                             IsWhitesMove = !IsWhitesMove;
                         }
                         fromSquare = null;
+                        board.ValidMoves.Clear();
                     }
                 }
-                board.ValidMoves.Clear();
             }
         }
 
@@ -74,20 +77,13 @@ namespace ChessWebApp
             board.UpdateValidSquares(square.CurrentPiece);
 
             foreach (Square sq in board.BoardSquares)
-            {
                 if (sq.AttackedByPieces.Contains(square.CurrentPiece))
                     sq.AttackedByPieces.Remove(square.CurrentPiece);
-            }
 
             var attackedLocs = square.CurrentPiece.GetLocationsAttackedByPiece(board);
 
             foreach (Location loc in attackedLocs)
-            {
                 board.LocationSquareMap[loc].AttackedByPieces.Add(square.CurrentPiece);
-            }
-
-
-
         }
     }
 }

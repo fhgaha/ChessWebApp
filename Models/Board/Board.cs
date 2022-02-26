@@ -22,8 +22,8 @@ namespace ChessWebApp
             ValidMoves = new List<Location>();
             LocationSquareMap = new Dictionary<Location, Square>();
 
-            //var pieces = PieceFactory.GetStandartPiecePositions();
-            var pieces = PieceFactory.GetTwoKings();
+            var pieces = PieceFactory.GetStandartPiecePositions();
+            //var pieces = PieceFactory.GetTwoKings();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {

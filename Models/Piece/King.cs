@@ -8,6 +8,7 @@ namespace ChessWebApp
     {
         IMovable bishop, rook;
         private bool isFirstMove = true;
+        private bool isUnderCheck = false;
 
         public King(PieceColor pieceColor) : base(pieceColor)
         {
