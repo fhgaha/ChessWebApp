@@ -60,7 +60,7 @@ namespace ChessWebApp
             CurrentSquare = square;
         }
 
-        public override List<Location> GetLocationsAttackedByPiece()
+        public override List<Location> GetLocationsAttackedByPiece(Board board)
         {
             List<Location> attackedLocations = new List<Location>();
 

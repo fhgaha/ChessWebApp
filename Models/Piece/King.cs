@@ -16,9 +16,17 @@ namespace ChessWebApp
             Name = "King";
         }
 
-        public override List<Location> GetLocationsAttackedByPiece()
+        public override List<Location> GetLocationsAttackedByPiece(Board board)
         {
-            throw new NotImplementedException();
+            var moveCandidates = new List<Location>();
+            moveCandidates.AddRange(bishop.GetValidMoves(board, CurrentSquare));
+            moveCandidates.AddRange(rook.GetValidMoves(board, CurrentSquare));
+            var current = CurrentSquare.Location;
+
+            return moveCandidates.Where(candidate =>
+                Math.Abs((int)candidate.File - (int)current.File) < 2 &&
+                Math.Abs(candidate.Rank - current.Rank) < 2)
+                .ToList();
         }
 
         public override List<Location> GetValidMoves(Board board, Square square)
@@ -28,21 +36,13 @@ namespace ChessWebApp
 
         public override List<Location> GetValidMoves(Board board)
         {
-            var moveCandidates = new List<Location>();
-            moveCandidates.AddRange(bishop.GetValidMoves(board, CurrentSquare));
-            moveCandidates.AddRange(rook.GetValidMoves(board, CurrentSquare));
-            var current = CurrentSquare.Location;
-
-            //no move to under attack square logic
-            //if (PieceColor = PieceColor.Light)
-            //  moveCandidates.Where(c => Board.SquaresAttackedByBlack.Where(ac => ac == c).Contains(c))
-
-            //need castle logic
-
-            return moveCandidates.Where(candidate => 
-                Math.Abs((int)candidate.File - (int)current.File) < 2 &&
-                Math.Abs(candidate.Rank - current.Rank) < 2
-            ).ToList();
+            return GetLocationsAttackedByPiece(board).Where(loc =>
+            {
+                var square = board.LocationSquareMap[loc];
+                if (square.AttackedByPieces.Any(ap => ap.PieceColor != PieceColor))
+                    return false;
+                return true;
+            }).ToList();
         }
 
         public override void MakeMove(Square square)

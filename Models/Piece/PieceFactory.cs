@@ -49,5 +49,15 @@ namespace ChessWebApp
             return pieces;
         }
 
+        public static Dictionary<Location, AbstractPiece> GetTwoKings()
+        {
+            var pieces = new Dictionary<Location, AbstractPiece>();
+
+            pieces.Add(new Location(File.E, 3), new King(PieceColor.Light));
+            pieces.Add(new Location(File.E, 6), new King(PieceColor.Dark));
+
+            return pieces;
+        }
+
     }
 }

@@ -79,45 +79,15 @@ namespace ChessWebApp
                     sq.AttackedByPieces.Remove(square.CurrentPiece);
             }
 
-            foreach (Square sq in board.BoardSquares)
+            var attackedLocs = square.CurrentPiece.GetLocationsAttackedByPiece(board);
+
+            foreach (Location loc in attackedLocs)
             {
-                foreach (Location loc in board.ValidMoves)
-                {
-                    if (sq.Location == loc)
-                    {
-                        //if (square.CurrentPiece is Pawn)
-                        //{
-                        //    var rankOffset = square.CurrentPiece.PieceColor == PieceColor.Light ? 1 : -1;
-
-                        //    var attackedLocation = LocationFactory.Build(square.Location, -1, rankOffset);
-                        //    if (attackedLocation != null)
-                        //        board.LocationSquareMap[attackedLocation].AttackedByPieces.Add(square.CurrentPiece);
-                            
-                        //    attackedLocation = LocationFactory.Build(square.Location, 1, rankOffset);
-                        //    if (attackedLocation != null)
-                        //        board.LocationSquareMap[attackedLocation].AttackedByPieces.Add(square.CurrentPiece);
-
-                        //}
-                        //else
-                        //{
-                        //    sq.AttackedByPieces.Add(square.CurrentPiece);
-                        //}
-
-                        var attackedLocs = square.CurrentPiece.GetLocationsAttackedByPiece();
-
-                        foreach (Location key in board.LocationSquareMap.Keys)
-                        {
-                            foreach (Location l in attackedLocs)
-                            {
-                                if (key == l)
-                                {
-                                    board.LocationSquareMap[key].AttackedByPieces.Add(square.CurrentPiece);
-                                }
-                            }
-                        }
-                    }
-                }
+                board.LocationSquareMap[loc].AttackedByPieces.Add(square.CurrentPiece);
             }
+
+
+
         }
     }
 }

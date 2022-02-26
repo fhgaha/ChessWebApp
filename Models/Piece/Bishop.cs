@@ -64,9 +64,9 @@ namespace ChessWebApp
             CurrentSquare = square;
         }
 
-        public override List<Location> GetLocationsAttackedByPiece()
+        public override List<Location> GetLocationsAttackedByPiece(Board board)
         {
-            throw new NotImplementedException();
+            return GetValidMoves(board);
         }
     }
 }
