@@ -1,0 +1,16 @@
+﻿@model ChessWebApp.Square
+
+<button class="square-button" type="submit" name="location" value="@Model.Location.File@Model.Location.Rank"
+        asp-controller="Home" asp-action="HandleButtonClick">
+    @if (Model.IsOccupied)
+    {
+
+        var piece = Model.CurrentPiece;
+
+        string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
+        string pieceClass = piece.GetType().Name;
+        string fileType = ".png";
+
+        <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />}
+</button>
+

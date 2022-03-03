@@ -8,7 +8,7 @@ namespace ChessWebApp
 {
     public class Square
     {
-        public SquareColor SquareColor { get; }
+        public SquareColor SquareColor { get; set; }
         public Location Location { get; }
         public AbstractPiece CurrentPiece { get; set; }
         public bool IsOccupied { get; set; }

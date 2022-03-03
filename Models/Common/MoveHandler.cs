@@ -11,7 +11,7 @@ namespace ChessWebApp
         private static bool IsWhitesMove = true;
         private static Square fromSquare;
 
-        public static void CalculateLegalMoves(Board board, Square square)
+        public static void PerformMove(Board board, Square square)
         {
             Func<bool> FromSquareIsSelected = () => fromSquare != null && fromSquare.CurrentPiece != null;
             Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
