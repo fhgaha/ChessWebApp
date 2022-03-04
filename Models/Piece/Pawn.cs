@@ -33,7 +33,7 @@ namespace ChessWebApp
 
             //need en passant logic
 
-            return moveCandidates.Where(c => c != null).Where(candidate =>
+            var validLocations = moveCandidates.Where(c => c != null).Where(candidate =>
             {
                 if (!squareMap.ContainsKey(candidate))
                     return false;
@@ -49,6 +49,8 @@ namespace ChessWebApp
 
                 return true;
             }).ToList();
+
+            return validLocations;
         }
 
         public override void MakeMove(Square square)

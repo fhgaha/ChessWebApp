@@ -11,8 +11,10 @@ namespace ChessWebApp
         private static bool IsWhitesMove = true;
         private static Square fromSquare;
 
-        public static void PerformMove(Board board, Square square)
+        public static bool PerformMove(Board board, Square square)
         {
+            bool isMovePerformed = false;
+
             Func<bool> FromSquareIsSelected = () => fromSquare != null && fromSquare.CurrentPiece != null;
             Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
 
@@ -64,12 +66,15 @@ namespace ChessWebApp
                             fromSquare.CurrentPiece.MakeMove(square);
                             UpdateSquareAttackedByPieces(board, square);
                             IsWhitesMove = !IsWhitesMove;
+
+                            isMovePerformed = true;
                         }
                         fromSquare = null;
                         board.ValidMoves.Clear();
                     }
                 }
             }
+            return isMovePerformed;
         }
 
         private static void UpdateSquareAttackedByPieces(Board board, Square square)

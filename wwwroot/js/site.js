@@ -23,8 +23,13 @@ $(function () {
                 console.log(jqXHR);
             },
             success: function (data) {
-                console.log(data);
-                $("#" + squareLoc).html(data);
+                //console.log(data);
+                //$("#" + squareLoc).html(data);
+
+                for (var d in data) {
+                    console.log(data[d]);
+                    $("#" + d).html(data[d]);
+                }
             }
         })
     }

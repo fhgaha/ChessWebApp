@@ -43,36 +43,45 @@ namespace ChessWebApp.Controllers
             return View("Index", board);
         }
 
+        private static List<Square> previousSquares;
         public IActionResult UpdateChangedSquares(string location)
         {
-            File file = ChessWebApp.File.A;
-
-            foreach (File f in Enum.GetValues(typeof(File)))
-                if (f.ToString() == location[0].ToString())
-                {
-                    file = f;
-                    break;
-                }
-
+            File file = Array.Find(
+                (File[])Enum.GetValues(typeof(File)),
+                f => f.ToString() == location[0].ToString());
             int rank = int.Parse(location[1].ToString());
-            Square square = board.LocationSquareMap[new Location(file, rank)];
+            Square currentSquare = board.LocationSquareMap[new Location(file, rank)];
 
-            MoveHandler.PerformMove(board, square);
+            bool isMoveMade = MoveHandler.PerformMove(board, currentSquare);
 
-            return PartialView(square);
+            var currentSquares = new List<Square>();
+            currentSquares.Add(currentSquare);
+            for (int i = 0; i < board.ValidMoves.Count; i++)
+            {
+                Location loc = board.ValidMoves[i];
+                currentSquares.Add(board.LocationSquareMap[loc]);
+            }
+
+            if (previousSquares == null) previousSquares = currentSquares;
+            if (!isMoveMade) previousSquares = currentSquares;
+
+            return Json(GetSquareStrings(location, currentSquare));
         }
 
-        public IActionResult Privacy()
+        private Dictionary<string, string> GetSquareStrings(string location, Square square)
         {
-            return View();
-        }
+            var squareStrings = new Dictionary<string, string>();
+            squareStrings.Add(location, RenderRazorViewToString(this, "UpdateChangedSquares", square));
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            foreach (Square s in previousSquares)
+            {
+                Square updatedSquare = board.LocationSquareMap[s.Location];
+                string key = s.Location.File.ToString() + s.Location.Rank.ToString();
+                squareStrings[key] = RenderRazorViewToString(this, "UpdateChangedSquares", updatedSquare);
+            }
 
+            return squareStrings;
+        }
 
         public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
         {
@@ -98,6 +107,15 @@ namespace ChessWebApp.Controllers
             }
         }
 
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }
