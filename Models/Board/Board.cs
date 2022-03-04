@@ -53,6 +53,7 @@ namespace ChessWebApp
 
         public void UpdateValidSquares(AbstractPiece piece)
         {
+            //LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
             ValidMoves = piece.GetValidMoves(this);
         }
 

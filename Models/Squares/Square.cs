@@ -13,7 +13,7 @@ namespace ChessWebApp
         public AbstractPiece CurrentPiece { get; set; }
         public bool IsOccupied { get; set; }
         public List<AbstractPiece> AttackedByPieces { get; set; }
-
+        public bool IsValid { get; set; }
 
         public Square(SquareColor squareColor, Location location)
         {

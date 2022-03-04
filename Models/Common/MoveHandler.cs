@@ -8,21 +8,37 @@ namespace ChessWebApp
 {
     public class MoveHandler
     {
+        private static Board board;
         private static bool IsWhitesMove = true;
         private static Square fromSquare;
+        private static Square FromSquare
+        {
+            get => fromSquare;
+            set
+            {
+                if (value == null) board.ValidMoves.Clear();
+                board.LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
+                fromSquare = value;
+            }
+        }
+
+        public MoveHandler(Board _board)
+        {
+            board = _board;
+        }
 
         public static bool PerformMove(Board board, Square square)
         {
             bool isMovePerformed = false;
 
-            Func<bool> FromSquareIsSelected = () => fromSquare != null && fromSquare.CurrentPiece != null;
+            Func<bool> FromSquareIsSelected = () => FromSquare != null && FromSquare.CurrentPiece != null;
             Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
 
             Func<bool> SelectedAndTargetPieceAreTheSamePiece = ()
-                => fromSquare == square && fromSquare.CurrentPiece != null;
+                => FromSquare == square && FromSquare.CurrentPiece != null;
 
             Func<bool> SelectedAndTargetPieceAreTheSameColor = ()
-                => fromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
+                => FromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
 
             Func<Square, bool> MoveOrderIsWrong = sq
                  => IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
@@ -32,45 +48,43 @@ namespace ChessWebApp
             {
                 if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
                 {
-                    fromSquare = square;
+                    FromSquare = square;
 
-                    if (fromSquare.CurrentPiece != null && !MoveOrderIsWrong(fromSquare))
-                        board.UpdateValidSquares(fromSquare.CurrentPiece);
+                    if (FromSquare.CurrentPiece != null && !MoveOrderIsWrong(FromSquare))
+                        board.UpdateValidSquares(FromSquare.CurrentPiece);
                 }
             }
             else
             {
-                if (MoveOrderIsWrong(fromSquare))
+                if (MoveOrderIsWrong(FromSquare))
                 {
-                    fromSquare = null;
+                    FromSquare = null;
                 }
                 else
                 {
                     if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
                     {
-                        fromSquare = null;
-                        board.ValidMoves.Clear();
+                        FromSquare = null;
                     }
                     else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
                     {
-                        fromSquare = square;
-                        board.UpdateValidSquares(fromSquare.CurrentPiece);
+                        FromSquare = square;
+                        board.UpdateValidSquares(FromSquare.CurrentPiece);
                     }
                     else
                     {   //making a move
 
-                        board.UpdateValidSquares(fromSquare.CurrentPiece);
+                        board.UpdateValidSquares(FromSquare.CurrentPiece);
 
                         if (board.ValidMoves.Contains(square.Location))
                         {
-                            fromSquare.CurrentPiece.MakeMove(square);
+                            FromSquare.CurrentPiece.MakeMove(square);
                             UpdateSquareAttackedByPieces(board, square);
                             IsWhitesMove = !IsWhitesMove;
 
                             isMovePerformed = true;
                         }
-                        fromSquare = null;
-                        board.ValidMoves.Clear();
+                        FromSquare = null;
                     }
                 }
             }
@@ -90,5 +104,7 @@ namespace ChessWebApp
             foreach (Location loc in attackedLocs)
                 board.LocationSquareMap[loc].AttackedByPieces.Add(square.CurrentPiece);
         }
+
+
     }
 }

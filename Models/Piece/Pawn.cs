@@ -50,6 +50,8 @@ namespace ChessWebApp
                 return true;
             }).ToList();
 
+            validLocations.ForEach(loc => squareMap[loc].IsValid = true);
+
             return validLocations;
         }
 

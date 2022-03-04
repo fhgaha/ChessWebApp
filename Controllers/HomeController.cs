@@ -18,6 +18,7 @@ namespace ChessWebApp.Controllers
         private readonly ILogger<HomeController> _logger;
 
         private static Board board;
+        private static MoveHandler moveHandler;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -26,6 +27,7 @@ namespace ChessWebApp.Controllers
         public IActionResult Index()
         {
             if (board == null) board = new Board();
+            if (moveHandler == null) moveHandler = new MoveHandler(board);
             return View(board);
         }
 
@@ -46,6 +48,7 @@ namespace ChessWebApp.Controllers
         private static List<Square> previousSquares;
         public IActionResult UpdateChangedSquares(string location)
         {
+
             File file = Array.Find(
                 (File[])Enum.GetValues(typeof(File)),
                 f => f.ToString() == location[0].ToString());
@@ -62,8 +65,11 @@ namespace ChessWebApp.Controllers
                 currentSquares.Add(board.LocationSquareMap[loc]);
             }
 
+            //need to update previous green squares
+
             if (previousSquares == null) previousSquares = currentSquares;
             if (!isMoveMade) previousSquares = currentSquares;
+                          
 
             return Json(GetSquareStrings(location, currentSquare));
         }

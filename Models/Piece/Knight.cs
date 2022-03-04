@@ -29,6 +29,8 @@ namespace ChessWebApp
             GetMoves(moveCandidates, squareMap, current, 1, -2);
             GetMoves(moveCandidates, squareMap, current, -1, -2);
 
+            moveCandidates.ForEach(loc => squareMap[loc].IsValid = true);
+
             return moveCandidates;
         }
 

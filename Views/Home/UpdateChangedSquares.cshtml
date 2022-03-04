@@ -1,16 +1,23 @@
 ﻿@model ChessWebApp.Square
 
+@{ 
+    var squareColor = Model.SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
+    if (Model.IsValid)
+        squareColor = "#5c9c6f";
+}
+
 <button class="square-button" type="submit" name="location" value="@Model.Location.File@Model.Location.Rank"
-        asp-controller="Home" asp-action="HandleButtonClick">
+        asp-controller="Home" asp-action="HandleButtonClick"
+        style="background: @squareColor">
     @if (Model.IsOccupied)
     {
-
         var piece = Model.CurrentPiece;
 
         string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
         string pieceClass = piece.GetType().Name;
         string fileType = ".png";
 
-        <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />}
+        <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+    }
 </button>
 

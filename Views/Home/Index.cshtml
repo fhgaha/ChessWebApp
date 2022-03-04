@@ -62,14 +62,14 @@
 
                     @for (int j = 0; j < squares.GetLength(1); j++)
                     {
-                        var squareColor = (i + j) % 2 == 0 ? "#eee" : "#aaa";   //black and white
+                        var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
 
                         if(Model.ValidMoves.Contains(squares[i, j].Location))
                         {
                             squareColor = "#5c9c6f";    //green
                         }
 
-                        <td style="background: @squareColor; ">
+                        <td style="background: @squareColor;">
                             <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
                                 <button class="square-button" name="location" 
                                         value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
