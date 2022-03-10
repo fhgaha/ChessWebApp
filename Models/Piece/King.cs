@@ -19,25 +19,43 @@ namespace ChessWebApp
 
         public override List<Location> GetLocationsAttackedByPiece(Board board)
         {
-            var moveCandidates = new List<Location>();
-            moveCandidates.AddRange(bishop.GetValidMoves(board, CurrentSquare));
-            moveCandidates.AddRange(rook.GetValidMoves(board, CurrentSquare));
-            var current = CurrentSquare.Location;
+            var attackedLocations = new List<Location>();
 
-            return moveCandidates.Where(candidate =>
-                Math.Abs((int)candidate.File - (int)current.File) < 2 &&
-                Math.Abs(candidate.Rank - current.Rank) < 2)
-                .ToList();
+            //get neighbour squares
+            for (int i = 0; i < 9; i++)
+            {
+                int rankOffset = i % 3 - 1;
+                int fileOffset = i / 3 - 1;
+
+                if (rankOffset == 0 && fileOffset == 0) continue;
+
+                attackedLocations.Add(LocationFactory.Build(CurrentSquare.Location, rankOffset, fileOffset));
+            }
+
+            return attackedLocations.Where(loc => loc != null).ToList();
         }
 
         public override List<Location> GetValidMoves(Board board, Square square)
         {
-            return GetValidMoves(board);
+            var moveCandidates = GetValidMoves(board)
+                .Where(candidate =>
+                    Math.Abs((int)candidate.File - (int)square.Location.File) < 2
+                    && Math.Abs(candidate.Rank - square.Location.Rank) < 2
+                    && (board.LocationSquareMap[candidate].IsOccupied == false
+                        || (board.LocationSquareMap[candidate].CurrentPiece.PieceColor != PieceColor
+                            && board.LocationSquareMap[candidate].CurrentPiece is not King)))
+                            .ToList();
+
+            board.SetAllSquaresNotValid();
+            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+
+            return moveCandidates;
         }
 
         public override List<Location> GetValidMoves(Board board)
         {
-            return GetLocationsAttackedByPiece(board).Where(loc =>
+            var locs = GetLocationsAttackedByPiece(board);
+            return locs.Where(loc =>
             {
                 var square = board.LocationSquareMap[loc];
                 if (square.AttackedByPieces.Any(ap => ap.PieceColor != PieceColor))

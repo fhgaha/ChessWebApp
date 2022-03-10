@@ -35,6 +35,7 @@ namespace ChessWebApp
                 "squareColor = " + SquareColor +
                 ", location = " + Location +
                 ", isOccupied = " + IsOccupied +
+                ", isValid = " + IsValid +
                 "}";
         }
     }

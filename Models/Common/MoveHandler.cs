@@ -54,41 +54,84 @@ namespace ChessWebApp
                         board.UpdateValidSquares(FromSquare.CurrentPiece);
                 }
             }
-            else
+            else if (MoveOrderIsWrong(FromSquare))
             {
-                if (MoveOrderIsWrong(FromSquare))
-                {
-                    FromSquare = null;
-                }
-                else
-                {
-                    if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
-                    {
-                        FromSquare = null;
-                    }
-                    else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
-                    {
-                        FromSquare = square;
-                        board.UpdateValidSquares(FromSquare.CurrentPiece);
-                    }
-                    else
-                    {   //making a move
-
-                        board.UpdateValidSquares(FromSquare.CurrentPiece);
-
-                        if (board.ValidMoves.Contains(square.Location))
-                        {
-                            FromSquare.CurrentPiece.MakeMove(square);
-                            UpdateSquareAttackedByPieces(board, square);
-                            IsWhitesMove = !IsWhitesMove;
-
-                            isMovePerformed = true;
-                        }
-                        FromSquare = null;
-                    }
-                }
+                FromSquare = null;
             }
+            else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
+            {
+                FromSquare = null;
+            }
+            else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
+            {
+                FromSquare = square;
+                board.UpdateValidSquares(FromSquare.CurrentPiece);
+            }
+            else
+            {   //making a move
+
+                board.UpdateValidSquares(FromSquare.CurrentPiece);
+
+                if (board.ValidMoves.Contains(square.Location))
+                {
+                    FromSquare.CurrentPiece.MakeMove(square);
+                    UpdateSquareAttackedByPieces(board, square);
+                    IsWhitesMove = !IsWhitesMove;
+
+                    isMovePerformed = true;
+                }
+                FromSquare = null;
+            }
+
             return isMovePerformed;
+
+            #region 
+            //if (!FromSquareIsSelected())
+            //{
+            //    if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
+            //    {
+            //        FromSquare = square;
+
+            //        if (FromSquare.CurrentPiece != null && !MoveOrderIsWrong(FromSquare))
+            //            board.UpdateValidSquares(FromSquare.CurrentPiece);
+            //    }
+            //}
+            //else
+            //{
+            //    if (MoveOrderIsWrong(FromSquare))
+            //    {
+            //        FromSquare = null;
+            //    }
+            //    else
+            //    {
+            //        if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
+            //        {
+            //            FromSquare = null;
+            //        }
+            //        else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
+            //        {
+            //            FromSquare = square;
+            //            board.UpdateValidSquares(FromSquare.CurrentPiece);
+            //        }
+            //        else
+            //        {   //making a move
+
+            //            board.UpdateValidSquares(FromSquare.CurrentPiece);
+
+            //            if (board.ValidMoves.Contains(square.Location))
+            //            {
+            //                FromSquare.CurrentPiece.MakeMove(square);
+            //                UpdateSquareAttackedByPieces(board, square);
+            //                IsWhitesMove = !IsWhitesMove;
+
+            //                isMovePerformed = true;
+            //            }
+            //            FromSquare = null;
+            //        }
+            //    }
+            //}
+            //return isMovePerformed;
+            #endregion
         }
 
         private static void UpdateSquareAttackedByPieces(Board board, Square square)
@@ -104,7 +147,5 @@ namespace ChessWebApp
             foreach (Location loc in attackedLocs)
                 board.LocationSquareMap[loc].AttackedByPieces.Add(square.CurrentPiece);
         }
-
-
     }
 }

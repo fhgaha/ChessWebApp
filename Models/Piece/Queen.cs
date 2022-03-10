@@ -32,6 +32,9 @@ namespace ChessWebApp
             var moveCandidates = new List<Location>();
             moveCandidates.AddRange(bishop.GetValidMoves(board, this.CurrentSquare));
             moveCandidates.AddRange(rook.GetValidMoves(board, this.CurrentSquare));
+
+            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+
             return moveCandidates;
         }
 

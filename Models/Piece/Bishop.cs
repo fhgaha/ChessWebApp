@@ -30,6 +30,8 @@ namespace ChessWebApp
             //need logic if candidate is enemy king
             //need logic that does not allow to pass another piece
 
+            moveCandidates.ForEach(loc => squareMap[loc].IsValid = true);
+
             return moveCandidates;
         }
 

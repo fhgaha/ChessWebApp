@@ -6,7 +6,8 @@ $(function () {
         event.preventDefault();
 
         var squareLoc = $(this).val();
-        console.log("you clicked on: " + squareLoc);
+        var greenText = "color: #bada55";
+        console.log("%c you clicked on: " + squareLoc, greenText);
         doSquareUpdate(squareLoc);
     })
 
