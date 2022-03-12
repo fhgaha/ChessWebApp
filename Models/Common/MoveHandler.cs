@@ -9,8 +9,8 @@ namespace ChessWebApp
 {
     public class MoveHandler
     {
+        public static bool IsWhitesMove = true;
         private static Board board;
-        private static bool IsWhitesMove = true;
         private static Square fromSquare;
         private static Square FromSquare
         {
@@ -78,6 +78,7 @@ namespace ChessWebApp
                 {
                     FromSquare.CurrentPiece.MovePiece(square);
                     UpdateSquaresAttackedByPiece(board, square.CurrentPiece);
+
                     IsWhitesMove = !IsWhitesMove;
                     isMovePerformed = true;
                 }
@@ -89,12 +90,9 @@ namespace ChessWebApp
 
         public static List<Location> GetMovesToPreventCheck(Board board, Square defender)
         {
-            var moveCandidates = defender.CurrentPiece.GetValidMoves(board);
-
+            var moveCandidates = defender.CurrentPiece.GetValidMoves(board, defender);
             King king = IsWhitesMove ? board.WhiteKing : board.BlackKing;
-
             var attackers = new List<AbstractPiece>(king.CurrentSquare.AttackedByPieces);
-
             List<Location> moves = new List<Location>();
 
             foreach (var loc in moveCandidates)
@@ -116,6 +114,12 @@ namespace ChessWebApp
 
         private static void MakeFakeMove(Square from, Square to, List<AbstractPiece> attackers, Action action)
         {
+            AbstractPiece savedFromPiece = from.CurrentPiece;
+
+            AbstractPiece savedToPiece = null;
+            if (to.CurrentPiece != null)
+                savedToPiece = to.CurrentPiece;
+
             from.CurrentPiece.MovePiece(to);
             attackers.ForEach(p => UpdateSquaresAttackedByPiece(board, p));
             if (to.CurrentPiece.isFirstMove == true) to.CurrentPiece.isFirstMove = true;
@@ -125,6 +129,12 @@ namespace ChessWebApp
             to.CurrentPiece.MovePiece(from);
             attackers.ForEach(p => UpdateSquaresAttackedByPiece(board, p));
             if (from.CurrentPiece.isFirstMove == true) from.CurrentPiece.isFirstMove = true;
+
+            if (savedToPiece != null)
+            {
+                to.CurrentPiece = savedToPiece;
+                to.IsOccupied = true;
+            }
         }
 
         private static void UpdateSquaresAttackedByPiece(Board board, AbstractPiece attacker)

@@ -15,6 +15,7 @@ namespace ChessWebApp
         public List<Location> ValidMoves { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
+        public string message = "";
 
         public Board()
         {
@@ -58,9 +59,13 @@ namespace ChessWebApp
 
         public void UpdateValidSquares(AbstractPiece piece)
         {
-            if (BlackKing.IsUnderCheck() || WhiteKing.IsUnderCheck())
+            King king = MoveHandler.IsWhitesMove ? WhiteKing : BlackKing;
+            if (king.IsUnderCheck())
             {
                 ValidMoves = MoveHandler.GetMovesToPreventCheck(this, piece.CurrentSquare);
+
+                if (ValidMoves.Count == 0)
+                    message = king + " is checkmated!";
                 return;
             }
 

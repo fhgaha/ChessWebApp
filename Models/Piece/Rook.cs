@@ -13,9 +13,9 @@ namespace ChessWebApp
             Name = "Rook";
         }
 
-        public override List<Location> GetValidMoves(Board board, Square square)
+        public override List<Location> GetValidMoves(Board board, Square from)
         {
-            CurrentSquare = square;
+            CurrentSquare = from;
             return GetValidMoves(board);
         }
 

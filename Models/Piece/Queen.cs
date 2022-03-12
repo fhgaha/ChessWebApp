@@ -22,7 +22,7 @@ namespace ChessWebApp
             return GetValidMoves(board);
         }
 
-        public override List<Location> GetValidMoves(Board board, Square square)
+        public override List<Location> GetValidMoves(Board board, Square from)
         {
             return GetValidMoves(board);
         }

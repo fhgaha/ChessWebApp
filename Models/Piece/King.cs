@@ -7,30 +7,11 @@ namespace ChessWebApp
     public class King : AbstractPiece
     {
         IMovable bishop, rook;
-        private bool isUnderCheck = false;
-        //public bool IsUnderCheck
-        //{
-        //    get 
-        //    {
-        //        if (CurrentSquare.AttackedByPieces.Any(piece => piece.PieceColor != PieceColor))
-        //        {
-        //            isUnderCheck = true;
-        //            return true;
-        //        }
-        //        isUnderCheck = false;
-        //        return false;
-        //    }
-        //    //set => isUnderCheck = value;
-        //}
 
         public bool IsUnderCheck()
         {
             if (CurrentSquare.AttackedByPieces.Any(piece => piece.PieceColor != PieceColor))
-            {
-                isUnderCheck = true;
                 return true;
-            }
-            isUnderCheck = false;
             return false;
         }
 
@@ -59,16 +40,21 @@ namespace ChessWebApp
             return attackedLocations.Where(loc => loc != null).ToList();
         }
 
-        public override List<Location> GetValidMoves(Board board, Square square)
+        public override List<Location> GetValidMoves(Board board, Square from)
         {
             var moveCandidates = GetValidMoves(board)
                 .Where(candidate =>
-                    Math.Abs((int)candidate.File - (int)square.Location.File) < 2
-                    && Math.Abs(candidate.Rank - square.Location.Rank) < 2
-                    && (board.LocationSquareMap[candidate].IsOccupied == false
+                    Math.Abs((int)candidate.File - (int)from.Location.File) < 2
+                    && Math.Abs(candidate.Rank - from.Location.Rank) < 2
+                    && 
+                    (
+                        board.LocationSquareMap[candidate].IsOccupied == false
+                        || board.LocationSquareMap[candidate].IsOccupied 
+                            && board.LocationSquareMap[candidate].CurrentPiece.PieceColor != PieceColor
                         || (board.LocationSquareMap[candidate].CurrentPiece.PieceColor != PieceColor
-                            && board.LocationSquareMap[candidate].CurrentPiece is not King)))
-                            .ToList();
+                            && board.LocationSquareMap[candidate].CurrentPiece is not King)
+                    ))
+                .ToList();
 
             board.SetAllSquaresNotValid();
             moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
