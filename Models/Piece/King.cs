@@ -7,8 +7,32 @@ namespace ChessWebApp
     public class King : AbstractPiece
     {
         IMovable bishop, rook;
-        private bool isFirstMove = true;
         private bool isUnderCheck = false;
+        //public bool IsUnderCheck
+        //{
+        //    get 
+        //    {
+        //        if (CurrentSquare.AttackedByPieces.Any(piece => piece.PieceColor != PieceColor))
+        //        {
+        //            isUnderCheck = true;
+        //            return true;
+        //        }
+        //        isUnderCheck = false;
+        //        return false;
+        //    }
+        //    //set => isUnderCheck = value;
+        //}
+
+        public bool IsUnderCheck()
+        {
+            if (CurrentSquare.AttackedByPieces.Any(piece => piece.PieceColor != PieceColor))
+            {
+                isUnderCheck = true;
+                return true;
+            }
+            isUnderCheck = false;
+            return false;
+        }
 
         public King(PieceColor pieceColor) : base(pieceColor)
         {
@@ -64,7 +88,7 @@ namespace ChessWebApp
             }).ToList();
         }
 
-        public override void MakeMove(Square square)
+        public override void MovePiece(Square square)
         {
             isFirstMove = false;
             square.IsOccupied = true;

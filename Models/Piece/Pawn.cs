@@ -8,8 +8,6 @@ namespace ChessWebApp
 {
     public class Pawn : AbstractPiece
     {
-        private bool isFirstMove = true;
-
         public Pawn(PieceColor pieceColor) : base(pieceColor)
         {
             Name = "Pawn";
@@ -55,7 +53,7 @@ namespace ChessWebApp
             return validLocations;
         }
 
-        public override void MakeMove(Square square)
+        public override void MovePiece(Square square)
         {
             isFirstMove = false;
             square.IsOccupied = true;

@@ -15,6 +15,18 @@ namespace ChessWebApp
         public List<AbstractPiece> AttackedByPieces { get; set; }
         public bool IsValid { get; set; }
 
+        public Square(Square square)
+        {
+            SquareColor = square.SquareColor;
+            Location = LocationFactory.Build(square.Location, 0, 0);
+            CurrentPiece = square.CurrentPiece;
+            IsOccupied = square.IsOccupied;
+
+            AttackedByPieces = new List<AbstractPiece>();
+            square.AttackedByPieces.ForEach(p =>AttackedByPieces.Add(p));
+            IsValid = square.IsValid;
+        }
+
         public Square(SquareColor squareColor, Location location)
         {
             SquareColor = squareColor;

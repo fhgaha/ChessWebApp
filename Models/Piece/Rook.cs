@@ -80,7 +80,7 @@ namespace ChessWebApp
             }
         }
 
-        public override void MakeMove(Square square)
+        public override void MovePiece(Square square)
         {
             IsFirstMove = false;
             square.IsOccupied = true;

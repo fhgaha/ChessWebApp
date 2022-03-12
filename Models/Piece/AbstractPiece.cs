@@ -11,6 +11,8 @@ namespace ChessWebApp
         public string Name { get; protected set; }
         public PieceColor PieceColor { get; protected set; }
         public Square CurrentSquare { get; set; }
+        public bool isFirstMove = true;
+
 
         protected AbstractPiece(PieceColor pieceColor)
         {
@@ -30,7 +32,7 @@ namespace ChessWebApp
 
         public abstract List<Location> GetValidMoves(Board board, Square square);
 
-        public virtual void MakeMove(Square square) { }
+        public virtual void MovePiece(Square square) { }
 
         public abstract List<Location> GetLocationsAttackedByPiece(Board board);
     }

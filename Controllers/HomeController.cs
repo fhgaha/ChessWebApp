@@ -57,7 +57,7 @@ namespace ChessWebApp.Controllers
             bool isMoveMade = MoveHandler.PerformMove(board, currentSquare);
 
             ///use this instead of below to update whole board
-            //return Json(GetSquareStrings(board.LocationSquareMap.Values.ToList(), currentSquare));
+            return Json(GetSquareStrings(board.LocationSquareMap.Values.ToList(), currentSquare));
 
             var currentSquares = new List<Square>();
             currentSquares.Add(currentSquare);

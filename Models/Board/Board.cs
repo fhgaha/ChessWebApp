@@ -13,6 +13,8 @@ namespace ChessWebApp
         public List<AbstractPiece> LightPieces { get; private set; }
         public List<AbstractPiece> DarkPieces { get; private set; }
         public List<Location> ValidMoves { get; private set; }
+        public King WhiteKing { get; private set; }
+        public King BlackKing { get; private set; }
 
         public Board()
         {
@@ -49,12 +51,22 @@ namespace ChessWebApp
                     column++;
                 }
             }
+
+            WhiteKing = (King)LightPieces.Find(piece => piece is King);
+            BlackKing = (King)DarkPieces.Find(piece => piece is King);
         }
 
         public void UpdateValidSquares(AbstractPiece piece)
         {
+            if (BlackKing.IsUnderCheck() || WhiteKing.IsUnderCheck())
+            {
+                ValidMoves = MoveHandler.GetMovesToPreventCheck(this, piece.CurrentSquare);
+                return;
+            }
+
             //LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
             ValidMoves = piece.GetValidMoves(this, piece.CurrentSquare);
+
         }
 
         public void SetAllSquaresNotValid()

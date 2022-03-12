@@ -10,6 +10,6 @@ namespace ChessWebApp
     {
         List<Location> GetValidMoves(Board board);
         List<Location> GetValidMoves(Board board, Square square);
-        void MakeMove(Square square);
+        void MovePiece(Square square);
     }
 }
