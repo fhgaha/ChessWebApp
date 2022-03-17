@@ -18,7 +18,6 @@ namespace ChessWebApp.Controllers
         private readonly ILogger<HomeController> _logger;
 
         private static Board board;
-        private static MoveHandler moveHandler;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -27,7 +26,6 @@ namespace ChessWebApp.Controllers
         public IActionResult Index()
         {
             if (board == null) board = new Board();
-            if (moveHandler == null) moveHandler = new MoveHandler(board);
             return View(board);
         }
 
@@ -41,7 +39,7 @@ namespace ChessWebApp.Controllers
             List<Location> oldValidMoves = new List<Location>();
             board.ValidMoves.ForEach(loc => oldValidMoves.Add(LocationFactory.Build(loc, 0, 0)));
 
-            MoveHandler.PerformMove(board, square);
+            board.PerformMove(board, square);
             return View("Index", board);
         }
 
@@ -54,7 +52,7 @@ namespace ChessWebApp.Controllers
             int rank = int.Parse(location[1].ToString());
             Square currentSquare = board.LocationSquareMap[new Location(file, rank)];
 
-            bool isMoveMade = MoveHandler.PerformMove(board, currentSquare);
+            bool isMoveMade = board.PerformMove(board, currentSquare);
 
             ///use this instead of below to update whole board
             return Json(GetSquareStrings(board.LocationSquareMap.Values.ToList(), currentSquare));

@@ -17,33 +17,22 @@ namespace ChessWebApp
             Name = "Queen";
         }
 
-        public override List<Location> GetLocationsAttackedByPiece(Board board)
+        public Queen(Queen piece) : this(piece.PieceColor) { }
+
+        public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {
-            return GetValidMoves(board);
+            return GetValidMoves(board, attacker);
         }
 
         public override List<Location> GetValidMoves(Board board, Square from)
         {
-            return GetValidMoves(board);
-        }
-
-        public override List<Location> GetValidMoves(Board board)
-        {
             var moveCandidates = new List<Location>();
-            moveCandidates.AddRange(bishop.GetValidMoves(board, this.CurrentSquare));
-            moveCandidates.AddRange(rook.GetValidMoves(board, this.CurrentSquare));
+            moveCandidates.AddRange(bishop.GetValidMoves(board, from));
+            moveCandidates.AddRange(rook.GetValidMoves(board, from));
 
             moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 
             return moveCandidates;
-        }
-
-        public override void MovePiece(Square square)
-        {
-            square.IsOccupied = true;
-            square.CurrentPiece = this;
-            CurrentSquare.Reset();
-            CurrentSquare = square;
         }
     }
 }

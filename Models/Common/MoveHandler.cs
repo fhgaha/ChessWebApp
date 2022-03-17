@@ -9,6 +9,7 @@ namespace ChessWebApp
 {
     public class MoveHandler
     {
+        public List<Tuple<Square, Square>> completedMoves = new List<Tuple<Square, Square>>();
         public static bool IsWhitesMove = true;
         private static Board board;
         private static Square fromSquare;
@@ -23,129 +24,135 @@ namespace ChessWebApp
             }
         }
 
-        public MoveHandler(Board _board)
-        {
-            board = _board;
-        }
+        //public MoveHandler(Board _board)
+        //{
+        //    board = _board;
+        //}
 
-        public static bool PerformMove(Board board, Square square)
-        {
-            bool isMovePerformed = false;
+        //public bool PerformMove(Board board, Square square)
+        //{
+        //    bool isMovePerformed = true;
 
-            Func<bool> FromSquareIsSelected = () => FromSquare != null && FromSquare.CurrentPiece != null;
-            Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
+        //    Func<bool> FromSquareIsSelected = () => FromSquare != null && FromSquare.CurrentPiece != null;
+        //    Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
 
-            Func<bool> SelectedAndTargetPieceAreTheSamePiece = ()
-                => FromSquare == square && FromSquare.CurrentPiece != null;
+        //    Func<bool> SelectedAndTargetPieceAreTheSamePiece = ()
+        //        => FromSquare == square && FromSquare.CurrentPiece != null;
 
-            Func<bool> SelectedAndTargetPieceAreTheSameColor = ()
-                => FromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
+        //    Func<bool> SelectedAndTargetPieceAreTheSameColor = ()
+        //        => FromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
 
-            Func<Square, bool> MoveOrderIsWrong = sq
-                 => IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
-                || !IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Dark;
+        //    Func<Square, bool> MoveOrderIsWrong = sq
+        //         => IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
+        //        || !IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Dark;
 
 
-            if (!FromSquareIsSelected())
-            {
-                if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
-                {
-                    FromSquare = square;
+        //    if (!FromSquareIsSelected())
+        //    {
+        //        if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
+        //        {
+        //            FromSquare = square;
 
-                    if (FromSquare.CurrentPiece != null && !MoveOrderIsWrong(FromSquare))
-                        board.UpdateValidSquares(FromSquare.CurrentPiece);
-                }
-            }
-            else if (MoveOrderIsWrong(FromSquare))
-            {
-                FromSquare = null;
-            }
-            else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
-            {
-                FromSquare = null;
-            }
-            else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
-            {
-                FromSquare = square;
-                board.UpdateValidSquares(FromSquare.CurrentPiece);
-            }
-            else
-            {   //making a move
+        //            if (FromSquare.CurrentPiece != null && !MoveOrderIsWrong(FromSquare))
+        //                board.UpdateValidSquares(FromSquare.CurrentPiece);
+        //        }
+        //    }
+        //    else if (MoveOrderIsWrong(FromSquare))
+        //    {
+        //        FromSquare = null;
+        //    }
+        //    else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
+        //    {
+        //        FromSquare = null;
+        //    }
+        //    else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
+        //    {
+        //        FromSquare = square;
+        //        board.UpdateValidSquares(FromSquare.CurrentPiece);
+        //    }
+        //    else
+        //    {   //making a move
 
-                //board.UpdateValidSquares(FromSquare.CurrentPiece);
+        //        //board.UpdateValidSquares(FromSquare.CurrentPiece);
 
-                if (board.ValidMoves.Contains(square.Location))
-                {
-                    FromSquare.CurrentPiece.MovePiece(square);
-                    UpdateSquaresAttackedByPiece(board, square.CurrentPiece);
+        //        if (board.ValidMoves.Contains(square.Location))
+        //        {
+        //            FromSquare.CurrentPiece.MovePiece(square);
+        //            UpdateSquaresAttackedByPiece(board, square.CurrentPiece);
 
-                    IsWhitesMove = !IsWhitesMove;
-                    isMovePerformed = true;
-                }
-                FromSquare = null;
-            }
+        //            IsWhitesMove = !IsWhitesMove;
+        //            isMovePerformed = true;
 
-            return isMovePerformed;
-        }
+        //            board.PerformedMoves.Add(Tuple.Create(fromSquare, square));
+        //        }
+        //        FromSquare = null;
+        //    }
 
-        public static List<Location> GetMovesToPreventCheck(Board board, Square defender)
-        {
-            var moveCandidates = defender.CurrentPiece.GetValidMoves(board, defender);
-            King king = IsWhitesMove ? board.WhiteKing : board.BlackKing;
-            var attackers = new List<AbstractPiece>(king.CurrentSquare.AttackedByPieces);
-            List<Location> moves = new List<Location>();
+        //    return isMovePerformed;
+        //}
 
-            foreach (var loc in moveCandidates)
-            {
-                var candidateSquare = board.LocationSquareMap[loc];
+        //public static List<Location> FilterMovesToPreventCheck(Board board, List<Location> candidates,
+        //    AbstractPiece defender, King king)
+        //{
+        //    List<Location> defendingMoves = new List<Location>();
 
-                MakeFakeMove(defender, candidateSquare, attackers, () =>
-                {
-                    if (!king.IsUnderCheck()) moves.Add(loc);
-                    return;
-                });
-            }
+        //    foreach (var candidate in candidates)
+        //    {
+        //        Board fBoard = new Board();
 
-            board.SetAllSquaresNotValid();
-            moves.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+        //        foreach (var loc in board.LocationSquareMap.Keys)
+        //            fBoard.LocationSquareMap[loc] = board.LocationSquareMap[loc];
 
-            return moves;
-        }
+        //        Square squareCandidate = fBoard.LocationSquareMap[candidate];
+        //        King fKing = new King(king);
+                
+        //        AbstractPiece fDefender = PieceFactory.GetNewPiece(defender);
+        //        fKing.CurrentSquare.AttackedByPieces = PieceFactory.GetCopies(
+        //            fBoard.LocationSquareMap[fKing.CurrentSquare.Location].AttackedByPieces);
 
-        private static void MakeFakeMove(Square from, Square to, List<AbstractPiece> attackers, Action action)
-        {
-            AbstractPiece savedFromPiece = from.CurrentPiece;
+        //        MakeFakeMove(fDefender.CurrentSquare, squareCandidate, defendingMoves, candidate, fBoard, fKing);
+        //        fBoard.SetAllSquaresNotValid();
+        //    }
+        //    return defendingMoves;
+        //}
 
-            AbstractPiece savedToPiece = null;
-            if (to.CurrentPiece != null)
-                savedToPiece = to.CurrentPiece;
+        //private static void MakeFakeMove(Square from, Square to, List<Location> defendingMoves,
+        //    Location candidate, Board fBoard, King fKing)
+        //{
+        //    //if candidate contains attacker, after moving a defender the attaker would be taken.
+        //    //update king's square for every other attacker and check if king is still attacked
 
-            from.CurrentPiece.MovePiece(to);
-            attackers.ForEach(p => UpdateSquaresAttackedByPiece(board, p));
-            if (to.CurrentPiece.isFirstMove == true) to.CurrentPiece.isFirstMove = true;
+        //    if (to.IsOccupied
+        //        && fKing.CurrentSquare.AttackedByPieces.Contains(to.CurrentPiece))
+        //    {
+        //        from.CurrentPiece.MovePiece(to);
 
-            action();
+        //        fKing.CurrentSquare.AttackedByPieces.Where(p => p.CurrentSquare.Location != candidate).ToList()
+        //            .ForEach(attacker => UpdateSquaresAttackedByPiece(fBoard, attacker));
+        //    }
+        //    else
+        //    {
+        //        from.CurrentPiece.MovePiece(to);
 
-            to.CurrentPiece.MovePiece(from);
-            attackers.ForEach(p => UpdateSquaresAttackedByPiece(board, p));
-            if (from.CurrentPiece.isFirstMove == true) from.CurrentPiece.isFirstMove = true;
+        //        fKing.CurrentSquare.AttackedByPieces
+        //            .ForEach(attacker => UpdateSquaresAttackedByPiece(fBoard, attacker));
+        //    }
 
-            if (savedToPiece != null)
-            {
-                to.CurrentPiece = savedToPiece;
-                to.IsOccupied = true;
-            }
-        }
+        //    if (!fKing.IsUnderCheck())
+        //        defendingMoves.Add(candidate);
 
-        private static void UpdateSquaresAttackedByPiece(Board board, AbstractPiece attacker)
-        {
-            foreach (Square sq in board.LocationSquareMap.Values)
-                if (sq.AttackedByPieces.Contains(attacker))
-                    sq.AttackedByPieces.Remove(attacker);
+        //    to.CurrentPiece.MovePiece(from);
+        //}
 
-            var attackedLocs = attacker.GetLocationsAttackedByPiece(board);
+        //private static void UpdateSquaresAttackedByPiece(Board board, AbstractPiece attacker)
+        //{
+        //    foreach (Square sq in board.LocationSquareMap.Values)
+        //        if (sq.AttackedByPieces.Contains(attacker))
+        //            sq.AttackedByPieces.Remove(attacker);
+            
+        //    var attackedLocs = attacker.GetLocationsAttackedByPiece(board);
 
-            attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPieces.Add(attacker));
-        }
+        //    attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPieces.Add(attacker));
+        //}
     }
 }

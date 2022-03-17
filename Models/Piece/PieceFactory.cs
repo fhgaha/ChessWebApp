@@ -59,5 +59,40 @@ namespace ChessWebApp
             return pieces;
         }
 
+        public static AbstractPiece GetNewPiece(AbstractPiece p)
+        {
+            if (p == null) return null;
+
+            AbstractPiece newPiece;
+            if (p.GetType() == typeof(Pawn))
+                newPiece = new Pawn((Pawn)p);
+            else if (p.GetType() == typeof(Rook))
+                newPiece = new Rook((Rook)p);
+            else if (p.GetType() == typeof(Knight))
+                newPiece = new Knight((Knight)p);
+            else if (p.GetType() == typeof(Bishop))
+                newPiece = new Bishop((Bishop)p);
+            else if (p.GetType() == typeof(Queen))
+                newPiece = new Queen((Queen)p);
+            else
+                newPiece = new King((King)p);
+
+            return newPiece;
+        }
+
+        public static List<Square> GetCopies(List<Square> list)
+        {
+            List<Square> copies = new();
+
+            foreach (var sq in list)
+            {
+                Square newSquare = new Square(sq);
+                newSquare.CurrentPiece = GetNewPiece(sq.CurrentPiece);
+
+                copies.Add(newSquare);
+            }
+
+            return copies;
+        }
     }
 }

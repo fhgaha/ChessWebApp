@@ -12,19 +12,18 @@ namespace ChessWebApp
         public Location Location { get; }
         public AbstractPiece CurrentPiece { get; set; }
         public bool IsOccupied { get; set; }
-        public List<AbstractPiece> AttackedByPieces { get; set; }
+        public List<Square> AttackedByPiecesOnSquares { get; set; }
         public bool IsValid { get; set; }
 
-        public Square(Square square)
+        public Square(Square originalSquare)
         {
-            SquareColor = square.SquareColor;
-            Location = LocationFactory.Build(square.Location, 0, 0);
-            CurrentPiece = square.CurrentPiece;
-            IsOccupied = square.IsOccupied;
+            SquareColor = originalSquare.SquareColor;
+            Location = LocationFactory.Build(originalSquare.Location, 0, 0);
+            CurrentPiece = PieceFactory.GetNewPiece(originalSquare.CurrentPiece);
+            IsOccupied = originalSquare.IsOccupied;
 
-            AttackedByPieces = new List<AbstractPiece>();
-            square.AttackedByPieces.ForEach(p =>AttackedByPieces.Add(p));
-            IsValid = square.IsValid;
+            AttackedByPiecesOnSquares = new List<Square>();
+            IsValid = originalSquare.IsValid;
         }
 
         public Square(SquareColor squareColor, Location location)
@@ -32,7 +31,15 @@ namespace ChessWebApp
             SquareColor = squareColor;
             Location = location;
             IsOccupied = false;
-            AttackedByPieces = new List<AbstractPiece>();
+            AttackedByPiecesOnSquares = new List<Square>();
+        }
+
+        public void MovePiece(Square to)
+        {
+            CurrentPiece.isFirstMove = false;
+            to.IsOccupied = true;
+            to.CurrentPiece = this.CurrentPiece;
+            Reset();
         }
 
         public void Reset()
@@ -49,6 +56,15 @@ namespace ChessWebApp
                 ", isOccupied = " + IsOccupied +
                 ", isValid = " + IsValid +
                 "}";
+        }
+
+        public void CopyAttackedByPiecesOnSquares(Board fakeBoard, List<Square> originalSquareAttackersList)
+        {
+            foreach (Square originalAttacker in originalSquareAttackersList)
+            {
+                var fakeAttacker = fakeBoard.LocationSquareMap[originalAttacker.Location];
+                AttackedByPiecesOnSquares.Add(fakeAttacker);
+            }
         }
     }
 }

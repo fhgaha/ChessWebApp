@@ -8,8 +8,6 @@ namespace ChessWebApp
 {
     public interface IMovable
     {
-        List<Location> GetValidMoves(Board board);
         List<Location> GetValidMoves(Board board, Square square);
-        void MovePiece(Square square);
     }
 }

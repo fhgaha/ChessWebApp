@@ -12,22 +12,20 @@ namespace ChessWebApp
         {
             Name = "Pawn";
         }
-        public override List<Location> GetValidMoves(Board board, Square from)
-        {
-            return GetValidMoves(board);
-        }
 
-        public override List<Location> GetValidMoves(Board board)
+        public Pawn(Pawn piece) : this(piece.PieceColor) { }
+
+        public override List<Location> GetValidMoves(Board board, Square start)
         {
             var moveCandidates = new List<Location>();
             var squareMap = board.LocationSquareMap;
 
             var rankOffset = PieceColor == PieceColor.Light ? 1 : -1;
 
-            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, rankOffset));
-            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 1, rankOffset));
-            moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, -1, rankOffset));
-            if (isFirstMove) moveCandidates.Add(LocationFactory.Build(CurrentSquare.Location, 0, rankOffset * 2));
+            moveCandidates.Add(LocationFactory.Build(start.Location, 0, rankOffset));
+            moveCandidates.Add(LocationFactory.Build(start.Location, 1, rankOffset));
+            moveCandidates.Add(LocationFactory.Build(start.Location, -1, rankOffset));
+            if (isFirstMove) moveCandidates.Add(LocationFactory.Build(start.Location, 0, rankOffset * 2));
 
             //need en passant logic
 
@@ -35,7 +33,7 @@ namespace ChessWebApp
             {
                 if (!squareMap.ContainsKey(candidate))
                     return false;
-                else if (candidate.File == CurrentSquare.Location.File)
+                else if (candidate.File == start.Location.File)
                 {
                     if (squareMap[candidate].IsOccupied)
                         return false;
@@ -53,23 +51,14 @@ namespace ChessWebApp
             return validLocations;
         }
 
-        public override void MovePiece(Square square)
-        {
-            isFirstMove = false;
-            square.IsOccupied = true;
-            square.CurrentPiece = this;
-            CurrentSquare.Reset();
-            CurrentSquare = square;
-        }
-
-        public override List<Location> GetLocationsAttackedByPiece(Board board)
+        public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {
             List<Location> attackedLocations = new List<Location>();
 
             var rankOffset = PieceColor == PieceColor.Light ? 1 : -1;
 
-            attackedLocations.Add(LocationFactory.Build(CurrentSquare.Location, -1, rankOffset));
-            attackedLocations.Add(LocationFactory.Build(CurrentSquare.Location, 1, rankOffset));
+            attackedLocations.Add(LocationFactory.Build(attacker.Location, -1, rankOffset));
+            attackedLocations.Add(LocationFactory.Build(attacker.Location, 1, rankOffset));
 
             return attackedLocations.Where(l => l != null).ToList();
         }

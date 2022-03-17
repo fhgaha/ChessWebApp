@@ -9,27 +9,22 @@ namespace ChessWebApp
             Name = "Knight";
         }
 
+        public Knight(Knight piece) : this(piece.PieceColor) { }
+
         public override List<Location> GetValidMoves(Board board, Square from)
         {
-            return GetValidMoves(board);
-        }
-
-        public override List<Location> GetValidMoves(Board board)
-        {
             var moveCandidates = new List<Location>();
-            var squareMap = board.LocationSquareMap;
-            var current = CurrentSquare.Location;
-            GetMoves(moveCandidates, squareMap, current, 2, 1);
-            GetMoves(moveCandidates, squareMap, current, 2, -1);
-            GetMoves(moveCandidates, squareMap, current, -2, 1);
-            GetMoves(moveCandidates, squareMap, current, -2, -1);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, 2, 1);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, 2, -1);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, -2, 1);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, -2, -1);
 
-            GetMoves(moveCandidates, squareMap, current, 1, 2);
-            GetMoves(moveCandidates, squareMap, current, -1, 2);
-            GetMoves(moveCandidates, squareMap, current, 1, -2);
-            GetMoves(moveCandidates, squareMap, current, -1, -2);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, 1, 2);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, -1, 2);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, 1, -2);
+            GetMoves(moveCandidates, board.LocationSquareMap, from.Location, -1, -2);
 
-            moveCandidates.ForEach(loc => squareMap[loc].IsValid = true);
+            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 
             return moveCandidates;
         }
@@ -56,17 +51,9 @@ namespace ChessWebApp
             }
         }
 
-        public override void MovePiece(Square square)
+        public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {
-            square.IsOccupied = true;
-            square.CurrentPiece = this;
-            CurrentSquare.Reset();
-            CurrentSquare = square;
-        }
-
-        public override List<Location> GetLocationsAttackedByPiece(Board board)
-        {
-            return GetValidMoves(board);
+            return GetValidMoves(board, attacker);
         }
     }
 }
