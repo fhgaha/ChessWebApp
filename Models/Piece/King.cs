@@ -6,9 +6,10 @@ namespace ChessWebApp
 {
     public class King : AbstractPiece
     {
-        public bool IsUnderCheck(Square square)
+        public bool IsUnderCheck(Square kingSquare)
         {
-            if (square.AttackedByPiecesOnSquares.Any(piece => piece.CurrentPiece.PieceColor != PieceColor))
+            if (kingSquare.AttackedByPiecesOnSquares
+                .Any(attackerSquare => attackerSquare.CurrentPiece.PieceColor != PieceColor))
                 return true;
             return false;
         }

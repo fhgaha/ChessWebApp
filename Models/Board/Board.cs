@@ -154,10 +154,11 @@ namespace ChessWebApp
             else
             {   //making a move
 
-                //board.UpdateValidSquares(FromSquare.CurrentPiece);
-
                 if (board.ValidMoves.Contains(square.Location))
                 {
+                    if (square.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, square);
+                    RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromSquare);
+
                     FromSquare.MovePiece(square);
                     UpdateSquaresAttackedByPiece(board, square);
 
@@ -222,16 +223,12 @@ namespace ChessWebApp
                 }
 
                 Square squareCandidate = fBoard.LocationSquareMap[candidate];
-
-                Square fDefenderSquare = fBoard.LocationSquareMap[defender.Location];   
-
+                Square fDefenderSquare = fBoard.LocationSquareMap[defender.Location];
                 Square fKingSquare = fBoard.LocationSquareMap[king.Location];
-
                 var originalkingAttackersList = originalBoard.LocationSquareMap[king.Location].AttackedByPiecesOnSquares;
                 fKingSquare.CopyAttackedByPiecesOnSquares(fBoard, originalkingAttackersList);
 
                 MakeFakeMove(fDefenderSquare, squareCandidate, defendingMoves, candidate, fBoard, fKingSquare);
-                //fBoard.SetAllSquaresNotValid();
             }
             return defendingMoves;
         }
@@ -260,19 +257,20 @@ namespace ChessWebApp
 
             if (((King)fKingSquare.CurrentPiece).IsUnderCheck(fKingSquare) == false)
                 defendingMoves.Add(candidate);
-
-            //to.MovePiece(from);
         }
 
         private static void UpdateSquaresAttackedByPiece(Board board, Square attacker)
         {
-            foreach (Square sq in board.LocationSquareMap.Values)
-                if (sq.AttackedByPiecesOnSquares.Contains(attacker))
-                    sq.AttackedByPiecesOnSquares.Remove(attacker);
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, attacker);
 
             var attackedLocs = attacker.CurrentPiece.GetLocationsAttackedByPiece(board, attacker);
 
             attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPiecesOnSquares.Add(attacker));
         }
+
+        private static void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker) =>
+            board.LocationSquareMap.Values
+                .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
+                .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
     }
 }

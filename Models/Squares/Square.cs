@@ -39,6 +39,7 @@ namespace ChessWebApp
             CurrentPiece.isFirstMove = false;
             to.IsOccupied = true;
             to.CurrentPiece = this.CurrentPiece;
+            to.CurrentPiece.Location = to.Location;
             Reset();
         }
 
