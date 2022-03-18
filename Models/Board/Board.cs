@@ -154,27 +154,68 @@ namespace ChessWebApp
                 board.UpdateValidSquares(FromSquare);
             }
             else
-            {   //making a move
-
-                if (board.ValidMoves.Contains(square.Location))
-                {
-                    if (square.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, square);
-                    RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromSquare);
-
-                    FromSquare.MovePiece(square);
-                    UpdateSquaresAttackedByPiece(board, square);
-
-                    IsWhitesMove = !IsWhitesMove;
-                    isMovePerformed = true;
-
-                    board.PerformedMoves.Add(Tuple.Create(fromSquare, square));
-                }
-                FromSquare = null;
+            {   
+                isMovePerformed = MakeMove(board, square, isMovePerformed);
             }
 
             return isMovePerformed;
         }
 
+        private bool MakeMove(Board board, Square square, bool isMovePerformed)
+        {
+            if (board.ValidMoves.Contains(square.Location))
+            {
+                if (square.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, square);
+                RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromSquare);
+
+                FromSquare.MovePiece(square);
+
+                if (square.CurrentPiece is King king
+                    && Math.Abs(FromSquare.Location.File - square.Location.File) == 2) //castling
+                {
+                    HandleCastling(board, square);
+                }
+
+                UpdateSquaresAttackedByPiece(board, square);
+
+                IsWhitesMove = !IsWhitesMove;
+                isMovePerformed = true;
+
+                board.PerformedMoves.Add(Tuple.Create(fromSquare, square));
+            }
+            FromSquare = null;
+            return isMovePerformed;
+        }
+
+        private static void HandleCastling(Board board, Square square)
+        {
+            Square FromRookSquare = null;
+            Square ToRookSquare = null;
+            if (square.Location == new Location(File.C, 1))
+            {
+                FromRookSquare = board.LocationSquareMap[new Location(File.A, 1)];
+                ToRookSquare = board.LocationSquareMap[new Location(File.D, 1)];
+            }
+            else if (square.Location == new Location(File.G, 1))
+            {
+                FromRookSquare = board.LocationSquareMap[new Location(File.H, 1)];
+                ToRookSquare = board.LocationSquareMap[new Location(File.F, 1)];
+            }
+            else if (square.Location == new Location(File.C, 8))
+            {
+                FromRookSquare = board.LocationSquareMap[new Location(File.A, 8)];
+                ToRookSquare = board.LocationSquareMap[new Location(File.D, 8)];
+            }
+            else if (square.Location == new Location(File.G, 8))
+            {
+                FromRookSquare = board.LocationSquareMap[new Location(File.H, 8)];
+                ToRookSquare = board.LocationSquareMap[new Location(File.F, 8)];
+            }
+
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromRookSquare);
+            FromRookSquare.MovePiece(ToRookSquare);
+            UpdateSquaresAttackedByPiece(board, ToRookSquare);
+        }
 
         public void UpdateValidSquares(Square square)
         {

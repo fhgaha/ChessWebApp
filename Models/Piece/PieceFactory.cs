@@ -69,6 +69,13 @@ namespace ChessWebApp
             pieces.Add(new Location(File.A, 8), new Rook(PieceColor.Dark));
             pieces.Add(new Location(File.H, 8), new Rook(PieceColor.Dark));
 
+            //pawns
+            foreach (File file in Enum.GetValues(typeof(File)))
+            {
+                pieces.Add(new Location(file, 2), new Pawn(PieceColor.Light));
+                pieces.Add(new Location(file, 7), new Pawn(PieceColor.Dark));
+            }
+
             //kings
             pieces.Add(new Location(File.E, 1), new King(PieceColor.Light));
             pieces.Add(new Location(File.E, 8), new King(PieceColor.Dark));
