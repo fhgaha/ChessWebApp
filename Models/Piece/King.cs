@@ -6,6 +6,7 @@ namespace ChessWebApp
 {
     public class King : AbstractPiece
     {
+        bool isAbleToCastle = true;
         public bool IsUnderCheck(Square kingSquare)
         {
             if (kingSquare.AttackedByPiecesOnSquares
@@ -62,55 +63,115 @@ namespace ChessWebApp
                     ))
                 .ToList();
 
-            if (IsCastlingPossible(board, from))
-                moveCandidates.AddRange(GetCastlingMoves());
+            if (isAbleToCastle)
+            {
+                moveCandidates.AddRange(GetCastlingMoves(board)
+                    .Select(cm => board.LocationSquareMap[cm])
+                    .Where(sq => sq.IsOccupied == false)
+                    .Select(sq => sq.Location));
+            }
 
             board.SetAllSquaresNotValid();
             moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
             return moveCandidates;
         }
 
-        private bool IsCastlingPossible(Board board, Square from)
+
+        private List<Location> GetCastlingMoves(Board board)
         {
-            if (!isFirstMove) return false;
+            //check if king ever moved
 
-            if (PieceColor == PieceColor.Light && (IsAbleToCastleLeft(board) || IsAbleToCastleRight(board)))
-                return true;
-            else if (PieceColor == PieceColor.Dark && (IsAbleToCastleLeft(board) || IsAbleToCastleRight(board)))
-                return true;
+            List<Location> moves = new();
 
-            return false;
+            if (!isFirstMove)
+            {
+                isAbleToCastle = false;
+                return moves;
+            }
+
+            //check if both rooks ever moved
+            var rank = PieceColor == PieceColor.Light ? 1 : 8;
+            var rooks = new List<AbstractPiece>
+            {
+                board.LocationSquareMap[new Location(File.A, rank)].CurrentPiece,
+                board.LocationSquareMap[new Location(File.H, rank)].CurrentPiece,
+            }
+            .Where(r => r != null).ToList();
+
+            if (rooks.Count == 2 && rooks[0].isFirstMove == false && rooks[1].isFirstMove == false)
+            {
+                isAbleToCastle = false;
+                return moves;
+            }
+
+
+            moves.Add(GetCastleLeftMove(board, rank));
+            moves.Add(GetCastleRightMove(board, rank));
+
+            if (moves.Where(m => m != null).ToList().Count == 0) isAbleToCastle = false;
+
+            return moves.Where(m => m != null).ToList();
         }
 
-        private bool IsAbleToCastleRight(Board board)
+        private Location GetCastleRightMove(Board board, int rank)
         {
-            List<Square> squaresInQuestion = new();
-            squaresInQuestion.AddRange(
-                PieceColor == PieceColor.Light ?
-                new List<Square>
+            List<Square> candidates = new();
+
+            candidates.AddRange(new List<Square>
                 {
-                    board.LocationSquareMap[new Location(File.F, 1)],
-                    board.LocationSquareMap[new Location(File.G, 1)],
-                    board.LocationSquareMap[new Location(File.H, 1)]
-                }
-                : new List<Square>
-                {
-                    board.LocationSquareMap[new Location(File.F, 8)],
-                    board.LocationSquareMap[new Location(File.G, 8)],
-                    board.LocationSquareMap[new Location(File.H, 8)]
+                    board.LocationSquareMap[new Location(File.F, rank)],
+                    board.LocationSquareMap[new Location(File.G, rank)],
+                    board.LocationSquareMap[new Location(File.H, rank)]
                 });
 
+            return GetCastleMove("Right", candidates);
         }
 
-        private bool IsAbleToCastleLeft()
+        private Location GetCastleLeftMove(Board board, int rank)
         {
-            throw new NotImplementedException();
+            List<Square> candidates = new();
+            candidates.AddRange(new List<Square>
+                {
+                    board.LocationSquareMap[new Location(File.A, rank)],
+                    board.LocationSquareMap[new Location(File.C, rank)],
+                    board.LocationSquareMap[new Location(File.D, rank)]
+                });
+
+            return GetCastleMove("Left", candidates);
         }
 
-        private IEnumerable<Location> GetCastlingMoves()
+        private Location GetCastleMove(string side, List<Square> candidates)
         {
-            throw new NotImplementedException();
-        }
+            if (side != "Right" && side != "Left")
+                throw new ArgumentException(@"side != ""Right"" && side != ""Left""");
 
+            //check if rooks have moved
+
+            var rooks = candidates.Where(sq => sq.CurrentPiece is Rook)
+                            .Where(r => r.CurrentPiece.isFirstMove).ToList();
+
+            if (rooks.Count == 0) return null;
+
+            //check if castle squares are under attack by opponent pieces
+
+            File file = side == "Right" ? File.H : File.A;
+
+            var candidatesAttackers = candidates
+                .Where(sq => sq.Location != new Location(file, 1))
+                .Where(sq => sq.Location != new Location(file, 8))
+                .SelectMany(sq => sq.AttackedByPiecesOnSquares)
+                .Where(attackerSquare => attackerSquare.CurrentPiece.PieceColor != PieceColor)
+                .ToList();
+
+            if (candidatesAttackers.Count > 0) return null;
+
+            return side == "Right"
+                    ? PieceColor == PieceColor.Light
+                        ? new Location(File.G, 1)
+                        : new Location(File.G, 8)
+                    : PieceColor == PieceColor.Light
+                        ? new Location(File.C, 1)
+                        : new Location(File.C, 8);
+        }
     }
 }
