@@ -15,8 +15,8 @@ namespace ChessWebApp
         public List<AbstractPiece> LightPieces { get; private set; }
         public List<AbstractPiece> DarkPieces { get; private set; }
         public List<Location> ValidMoves { get; private set; }
-        public King WhiteKing { get; private set; }
-        public King BlackKing { get; private set; }
+        public Square WhiteKingSquare { get; private set; }
+        public Square BlackKingSquare { get; private set; }
         public string message = "";
 
 
@@ -46,8 +46,8 @@ namespace ChessWebApp
 
             var pieces =
                 PieceFactory.GetStandartPiecePositions();
-                //PieceFactory.GetTwoKings();
-                //PieceFactory.GetCastlingSetup();
+            //PieceFactory.GetTwoKings();
+            //PieceFactory.GetCastlingSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
@@ -64,8 +64,16 @@ namespace ChessWebApp
                         newSquare.CurrentPiece = piece;
                         newSquare.IsOccupied = true;
 
-                        if (piece.PieceColor == PieceColor.Light) LightPieces.Add(piece);
-                        else DarkPieces.Add(piece);
+                        if (piece.PieceColor == PieceColor.Light)
+                        {
+                            LightPieces.Add(piece);
+                            if (piece is King) WhiteKingSquare = newSquare;
+                        }
+                        else
+                        {
+                            DarkPieces.Add(piece);
+                            if (piece is King) BlackKingSquare = newSquare;
+                        }
                     }
                     BoardSquares[i, column] = newSquare;
                     LocationSquareMap.Add(newSquare.Location, newSquare);
@@ -73,9 +81,6 @@ namespace ChessWebApp
                     column++;
                 }
             }
-
-            WhiteKing = (King)LightPieces.Find(piece => piece is King);
-            BlackKing = (King)DarkPieces.Find(piece => piece is King);
         }
 
 
@@ -112,7 +117,7 @@ namespace ChessWebApp
 
         //fromMoveHandler
 
-        public bool PerformMove(Board board, Square square)
+        public bool HandleClick(Board board, Square square)
         {
             bool isMovePerformed = true;
 
@@ -140,54 +145,50 @@ namespace ChessWebApp
                         board.UpdateValidSquares(FromSquare);
                 }
             }
-            else if (MoveOrderIsWrong(FromSquare))
-            {
+            else if (MoveOrderIsWrong(FromSquare)) 
                 FromSquare = null;
-            }
             else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
-            {
                 FromSquare = null;
-            }
             else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
             {
                 FromSquare = square;
                 board.UpdateValidSquares(FromSquare);
             }
             else
-            {   
-                isMovePerformed = MakeMove(board, square, isMovePerformed);
-            }
-
-            return isMovePerformed;
-        }
-
-        private bool MakeMove(Board board, Square square, bool isMovePerformed)
-        {
-            if (board.ValidMoves.Contains(square.Location))
             {
-                if (square.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, square);
-                RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromSquare);
-
-                FromSquare.MovePiece(square);
-
-                if (square.CurrentPiece is King king
-                    && Math.Abs(FromSquare.Location.File - square.Location.File) == 2) //castling
+                if (board.ValidMoves.Contains(square.Location))
                 {
-                    HandleCastling(board, square);
+                    isMovePerformed = MakeMove(board, square);
                 }
-
-                UpdateSquaresAttackedByPiece(board, square);
-
-                IsWhitesMove = !IsWhitesMove;
-                isMovePerformed = true;
-
-                board.PerformedMoves.Add(Tuple.Create(fromSquare, square));
+                FromSquare = null;
             }
-            FromSquare = null;
+
+            ((King)WhiteKingSquare.CurrentPiece).UpdateIsUnderCheck(WhiteKingSquare);
+            ((King)BlackKingSquare.CurrentPiece).UpdateIsUnderCheck(BlackKingSquare);
+
             return isMovePerformed;
         }
 
-        private static void HandleCastling(Board board, Square square)
+        private bool MakeMove(Board board, Square square)
+        {
+            if (square.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, square);
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromSquare);
+
+            FromSquare.MovePiece(square);
+
+            //castling
+            if (square.CurrentPiece is King && Math.Abs(FromSquare.Location.File - square.Location.File) == 2)
+                HandleCastling(board, square);
+
+            LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(this, sq));
+
+            IsWhitesMove = !IsWhitesMove;
+
+            board.PerformedMoves.Add(Tuple.Create(fromSquare, square));
+            return true;
+        }
+
+        private void HandleCastling(Board board, Square square)
         {
             Square FromRookSquare = null;
             Square ToRookSquare = null;
@@ -221,14 +222,14 @@ namespace ChessWebApp
         {
             var moves = square.CurrentPiece.GetValidMoves(this, square);
 
-            King king = IsWhitesMove ? WhiteKing : BlackKing;
+            King king = IsWhitesMove ? (King)WhiteKingSquare.CurrentPiece : (King)BlackKingSquare.CurrentPiece;
 
             Square kingSquare = LocationSquareMap[king.Location];
 
-            if (IsReal && king.IsUnderCheck(kingSquare))
+            if (IsReal && king.UpdateIsUnderCheck(kingSquare))
             {
                 moves = FilterMovesToPreventCheck(this, moves, square.CurrentPiece, king);
-                
+
                 SetAllSquaresNotValid();
 
                 if (moves.Count == 0)
@@ -277,7 +278,7 @@ namespace ChessWebApp
             return defendingMoves;
         }
 
-        private static void MakeFakeMove(Square from, Square to, List<Location> defendingMoves,
+        private void MakeFakeMove(Square from, Square to, List<Location> defendingMoves,
             Location candidate, Board fBoard, Square fKingSquare)
         {
             //if candidate contains attacker, after moving a defender the attaker would be taken.
@@ -299,12 +300,14 @@ namespace ChessWebApp
                 attackers.ForEach(attacker => UpdateSquaresAttackedByPiece(fBoard, attacker));
             }
 
-            if (((King)fKingSquare.CurrentPiece).IsUnderCheck(fKingSquare) == false)
+            if (((King)fKingSquare.CurrentPiece).UpdateIsUnderCheck(fKingSquare) == false)
                 defendingMoves.Add(candidate);
         }
 
-        private static void UpdateSquaresAttackedByPiece(Board board, Square attacker)
+        private void UpdateSquaresAttackedByPiece(Board board, Square attacker)
         {
+            if (attacker.CurrentPiece == null) return;
+
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, attacker);
 
             var attackedLocs = attacker.CurrentPiece.GetLocationsAttackedByPiece(board, attacker);
@@ -312,7 +315,7 @@ namespace ChessWebApp
             attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPiecesOnSquares.Add(attacker));
         }
 
-        private static void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker) =>
+        private void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker) =>
             board.LocationSquareMap.Values
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));

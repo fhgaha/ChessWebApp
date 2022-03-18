@@ -7,11 +7,17 @@ namespace ChessWebApp
     public class King : AbstractPiece
     {
         bool isAbleToCastle = true;
-        public bool IsUnderCheck(Square kingSquare)
+        public bool IsUnderCheck = false;
+        public bool UpdateIsUnderCheck(Square kingSquare)
         {
             if (kingSquare.AttackedByPiecesOnSquares
                 .Any(attackerSquare => attackerSquare.CurrentPiece.PieceColor != PieceColor))
+            {
+                IsUnderCheck = true;
                 return true;
+            }
+
+            IsUnderCheck = false;
             return false;
         }
 
