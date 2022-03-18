@@ -62,10 +62,55 @@ namespace ChessWebApp
                     ))
                 .ToList();
 
+            if (IsCastlingPossible(board, from))
+                moveCandidates.AddRange(GetCastlingMoves());
+
             board.SetAllSquaresNotValid();
             moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
-
             return moveCandidates;
         }
+
+        private bool IsCastlingPossible(Board board, Square from)
+        {
+            if (!isFirstMove) return false;
+
+            if (PieceColor == PieceColor.Light && (IsAbleToCastleLeft(board) || IsAbleToCastleRight(board)))
+                return true;
+            else if (PieceColor == PieceColor.Dark && (IsAbleToCastleLeft(board) || IsAbleToCastleRight(board)))
+                return true;
+
+            return false;
+        }
+
+        private bool IsAbleToCastleRight(Board board)
+        {
+            List<Square> squaresInQuestion = new();
+            squaresInQuestion.AddRange(
+                PieceColor == PieceColor.Light ?
+                new List<Square>
+                {
+                    board.LocationSquareMap[new Location(File.F, 1)],
+                    board.LocationSquareMap[new Location(File.G, 1)],
+                    board.LocationSquareMap[new Location(File.H, 1)]
+                }
+                : new List<Square>
+                {
+                    board.LocationSquareMap[new Location(File.F, 8)],
+                    board.LocationSquareMap[new Location(File.G, 8)],
+                    board.LocationSquareMap[new Location(File.H, 8)]
+                });
+
+        }
+
+        private bool IsAbleToCastleLeft()
+        {
+            throw new NotImplementedException();
+        }
+
+        private IEnumerable<Location> GetCastlingMoves()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

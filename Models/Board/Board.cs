@@ -44,8 +44,10 @@ namespace ChessWebApp
             ValidMoves = new List<Location>();
             LocationSquareMap = new Dictionary<Location, Square>();
 
-            var pieces = PieceFactory.GetStandartPiecePositions();
-            //var pieces = PieceFactory.GetTwoKings();
+            var pieces =
+                //PieceFactory.GetStandartPiecePositions();
+                //PieceFactory.GetTwoKings();
+                PieceFactory.GetCastlingSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
@@ -185,6 +187,7 @@ namespace ChessWebApp
             if (IsReal && king.IsUnderCheck(kingSquare))
             {
                 moves = FilterMovesToPreventCheck(this, moves, square.CurrentPiece, king);
+                
                 SetAllSquaresNotValid();
 
                 if (moves.Count == 0)
