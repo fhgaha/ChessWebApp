@@ -134,7 +134,7 @@ namespace ChessWebApp
             {
                 if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
                 {
-                    if (!SquareIsEmpty() && MovingThisPieceDiscoversCheck(square))
+                    if (MovingPieceBesidesTheseLocsDiscoversCheck(square).Count == 0)
                     {
                         FromSquare = null;
                     }
@@ -153,13 +153,20 @@ namespace ChessWebApp
                 FromSquare = null;
             else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
             {
-                FromSquare = square;
-                board.UpdateValidSquares(FromSquare);
+                if (MovingPieceBesidesTheseLocsDiscoversCheck(square).Count == 0)
+                {
+                    FromSquare = null;
+                }
+                else
+                {
+                    FromSquare = square;
+                    board.UpdateValidSquares(FromSquare);
+                }
             }
-
-            else if (ValidMoves.Contains(square.Location))
+            else if (ValidMoves.Contains(square.Location))  //selected and moving allowed
             {
                 isMovePerformed = MakeMove(board, square);
+
                 FromSquare = null;
             }
             else
@@ -171,7 +178,7 @@ namespace ChessWebApp
             return isMovePerformed;
         }
 
-        private bool MovingThisPieceDiscoversCheck(Square defender)
+        private List<Location> MovingPieceBesidesTheseLocsDiscoversCheck(Square defender)
         {
             var moves = defender.CurrentPiece.GetValidMoves(this, defender);
 
@@ -179,8 +186,7 @@ namespace ChessWebApp
 
             moves = FilterMovesToPreventCheck(this, moves, defender.CurrentPiece, king);
 
-            if (moves.Count == 0) return true;
-            return false;
+            return moves;
         }
 
         private bool MakeMove(Board board, Square square)
@@ -195,6 +201,8 @@ namespace ChessWebApp
                 HandleCastling(board, square);
 
             LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(this, sq));
+
+            //MovingPieceBesidesTheseLocsDiscoversCheck(square).ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 
             IsWhitesMove = !IsWhitesMove;
 
@@ -234,28 +242,36 @@ namespace ChessWebApp
 
         public void UpdateValidSquares(Square square)
         {
-            var moves = square.CurrentPiece.GetValidMoves(this, square);
 
-            King king = IsWhitesMove ? WhiteKing : BlackKing;
 
-            Square kingSquare = LocationSquareMap[king.Location];
+            //var moves = square.CurrentPiece.GetValidMoves(this, square);
 
-            if (IsReal && king.UpdateIsUnderCheck(kingSquare))
-            {
-                moves = FilterMovesToPreventCheck(this, moves, square.CurrentPiece, king);
+            //King king = IsWhitesMove ? WhiteKing : BlackKing;
 
-                SetAllSquaresNotValid();
+            //Square kingSquare = LocationSquareMap[king.Location];
 
-                if (moves.Count == 0)
-                {
-                    return;
-                }
+            //if (IsReal && king.UpdateIsUnderCheck(kingSquare))
+            //{
+            //    moves = FilterMovesToPreventCheck(this, moves, square.CurrentPiece, king);
 
-                foreach (var item in moves)
-                    LocationSquareMap[item].IsValid = true;
-            }
+            //    SetAllSquaresNotValid();
 
-            ValidMoves = moves;
+            //    if (moves.Count == 0)
+            //    {
+            //        return;
+            //    }
+
+            //    foreach (var item in moves)
+            //        LocationSquareMap[item].IsValid = true;
+            //}
+
+            //ValidMoves = moves;
+
+            var legalMoves = MovingPieceBesidesTheseLocsDiscoversCheck(square);
+
+            SetAllSquaresNotValid();
+            legalMoves.ForEach(loc => LocationSquareMap[loc].IsValid = true);
+            ValidMoves = legalMoves;
         }
 
         public List<Location> FilterMovesToPreventCheck(Board originalBoard, List<Location> candidates,
