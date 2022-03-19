@@ -19,7 +19,7 @@ namespace ChessWebApp
         {
             SquareColor = originalSquare.SquareColor;
             Location = LocationFactory.Build(originalSquare.Location, 0, 0);
-            CurrentPiece = PieceFactory.GetNewPiece(originalSquare.CurrentPiece);
+            CurrentPiece = PieceFactory.BuildPiece(originalSquare.CurrentPiece);
             IsOccupied = originalSquare.IsOccupied;
 
             AttackedByPiecesOnSquares = new List<Square>();

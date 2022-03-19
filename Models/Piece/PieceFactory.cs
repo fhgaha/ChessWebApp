@@ -83,7 +83,7 @@ namespace ChessWebApp
             return pieces;
         }
 
-        public static AbstractPiece GetNewPiece(AbstractPiece p)
+        public static AbstractPiece BuildPiece(AbstractPiece p)
         {
             if (p == null) return null;
 
@@ -101,6 +101,8 @@ namespace ChessWebApp
             else
                 newPiece = new King((King)p);
 
+            newPiece.Location = LocationFactory.Build(p.Location, 0, 0);
+
             return newPiece;
         }
 
@@ -111,7 +113,7 @@ namespace ChessWebApp
             foreach (var sq in list)
             {
                 Square newSquare = new Square(sq);
-                newSquare.CurrentPiece = GetNewPiece(sq.CurrentPiece);
+                newSquare.CurrentPiece = BuildPiece(sq.CurrentPiece);
 
                 copies.Add(newSquare);
             }

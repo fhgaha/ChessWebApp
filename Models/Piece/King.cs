@@ -26,7 +26,11 @@ namespace ChessWebApp
             Name = "King";
         }
 
-        public King(King piece) : this(piece.PieceColor) { }
+        public King(King piece) : this(piece.PieceColor) 
+        {
+            isAbleToCastle = piece.isAbleToCastle;
+            IsUnderCheck = piece.IsUnderCheck;
+        }
 
         public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {

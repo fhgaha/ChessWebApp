@@ -34,11 +34,6 @@ namespace ChessWebApp.Controllers
             Location loc = board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
             Square square = board.LocationSquareMap[loc];
 
-            Square[,] squares = board.BoardSquares;
-
-            List<Location> oldValidMoves = new List<Location>();
-            board.ValidMoves.ForEach(loc => oldValidMoves.Add(LocationFactory.Build(loc, 0, 0)));
-
             board.HandleClick(board, square);
             return View("Index", board);
         }
@@ -57,11 +52,12 @@ namespace ChessWebApp.Controllers
             ///use this instead of below to update whole board
             return Json(GetSquareStrings(board.LocationSquareMap.Values.ToList(), currentSquare));
 
+
             var currentSquares = new List<Square>();
             currentSquares.Add(currentSquare);
             currentSquares.AddRange(board.ValidMoves.Select(loc => board.LocationSquareMap[loc]));
-            currentSquares.Add(board.WhiteKingSquare);
-            currentSquares.Add(board.BlackKingSquare);
+            currentSquares.Add(board.LocationSquareMap[board.WhiteKing.Location]);
+            currentSquares.Add(board.LocationSquareMap[board.BlackKing.Location]);
 
             savedSquares.Enqueue(currentSquares);
             if (savedSquares.Count > 2) savedSquares.Dequeue();
