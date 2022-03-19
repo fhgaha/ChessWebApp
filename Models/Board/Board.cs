@@ -132,42 +132,34 @@ namespace ChessWebApp
 
             if (!FromSquareIsSelected())
             {
-                if (!SquareIsEmpty() && !MoveOrderIsWrong(square))
+                if (SquareIsEmpty())
+                    FromSquare = null;
+                else if (MoveOrderIsWrong(square))
+                    FromSquare = null;
+                else
                 {
-                    if (MovingPieceBesidesTheseLocsDiscoversCheck(square).Count == 0)
-                    {
-                        FromSquare = null;
-                    }
-                    else
-                    {
-                        FromSquare = square;
-
-                        if (FromSquare.CurrentPiece != null && !MoveOrderIsWrong(FromSquare))
-                            board.UpdateValidSquares(FromSquare);
-                    }
+                    FromSquare = square;
+                    board.UpdateValidSquares(square);
                 }
             }
-            else if (MoveOrderIsWrong(FromSquare))
-                FromSquare = null;
-            else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
-                FromSquare = null;
-            else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
+            else if (FromSquareIsSelected())
             {
-                if (MovingPieceBesidesTheseLocsDiscoversCheck(square).Count == 0)
-                {
+                if (MoveOrderIsWrong(FromSquare))
                     FromSquare = null;
-                }
-                else
+                else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSamePiece())
+                    FromSquare = null;
+                else if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
                 {
                     FromSquare = square;
                     board.UpdateValidSquares(FromSquare);
                 }
-            }
-            else if (ValidMoves.Contains(square.Location))  //selected and moving allowed
-            {
-                isMovePerformed = MakeMove(board, square);
-
-                FromSquare = null;
+                else if (ValidMoves.Contains(square.Location))  //selected and moving allowed
+                {
+                    isMovePerformed = MakeMove(board, square);
+                    FromSquare = null;
+                }
+                else
+                    FromSquare = null;
             }
             else
                 FromSquare = null;
@@ -178,16 +170,6 @@ namespace ChessWebApp
             return isMovePerformed;
         }
 
-        private List<Location> MovingPieceBesidesTheseLocsDiscoversCheck(Square defender)
-        {
-            var moves = defender.CurrentPiece.GetValidMoves(this, defender);
-
-            King king = IsWhitesMove ? WhiteKing : BlackKing;
-
-            moves = FilterMovesToPreventCheck(this, moves, defender.CurrentPiece, king);
-
-            return moves;
-        }
 
         private bool MakeMove(Board board, Square square)
         {
@@ -242,36 +224,21 @@ namespace ChessWebApp
 
         public void UpdateValidSquares(Square square)
         {
-
-
-            //var moves = square.CurrentPiece.GetValidMoves(this, square);
-
-            //King king = IsWhitesMove ? WhiteKing : BlackKing;
-
-            //Square kingSquare = LocationSquareMap[king.Location];
-
-            //if (IsReal && king.UpdateIsUnderCheck(kingSquare))
-            //{
-            //    moves = FilterMovesToPreventCheck(this, moves, square.CurrentPiece, king);
-
-            //    SetAllSquaresNotValid();
-
-            //    if (moves.Count == 0)
-            //    {
-            //        return;
-            //    }
-
-            //    foreach (var item in moves)
-            //        LocationSquareMap[item].IsValid = true;
-            //}
-
-            //ValidMoves = moves;
-
             var legalMoves = MovingPieceBesidesTheseLocsDiscoversCheck(square);
 
             SetAllSquaresNotValid();
             legalMoves.ForEach(loc => LocationSquareMap[loc].IsValid = true);
             ValidMoves = legalMoves;
+        }
+
+        private List<Location> MovingPieceBesidesTheseLocsDiscoversCheck(Square defender)
+        {
+            var moves = defender.CurrentPiece.GetValidMoves(this, defender);
+            King king = IsWhitesMove ? WhiteKing : BlackKing;
+
+            moves = FilterMovesToPreventCheck(this, moves, defender.CurrentPiece, king);
+
+            return moves;
         }
 
         public List<Location> FilterMovesToPreventCheck(Board originalBoard, List<Location> candidates,
@@ -301,7 +268,7 @@ namespace ChessWebApp
                 var originalkingAttackersList = originalBoard.LocationSquareMap[king.Location].AttackedByPiecesOnSquares;
                 fKingSquare.CopyAttackedByPiecesOnSquares(fBoard, originalkingAttackersList);
 
-                MakeFakeMove(fDefenderSquare, squareCandidate, defendingMoves, candidate, fBoard, 
+                MakeFakeMove(fDefenderSquare, squareCandidate, defendingMoves, candidate, fBoard,
                     (King)fKingSquare.CurrentPiece);
             }
             return defendingMoves;
