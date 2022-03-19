@@ -1,0 +1,26 @@
+﻿@model List<ChessWebApp.AbstractPiece>
+
+@{
+    var queen = Model[0];
+    var knight = Model[1];
+    var rook = Model[2];
+    var bishop = Model[3];
+
+    string pieceColor = queen.PieceColor == PieceColor.Light ? "white" : "black";
+    string fileType = ".png";
+
+    for (int i = 0; i < Model.Count; i++)
+    {
+        <button id="@i" class="square-button" type="submit" name="location" 
+                value="@Model[i].Location.File@Model[i].Location.Rank"
+                asp-controller="Home" asp-action="UpdateChangedSquares" data-dismiss="modal">
+            @{
+                string pieceClass = Model[i].GetType().Name;
+            }
+            <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+        </button>
+    }
+}
+
+
+

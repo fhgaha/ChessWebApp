@@ -8,6 +8,7 @@ namespace ChessWebApp
 {
     public class Board
     {
+        public bool GameIsOver = false;
         public bool IsReal = true;
         public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
         public Square[,] BoardSquares { get; private set; }

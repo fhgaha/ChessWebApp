@@ -24,7 +24,7 @@
 
         .board-zone button {
             border: none;
-            background-color:  transparent;
+            background-color: transparent;
             height: 100%;
             width: 100%;
         }
@@ -36,7 +36,13 @@
     }
 
     .oneSquare {
-       padding: 0; height: 100%; width: 100%;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    img {
+        padding: 0px;
     }
 </style>
 
@@ -64,14 +70,14 @@
                     {
                         var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
 
-                        if(Model.ValidMoves.Contains(squares[i, j].Location))
+                        if (Model.ValidMoves.Contains(squares[i, j].Location))
                         {
                             squareColor = "#5c9c6f";    //green
                         }
 
                         <td style="background: @squareColor;">
                             <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                                <button class="square-button" name="location" 
+                                <button class="square-button" name="location"
                                         value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
                                         asp-controller="Home" asp-action="HandleButtonClick">
                                     @if (squares[i, j].IsOccupied)
@@ -82,7 +88,7 @@
                                         string pieceClass = piece.GetType().Name;
                                         string fileType = ".png";
 
-                                        <img width="100%" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                        <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
                                     }
                                 </button>
                             </div>
@@ -102,3 +108,34 @@
         </tbody>
     </table>
 </form>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#promotionModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal" id="promotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                @{
+                    //color is always white
+                    var color = Model.IsWhitesMove ? PieceColor.Light : PieceColor.Dark;
+                    var pieces = new List<AbstractPiece>
+                                            {
+                        new Queen(color) { Location = new Location(File.A, 1)},
+                        new Knight(color) { Location = new Location(File.A, 1)},
+                        new Rook(color) { Location = new Location(File.A, 1)},
+                        new Bishop(color) { Location = new Location(File.A, 1)}
+                    };
+                }
+
+                <partial name="_pickPieceCard" model="@pieces" />
+
+            </div>
+        </div>
+    </div>
+</div>
