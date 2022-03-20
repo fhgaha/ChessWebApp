@@ -17,7 +17,7 @@ namespace ChessWebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        private static Board board;
+        private static Game game;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -25,17 +25,17 @@ namespace ChessWebApp.Controllers
 
         public IActionResult Index()
         {
-            if (board == null) board = new Board();
-            return View(board);
+            if (game == null) game = new();
+            return View(game.Board);
         }
 
         public IActionResult HandleButtonClick(string location)
         {
-            Location loc = board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
-            Square square = board.LocationSquareMap[loc];
+            Location loc = game.Board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
+            Square square = game.Board.LocationSquareMap[loc];
 
-            board.HandleClick(board, square);
-            return View("Index", board);
+            game.HandleClick(square);
+            return View("Index", game.Board);
         }
 
         private static Queue<List<Square>> savedSquares = new Queue<List<Square>>();
@@ -45,19 +45,19 @@ namespace ChessWebApp.Controllers
                 (File[])Enum.GetValues(typeof(File)),
                 f => f.ToString() == location[0].ToString());
             int rank = int.Parse(location[1].ToString());
-            Square currentSquare = board.LocationSquareMap[new Location(file, rank)];
+            Square currentSquare = game.Board.LocationSquareMap[new Location(file, rank)];
 
-            bool isMoveMade = board.HandleClick(board, currentSquare);
+            bool isMoveMade = game.HandleClick(currentSquare);
 
             ///use this instead of below to update whole board
-            return Json(GetSquareStrings(board.LocationSquareMap.Values.ToList(), currentSquare));
+            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
 
 
             var currentSquares = new List<Square>();
             currentSquares.Add(currentSquare);
-            currentSquares.AddRange(board.ValidMoves.Select(loc => board.LocationSquareMap[loc]));
-            currentSquares.Add(board.LocationSquareMap[board.WhiteKing.Location]);
-            currentSquares.Add(board.LocationSquareMap[board.BlackKing.Location]);
+            currentSquares.AddRange(game.ValidMoves.Select(loc => game.Board.LocationSquareMap[loc]));
+            currentSquares.Add(game.Board.LocationSquareMap[game.Board.WhiteKing.Location]);
+            currentSquares.Add(game.Board.LocationSquareMap[game.Board.BlackKing.Location]);
 
             savedSquares.Enqueue(currentSquares);
             if (savedSquares.Count > 2) savedSquares.Dequeue();
@@ -75,7 +75,7 @@ namespace ChessWebApp.Controllers
 
             foreach (Square s in squares)
             {
-                Square updatedSquare = board.LocationSquareMap[s.Location];
+                Square updatedSquare = game.Board.LocationSquareMap[s.Location];
                 string key = s.Location.File.ToString() + s.Location.Rank.ToString();
                 squareStrings[key] = RenderRazorViewToString(this, "UpdateChangedSquares", updatedSquare);
             }

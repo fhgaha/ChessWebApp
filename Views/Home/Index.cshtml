@@ -70,7 +70,7 @@
                     {
                         var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
 
-                        if (Model.ValidMoves.Contains(squares[i, j].Location))
+                        if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
                         {
                             squareColor = "#5c9c6f";    //green
                         }
