@@ -118,14 +118,16 @@ namespace ChessWebApp
             moves.Add(GetCastleLeftMove(board, rank));
             moves.Add(GetCastleRightMove(board, rank));
 
-            if (moves.Where(m => m != null).ToList().Count == 0) isAbleToCastle = false;
-
             return moves.Where(m => m != null).ToList();
         }
 
         private Location GetCastleRightMove(Board board, int rank)
         {
             List<Square> candidates = new();
+
+            if (board.LocationSquareMap[new Location(File.F, rank)].IsOccupied
+                || board.LocationSquareMap[new Location(File.G, rank)].IsOccupied)
+                return null;
 
             candidates.AddRange(new List<Square>
                 {
@@ -140,6 +142,11 @@ namespace ChessWebApp
         private Location GetCastleLeftMove(Board board, int rank)
         {
             List<Square> candidates = new();
+
+            if (board.LocationSquareMap[new Location(File.C, rank)].IsOccupied
+                || board.LocationSquareMap[new Location(File.D, rank)].IsOccupied)
+                return null;
+
             candidates.AddRange(new List<Square>
                 {
                     board.LocationSquareMap[new Location(File.A, rank)],

@@ -46,9 +46,9 @@ namespace ChessWebApp
             LocationSquareMap = new Dictionary<Location, Square>();
 
             var pieces =
-                PieceFactory.GetStandartPiecePositions();
-            //PieceFactory.GetTwoKings();
-            //PieceFactory.GetCastlingSetup();
+                //PieceFactory.GetStandartPiecePositions();
+                //PieceFactory.GetTwoKings();
+                PieceFactory.GetCastlingSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
@@ -199,6 +199,8 @@ namespace ChessWebApp
             Square ToRookSquare = null;
             if (square.Location == new Location(File.C, 1))
             {
+                if (board.LocationSquareMap[new Location(File.D, 1)].IsOccupied) return;
+
                 FromRookSquare = board.LocationSquareMap[new Location(File.A, 1)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.D, 1)];
             }
@@ -298,7 +300,6 @@ namespace ChessWebApp
                 from.MovePiece(to);
                 fBoard.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(fBoard, sq));
 
-                //need to update all attacker square lists?
                 fBoard.LocationSquareMap.Values.Where(sq => sq.CurrentPiece != null)
                     .ToList()
                     .ForEach(sq => fBoard.UpdateSquaresAttackedByPiece(fBoard, sq));

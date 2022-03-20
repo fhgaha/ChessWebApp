@@ -76,6 +76,12 @@ namespace ChessWebApp
                 pieces.Add(new Location(file, 7), new Pawn(PieceColor.Dark));
             }
 
+            //bishops
+            pieces.Add(new Location(File.C, 1), new Bishop(PieceColor.Light));
+            pieces.Add(new Location(File.F, 1), new Bishop(PieceColor.Light));
+            pieces.Add(new Location(File.C, 8), new Bishop(PieceColor.Dark));
+            pieces.Add(new Location(File.F, 8), new Bishop(PieceColor.Dark));
+
             //kings
             pieces.Add(new Location(File.E, 1), new King(PieceColor.Light));
             pieces.Add(new Location(File.E, 8), new King(PieceColor.Dark));
