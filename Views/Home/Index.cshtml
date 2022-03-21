@@ -84,7 +84,7 @@
                                     {
                                         var piece = squares[i, j].CurrentPiece;
 
-                                        string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
+                                        string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
                                         string pieceClass = piece.GetType().Name;
                                         string fileType = ".png";
 
@@ -110,31 +110,39 @@
 </form>
 
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#promotionModal">
-    Launch demo modal
-</button>
-
 <!-- Modal -->
-<div class="modal" id="promotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal" id="promotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1" 
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
 
                 @{
                     //color is always white
-                    var color = Model.IsWhitesMove ? PieceColor.Light : PieceColor.Dark;
+                    var PieceColor = Model.IsWhitesMove ? ChessWebApp.PieceColor.Light : ChessWebApp.PieceColor.Dark;
                     var pieces = new List<AbstractPiece>
-                                            {
-                        new Queen(color) { Location = new Location(File.A, 1)},
-                        new Knight(color) { Location = new Location(File.A, 1)},
-                        new Rook(color) { Location = new Location(File.A, 1)},
-                        new Bishop(color) { Location = new Location(File.A, 1)}
+                                                                            {
+                        new Queen(PieceColor) { Location = new Location(File.A, 1)},
+                        new Knight(PieceColor) { Location = new Location(File.A, 1)},
+                        new Rook(PieceColor) { Location = new Location(File.A, 1)},
+                        new Bishop(PieceColor) { Location = new Location(File.A, 1)}
                     };
+                    string _fileType = ".png";
+
+                    for (int i = 0; i < pieces.Count; i++)
+                    {
+                        string pieceClass = pieces[i].GetType().Name;
+                        string color = PieceColor == PieceColor.Light ? "white" : "black";
+
+                        <button id="@i" class="promotion-button" type="submit" name="location"
+                                value="@pieceClass @color @pieces[i].Location.File @pieces[i].Location.Rank"
+                                asp-controller="Home" asp-action="PromotePawn" data-dismiss="modal">
+
+                            <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
+
+                        </button>
+                    }
                 }
-
-                <partial name="_pickPieceCard" model="@pieces" />
-
             </div>
         </div>
     </div>

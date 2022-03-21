@@ -89,6 +89,26 @@ namespace ChessWebApp
             return pieces;
         }
 
+        public static Dictionary<Location, AbstractPiece> GetPromotionSetup()
+        {
+            var pieces = new Dictionary<Location, AbstractPiece>();
+
+            //queens
+            pieces.Add(new Location(File.D, 1), new Queen(PieceColor.Light));
+            pieces.Add(new Location(File.D, 8), new Queen(PieceColor.Dark));
+
+            //kings
+            pieces.Add(new Location(File.E, 1), new King(PieceColor.Light));
+            pieces.Add(new Location(File.E, 8), new King(PieceColor.Dark));
+
+            //pawns
+
+            pieces.Add(new Location(File.B, 7), new Pawn(PieceColor.Light));
+            pieces.Add(new Location(File.B, 2), new Pawn(PieceColor.Dark));
+
+            return pieces;
+        }
+
         public static AbstractPiece BuildPiece(AbstractPiece p)
         {
             if (p == null) return null;

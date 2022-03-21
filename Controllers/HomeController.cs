@@ -41,11 +41,13 @@ namespace ChessWebApp.Controllers
         private static Queue<List<Square>> savedSquares = new Queue<List<Square>>();
         public IActionResult UpdateChangedSquares(string location)
         {
-            File file = Array.Find(
-                (File[])Enum.GetValues(typeof(File)),
-                f => f.ToString() == location[0].ToString());
-            int rank = int.Parse(location[1].ToString());
-            Square currentSquare = game.Board.LocationSquareMap[new Location(file, rank)];
+            //File file = Array.Find(
+            //    (File[])Enum.GetValues(typeof(File)),
+            //    f => f.ToString() == location[0].ToString());
+            //int rank = int.Parse(location[1].ToString());
+            //Square currentSquare = game.Board.LocationSquareMap[new Location(file, rank)];
+
+            Square currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
 
             bool isMoveMade = game.HandleClick(currentSquare);
 
@@ -107,10 +109,55 @@ namespace ChessWebApp.Controllers
             }
         }
 
+
+        public IActionResult CheckPromotionJSON(string location)
+        {
+            //File file = Array.Find(
+            //    (File[])Enum.GetValues(typeof(File)),
+            //    f => f.ToString() == location[0].ToString());
+            //int rank = int.Parse(location[1].ToString());
+            //Square square = game.Board.LocationSquareMap[new Location(file, rank)];
+
+            Square square = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
+
+            return Json(game.PawnToPromote);
+        }
+
+
+        public IActionResult PromotePawn(string pieceData)
+        {
+            string[] data = pieceData.Split();  //"Rook white A 1"
+
+            string className = data[0];
+            string color = data[1];
+
+            var names = new Dictionary<string, Type>
+            {
+                [typeof(Queen).Name] = typeof(Queen),
+                [typeof(Knight).Name] = typeof(Knight),
+                [typeof(Rook).Name] = typeof(Rook),
+                [typeof(Bishop).Name] = typeof(Bishop)
+            };
+
+            AbstractPiece newPiece = (AbstractPiece)Activator.CreateInstance(
+                names[className],
+                color == "white" ? PieceColor.Light : PieceColor.Dark);
+
+            newPiece.Location = game.PawnToPromote.Location;
+
+            game.PromotePawn(newPiece);
+
+            var updatedSquare = game.Board.LocationSquareMap[newPiece.Location];
+
+            return Json(GetSquareStrings(new List<Square>(), updatedSquare));
+        }
+
+
         public IActionResult Privacy()
         {
             return View();
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

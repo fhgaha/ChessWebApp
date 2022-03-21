@@ -30,7 +30,8 @@ namespace ChessWebApp
             var pieces =
                 //PieceFactory.GetStandartPiecePositions();
                 //PieceFactory.GetTwoKings();
-                PieceFactory.GetCastlingSetup();
+                //PieceFactory.GetCastlingSetup();
+                PieceFactory.GetPromotionSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {

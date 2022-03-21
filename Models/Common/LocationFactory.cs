@@ -24,5 +24,16 @@ namespace ChessWebApp
 
             return new Location(files[newFileValue], newRankValue);
         }
+
+        public static Location Parse(string location)
+        {
+            File file = Array.Find(
+                (File[])Enum.GetValues(typeof(File)),
+                f => f.ToString() == location[0].ToString());
+
+            int rank = int.Parse(location[1].ToString());
+
+            return new Location(file, rank);
+        }
     }
 }

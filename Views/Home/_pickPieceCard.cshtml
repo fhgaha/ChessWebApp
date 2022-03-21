@@ -1,7 +1,7 @@
 ﻿@model List<ChessWebApp.AbstractPiece>
 
 @{
-    var queen = Model[0];
+    @*var queen = Model[0];
     var knight = Model[1];
     var rook = Model[2];
     var bishop = Model[3];
@@ -19,7 +19,7 @@
             }
             <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
         </button>
-    }
+    }*@
 }
 
 

@@ -13,6 +13,7 @@ namespace ChessWebApp.Models
         public List<Location> ValidMoves { get; private set; } = new();
         public string message = "";
         public bool IsWhitesMove = true;
+        public Pawn PawnToPromote;
         private Square fromSquare;
         private Square FromSquare
         {
@@ -89,7 +90,7 @@ namespace ChessWebApp.Models
         }
 
 
-        private bool MakeMove(Board board, Square square)
+        public bool MakeMove(Board board, Square square)
         {
             if (square.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board, square);
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board, FromSquare);
@@ -100,6 +101,14 @@ namespace ChessWebApp.Models
             if (square.CurrentPiece is King && Math.Abs(FromSquare.Location.File - square.Location.File) == 2)
                 HandleCastling(square);
 
+            //pawn promotion
+            if (square.CurrentPiece is Pawn pawn
+                && (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
+                 || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1))
+            {
+                PawnToPromote = pawn;
+            }
+
             board.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(Board, sq));
 
             //MovingPieceBesidesTheseLocsDiscoversCheck(square).ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
@@ -108,6 +117,21 @@ namespace ChessWebApp.Models
 
             board.PerformedMoves.Add(Tuple.Create(fromSquare, square));
             return true;
+        }
+
+        public void PromotePawn(AbstractPiece piece)
+        {
+            var square = Board.LocationSquareMap[piece.Location];
+
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board, square);
+
+            square.CurrentPiece = piece;
+            
+            Board.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(Board, sq));
+
+            Board.SetAllSquaresNotValid();
+
+            PawnToPromote = null;   
         }
 
         public void HandleCastling(Square square)
