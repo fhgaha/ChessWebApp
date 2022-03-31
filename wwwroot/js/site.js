@@ -55,9 +55,9 @@ $(function () {
                      || data.location.rank == 1 && data.pieceColor == 1 )) {
 
                     if (data.pieceColor == "0")
-                        $('#WhitePiecesPromotionModal').modal('show');
+                        $('#WhitePromotionModal').modal('show');
                     else if (data.pieceColor == "1")
-                        $('#BlackPiecesPromotionModal').modal('show');
+                        $('#BlackPromotionModal').modal('show');
                 }
             }
         })

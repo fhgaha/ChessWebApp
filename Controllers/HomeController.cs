@@ -41,12 +41,6 @@ namespace ChessWebApp.Controllers
         private static Queue<List<Square>> savedSquares = new Queue<List<Square>>();
         public IActionResult UpdateChangedSquares(string location)
         {
-            //File file = Array.Find(
-            //    (File[])Enum.GetValues(typeof(File)),
-            //    f => f.ToString() == location[0].ToString());
-            //int rank = int.Parse(location[1].ToString());
-            //Square currentSquare = game.Board.LocationSquareMap[new Location(file, rank)];
-
             Square currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
 
             bool isMoveMade = game.HandleClick(currentSquare);
@@ -112,14 +106,6 @@ namespace ChessWebApp.Controllers
 
         public IActionResult CheckPromotionJSON(string location)
         {
-            //File file = Array.Find(
-            //    (File[])Enum.GetValues(typeof(File)),
-            //    f => f.ToString() == location[0].ToString());
-            //int rank = int.Parse(location[1].ToString());
-            //Square square = game.Board.LocationSquareMap[new Location(file, rank)];
-
-            Square square = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
-
             return Json(game.PawnToPromote);
         }
 
@@ -149,7 +135,7 @@ namespace ChessWebApp.Controllers
 
             var updatedSquare = game.Board.LocationSquareMap[newPiece.Location];
 
-            return Json(GetSquareStrings(new List<Square>(), updatedSquare));
+            return UpdateChangedSquares(string.Concat(data[2], data[3]));
         }
 
 
