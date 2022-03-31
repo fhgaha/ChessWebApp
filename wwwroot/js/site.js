@@ -54,7 +54,10 @@ $(function () {
                     && (data.location.rank == 8 && data.pieceColor == 0
                      || data.location.rank == 1 && data.pieceColor == 1 )) {
 
-                        $('#promotionModal').modal('show');
+                    if (data.pieceColor == "0")
+                        $('#WhitePiecesPromotionModal').modal('show');
+                    else if (data.pieceColor == "1")
+                        $('#BlackPiecesPromotionModal').modal('show');
                 }
             }
         })

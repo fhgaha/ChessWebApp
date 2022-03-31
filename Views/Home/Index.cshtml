@@ -46,12 +46,10 @@
     }
 </style>
 
-@{
-    ViewData["Title"] = "Index";
+@{ ViewData["Title"] = "Index";
 
-    string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
-    var squares = Model.BoardSquares;
-}
+                string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
+                var squares = Model.BoardSquares; }
 
 <form>
 
@@ -60,49 +58,45 @@
 
             @for (int i = 0; i < squares.GetLength(0); i++)
             {
-                <tr>
+<tr>
 
-                    @{ var rank = Constants.BoardLength - i + " ";}
+    @{ var rank = Constants.BoardLength - i + " ";}
 
-                    <th class="rank-number">@rank</th>
+    <th class="rank-number">@rank</th>
 
-                    @for (int j = 0; j < squares.GetLength(1); j++)
-                    {
-                        var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
+    @for (int j = 0; j < squares.GetLength(1); j++)
+    {
+        var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
 
-                        if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
-                        {
-                            squareColor = "#5c9c6f";    //green
-                        }
+        if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
+        {
+            squareColor = "#5c9c6f";    //green
+        }
 
-                        <td style="background: @squareColor;">
-                            <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                                <button class="square-button" name="location"
-                                        value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
-                                        asp-controller="Home" asp-action="HandleButtonClick">
-                                    @if (squares[i, j].IsOccupied)
-                                    {
-                                        var piece = squares[i, j].CurrentPiece;
+<td style="background: @squareColor;">
+    <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
+        <button class="square-button" name="location"
+                value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
+                asp-controller="Home" asp-action="HandleButtonClick">
+            @if (squares[i, j].IsOccupied)
+            {
+                var piece = squares[i, j].CurrentPiece;
 
-                                        string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
-                                        string pieceClass = piece.GetType().Name;
-                                        string fileType = ".png";
+                string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
+                string pieceClass = piece.GetType().Name;
+                string fileType = ".png";
 
-                                        <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-                                    }
-                                </button>
-                            </div>
-                        </td>
-                    }
-                </tr>
-            }
+<img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />}
+        </button>
+    </div>
+</td>}
+</tr>            }
 
             <tr>
                 <th></th>
                 @foreach (var file in Enum.GetValues(typeof(File)))
                 {
-                    <th class="file-letter">@file</th>
-                }
+    <th class="file-letter">@file</th>}
             </tr>
 
         </tbody>
@@ -110,29 +104,28 @@
 </form>
 
 
-<!-- Modal -->
-<div class="modal" id="promotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1" 
+<!-- White Pieces Modal -->
+<div class="modal" id="WhitePiecesPromotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
 
-                @{
-                    //color is always white
-                    var PieceColor = Model.IsWhitesMove ? ChessWebApp.PieceColor.Light : ChessWebApp.PieceColor.Dark;
-                    var pieces = new List<AbstractPiece>
-                                                                            {
-                        new Queen(PieceColor) { Location = new Location(File.A, 1)},
-                        new Knight(PieceColor) { Location = new Location(File.A, 1)},
-                        new Rook(PieceColor) { Location = new Location(File.A, 1)},
-                        new Bishop(PieceColor) { Location = new Location(File.A, 1)}
-                    };
+                @{ //color is always white
                     string _fileType = ".png";
+
+                    var pieces = new List<AbstractPiece>
+                    {
+                        new Queen(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)},
+                        new Knight(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)},
+                        new Rook(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)},
+                        new Bishop(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)}
+                    };
 
                     for (int i = 0; i < pieces.Count; i++)
                     {
                         string pieceClass = pieces[i].GetType().Name;
-                        string color = PieceColor == PieceColor.Light ? "white" : "black";
+                        string color = pieces[i].PieceColor == PieceColor.Light ? "white" : "black";
 
                         <button id="@i" class="promotion-button" type="submit" name="location"
                                 value="@pieceClass @color @pieces[i].Location.File @pieces[i].Location.Rank"
@@ -140,8 +133,43 @@
 
                             <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
 
-                        </button>
-                    }
+                        </button> 
+                    } 
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Black Pieces Modal -->
+<div class="modal" id="BlackPiecesPromotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                @{ //color is always white
+                    pieces = new List<AbstractPiece>
+                    {
+                        new Queen(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)},
+                        new Knight(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)},
+                        new Rook(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)},
+                        new Bishop(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)}
+                    };
+                    
+                    for (int i = 0; i < pieces.Count; i++)
+                    {
+                        string pieceClass = pieces[i].GetType().Name;
+                        string color = pieces[i].PieceColor == PieceColor.Light ? "white" : "black";
+
+                        <button id="@i" class="promotion-button" type="submit" name="location"
+                                value="@pieceClass @color @pieces[i].Location.File @pieces[i].Location.Rank"
+                                asp-controller="Home" asp-action="PromotePawn" data-dismiss="modal">
+
+                            <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
+
+                        </button> 
+                    } 
                 }
             </div>
         </div>
