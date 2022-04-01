@@ -8,6 +8,8 @@ namespace ChessWebApp
 {
     public class Pawn : AbstractPiece
     {
+        public bool IsReadyToPromote { get; set; } = false;
+
         public Pawn(PieceColor pieceColor) : base(pieceColor)
         {
             Name = "Pawn";
@@ -62,5 +64,14 @@ namespace ChessWebApp
 
             return attackedLocations.Where(l => l != null).ToList();
         }
+
+        //public void UpdateValuesAfterMove()
+        //{
+        //    if (PieceColor == PieceColor.Light && Location.Rank == 8
+        //        || PieceColor == PieceColor.Dark && Location.Rank == 1)
+        //    {
+        //        IsReadyToPromote = true;
+        //    }
+        //}
     }
 }

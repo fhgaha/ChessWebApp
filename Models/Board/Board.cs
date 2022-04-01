@@ -8,7 +8,6 @@ namespace ChessWebApp
 {
     public class Board
     {
-        public bool GameIsOver = false;
         public bool IsReal = true;
         public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
         public Square[,] BoardSquares { get; private set; }
@@ -18,7 +17,6 @@ namespace ChessWebApp
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
         public string message = "";
-        public bool IsWhitesMove = true;
 
         public Board()
         {

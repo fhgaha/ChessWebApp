@@ -27,6 +27,8 @@ namespace ChessWebApp
 
         public static Location Parse(string location)
         {
+            if (location is null) return null;
+
             File file = Array.Find(
                 (File[])Enum.GetValues(typeof(File)),
                 f => f.ToString() == location[0].ToString());

@@ -51,7 +51,7 @@ namespace ChessWebApp.Controllers
 
             var currentSquares = new List<Square>();
             currentSquares.Add(currentSquare);
-            currentSquares.AddRange(game.ValidMoves.Select(loc => game.Board.LocationSquareMap[loc]));
+            currentSquares.AddRange(game.GetValidMoves().Select(loc => game.Board.LocationSquareMap[loc]));
             currentSquares.Add(game.Board.LocationSquareMap[game.Board.WhiteKing.Location]);
             currentSquares.Add(game.Board.LocationSquareMap[game.Board.BlackKing.Location]);
 
@@ -106,7 +106,9 @@ namespace ChessWebApp.Controllers
 
         public IActionResult CheckPromotionJSON(string location)
         {
-            return Json(game.PawnToPromote);
+            Location loc = LocationFactory.Parse(location);
+
+            return Json(game.Board.LocationSquareMap[loc].CurrentPiece);
         }
 
 
@@ -116,6 +118,7 @@ namespace ChessWebApp.Controllers
 
             string className = data[0];
             string color = data[1];
+            string location = string.Concat(data[2], data[3]);
 
             var names = new Dictionary<string, Type>
             {
@@ -129,13 +132,13 @@ namespace ChessWebApp.Controllers
                 names[className],
                 color == "white" ? PieceColor.Light : PieceColor.Dark);
 
-            newPiece.Location = game.PawnToPromote.Location;
+            newPiece.Location = LocationFactory.Parse(location);
 
             game.PromotePawn(newPiece);
 
             var updatedSquare = game.Board.LocationSquareMap[newPiece.Location];
 
-            return UpdateChangedSquares(string.Concat(data[2], data[3]));
+            return UpdateChangedSquares(location);
         }
 
 

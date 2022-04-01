@@ -36,11 +36,16 @@ namespace ChessWebApp
 
         public void MovePiece(Square to)
         {
+            //if (CurrentPiece is Pawn p && p.IsReadyToPromote)
+            //    p.IsReadyToPromote = false;
+
             CurrentPiece.isFirstMove = false;
             to.IsOccupied = true;
             to.CurrentPiece = this.CurrentPiece;
             to.CurrentPiece.Location = to.Location;
             Reset();
+
+            //if (to.CurrentPiece is Pawn pawn) pawn.UpdateValuesAfterMove();
         }
 
         public void Reset()
