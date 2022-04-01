@@ -38,18 +38,30 @@
         height: inherit;
     }
 
-    img {
-        padding: 0;
-        width: 100%;
-        height: 100%;
+
+    .modal-body {
+        display: inline-flex;
     }
 
+    .modal-content {
+        margin: 10% auto;
+        width: min-content;
+    }
 
+    .promotion-button {
+        border: none;
+        background-color: transparent;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
 
-/*    .board-zone{width: 50%; margin-left:auto; margin-right: auto;}
-    .board-zone td{width: 12%; padding-bottom: 12%; position: relative;}
-    .oneSquare{width: inherit; height: inherit;}
-    .board-zone button{background-color: transparent; position: absolute;}*/
+    img {
+        padding: 0;
+        width: 70px;
+        height: 70px;
+    }
 </style>
 
 @{ ViewData["Title"] = "Index";
