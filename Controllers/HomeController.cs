@@ -35,6 +35,7 @@ namespace ChessWebApp.Controllers
             Square square = game.Board.LocationSquareMap[loc];
 
             game.HandleClick(square);
+
             return View("Index", game.Board);
         }
 
@@ -136,11 +137,12 @@ namespace ChessWebApp.Controllers
 
             game.PromotePawn(newPiece);
 
-
-
             Square currentSquare = game.Board.LocationSquareMap[newPiece.Location];
 
-            //this return all squares. should return only part like in second part of UpdateChangedSquares method
+            game.HandleClick(currentSquare);
+
+
+            //this returns all squares. should return only part like in second part of UpdateChangedSquares method
             return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
 
         }
