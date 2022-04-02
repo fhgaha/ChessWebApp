@@ -17,7 +17,7 @@ $(function () {
         $.ajax({
             //dataType: "json",
             method: "POST",
-            url: "/Home/UpdateChangedSquares",
+            url: "/Home/UpdateChangedSquaresJSON",
             data: {
                 "location": squareLoc
             },
@@ -74,7 +74,7 @@ $(function () {
             data: {
                 "pieceData": pieceData
             },
-            url: "/Home/PromotePawn",
+            url: "/Home/PromotePawnJSON",
             success: function (data) {
                 console.log(data);
 

@@ -37,16 +37,16 @@ namespace ChessWebApp.Controllers
             return View("Index", game.Board);
         }
 
-        public IActionResult UpdateChangedSquares(string location)
+        public IActionResult UpdateChangedSquaresJSON(string location)
         {
             Square currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
 
             bool isMoveMade = game.HandleClick(currentSquare);
 
-            ///use this instead of below to update whole board
-            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
+            ///this return updates all squares
+            //return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
 
-
+            ///this code section updates only changed squares
             var currentSquares = new List<Square>();
             currentSquares.Add(currentSquare);
             currentSquares.AddRange(game.GetValidMoves().Select(loc => game.Board.LocationSquareMap[loc]));
@@ -110,7 +110,7 @@ namespace ChessWebApp.Controllers
         }
 
 
-        public IActionResult PromotePawn(string pieceData)
+        public IActionResult PromotePawnJSON(string pieceData)
         {
             string[] data = pieceData.Split();  //"Rook white A 1"
 
@@ -136,12 +136,7 @@ namespace ChessWebApp.Controllers
 
             Square currentSquare = game.Board.LocationSquareMap[newPiece.Location];
 
-            game.HandleClick(currentSquare);
-
-
-            //this returns all squares. should return only part like in second part of UpdateChangedSquares method
-            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
-
+            return UpdateChangedSquaresJSON(newPiece.Location.File.ToString() + newPiece.Location.Rank.ToString());
         }
 
 
