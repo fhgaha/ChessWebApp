@@ -21,11 +21,6 @@ namespace ChessWebApp
 
             fromSquare.MovePiece(toSquare);
 
-            //if (toSquare.CurrentPiece is )
-            //if (IsEnPassant == true) IsEnPassant = false;
-
-          
-
             //castling
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare);
@@ -33,13 +28,13 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is Pawn pawn)
             {
                 //en passant
-                //if (pawn.isFirstMove && (Math.Abs(toSquare.Location.File - fromSquare.Location.File) == 2))
-                //{
-                //    File enPassFile = (File)(((int)toSquare.Location.File + (int)fromSquare.Location.File) / 2);
-                //    var enPassSquare = board.LocationSquareMap[new Location(enPassFile)]
+                if (fromSquare.Location.File != toSquare.Location.File)
+                {
+                    var pawnToRemoveLoc = LocationFactory.Build(toSquare.Location, 0,
+                        toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
 
-                //}
-                //    IsEnPassant = true;
+                    board.LocationSquareMap[pawnToRemoveLoc].Reset();
+                }
 
                 //pawn promotion
                 if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
