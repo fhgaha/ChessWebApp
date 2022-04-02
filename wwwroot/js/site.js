@@ -64,6 +64,8 @@ $(function () {
     }
 
     $(document).on("click", ".promotion-button", function () {
+        event.preventDefault();
+
         var pieceData = $(this).val();    //"Rook white A 1"
         console.log("You clicked on promotion button " + pieceData);
 
@@ -76,7 +78,6 @@ $(function () {
             success: function (data) {
                 console.log(data);
 
-                //need to update squares on view
                 for (var d in data) {
                     //console.log(data[d]);
                     $("#" + d).html(data[d]);

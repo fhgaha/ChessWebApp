@@ -108,8 +108,9 @@ namespace ChessWebApp
             pieces.Add(new Location(File.E, 8), new King(PieceColor.Dark));
 
             //pawns
-
+            pieces.Add(new Location(File.A, 7), new Pawn(PieceColor.Light));
             pieces.Add(new Location(File.B, 7), new Pawn(PieceColor.Light));
+            pieces.Add(new Location(File.A, 2), new Pawn(PieceColor.Dark));
             pieces.Add(new Location(File.B, 2), new Pawn(PieceColor.Dark));
 
             return pieces;

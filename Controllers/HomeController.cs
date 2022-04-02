@@ -136,9 +136,13 @@ namespace ChessWebApp.Controllers
 
             game.PromotePawn(newPiece);
 
-            var updatedSquare = game.Board.LocationSquareMap[newPiece.Location];
 
-            return UpdateChangedSquares(location);
+
+            Square currentSquare = game.Board.LocationSquareMap[newPiece.Location];
+
+            //this return all squares. should return only part like in second part of UpdateChangedSquares method
+            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
+
         }
 
 

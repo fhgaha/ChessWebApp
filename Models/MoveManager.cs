@@ -61,7 +61,8 @@ namespace ChessWebApp
             //bottom left
             if (square.Location == new Location(File.C, 1))
             {
-                //if (board.LocationSquareMap[new Location(File.B, 1)].IsOccupied) return;
+                //absent square are validated in king class logic
+
                 if (board.LocationSquareMap[new Location(File.D, 1)].IsOccupied) return;
 
                 FromRookSquare = board.LocationSquareMap[new Location(File.A, 1)];
@@ -70,17 +71,12 @@ namespace ChessWebApp
             //bottom right
             else if (square.Location == new Location(File.G, 1))
             {
-                if (board.LocationSquareMap[new Location(File.F, 1)].IsOccupied) return;
-
                 FromRookSquare = board.LocationSquareMap[new Location(File.H, 1)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.F, 1)];
             }
             //top left
             else if (square.Location == new Location(File.C, 8))
             {
-                //if (board.LocationSquareMap[new Location(File.B, 8)].IsOccupied) return;
-                if (board.LocationSquareMap[new Location(File.D, 8)].IsOccupied) return;
-
                 FromRookSquare = board.LocationSquareMap[new Location(File.A, 8)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.D, 8)];
             }

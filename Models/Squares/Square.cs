@@ -13,7 +13,8 @@ namespace ChessWebApp
         public AbstractPiece CurrentPiece { get; set; }
         public bool IsOccupied { get; set; }
         public List<Square> AttackedByPiecesOnSquares { get; set; }
-        public bool IsValid { get; set; }
+        public bool IsValid { get; 
+            set; }
 
         public Square(Square originalSquare)
         {
