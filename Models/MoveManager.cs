@@ -21,15 +21,32 @@ namespace ChessWebApp
 
             fromSquare.MovePiece(toSquare);
 
+            //if (toSquare.CurrentPiece is )
+            //if (IsEnPassant == true) IsEnPassant = false;
+
+          
+
             //castling
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare);
 
-            //pawn promotion
-            if (toSquare.CurrentPiece is Pawn pawn && (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
-                || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1))
+            if (toSquare.CurrentPiece is Pawn pawn)
             {
-                board.RegisterPawnToPromote((Pawn)toSquare.CurrentPiece);
+                //en passant
+                //if (pawn.isFirstMove && (Math.Abs(toSquare.Location.File - fromSquare.Location.File) == 2))
+                //{
+                //    File enPassFile = (File)(((int)toSquare.Location.File + (int)fromSquare.Location.File) / 2);
+                //    var enPassSquare = board.LocationSquareMap[new Location(enPassFile)]
+
+                //}
+                //    IsEnPassant = true;
+
+                //pawn promotion
+                if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
+                    || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
+                {
+                    board.RegisterPawnToPromote((Pawn)toSquare.CurrentPiece);
+                }
             }
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
@@ -112,7 +129,7 @@ namespace ChessWebApp
 
         public void ClearValidMoves() => MoveValidator.ValidMoves.Clear();
 
-        public void UpdateValidSquares(Board board, King king, Square square) 
+        public void UpdateValidSquares(Board board, King king, Square square)
             => MoveValidator.UpdateValidSquares(board, king, square);
 
         public List<Location> GetValidMoves() => MoveValidator.ValidMoves;

@@ -16,12 +16,10 @@ namespace ChessWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         private static Game game;
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        private static Queue<List<Square>> savedSquares = new Queue<List<Square>>();
+
+        public HomeController(ILogger<HomeController> logger) => _logger = logger;
 
         public IActionResult Index()
         {
@@ -39,7 +37,6 @@ namespace ChessWebApp.Controllers
             return View("Index", game.Board);
         }
 
-        private static Queue<List<Square>> savedSquares = new Queue<List<Square>>();
         public IActionResult UpdateChangedSquares(string location)
         {
             Square currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];

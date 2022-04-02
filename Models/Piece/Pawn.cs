@@ -27,8 +27,6 @@ namespace ChessWebApp
             moveCandidates.Add(LocationFactory.Build(start.Location, -1, rankOffset));
             if (isFirstMove) moveCandidates.Add(LocationFactory.Build(start.Location, 0, rankOffset * 2));
 
-            //need en passant logic
-
             var validLocations = moveCandidates.Where(c => c != null).Where(candidate =>
             {
                 if (!squareMap.ContainsKey(candidate))
@@ -46,9 +44,27 @@ namespace ChessWebApp
                 return true;
             }).ToList();
 
+            TryAddEnPassantMove(board, validLocations);
+
             validLocations.ForEach(loc => squareMap[loc].IsValid = true);
 
             return validLocations;
+        }
+
+        private void TryAddEnPassantMove(Board board, List<Location> validLocations)
+        {
+            var prevMoveFromSquare = board.PerformedMoves.LastOrDefault()?.Item1;
+            var prevMoveToSquare = board.PerformedMoves.LastOrDefault()?.Item2;
+
+            if (prevMoveToSquare?.CurrentPiece is Pawn pawn && pawn.PieceColor != PieceColor
+                && Math.Abs(prevMoveFromSquare.Location.Rank - prevMoveToSquare.Location.Rank) == 2)
+            {
+                if (LocationFactory.Build(Location, 1, 0) is Location loc && pawn.Location == loc)
+                    validLocations.Add(LocationFactory.Build(loc, 0, PieceColor == PieceColor.Light ? 1 : -1));
+
+                else if (LocationFactory.Build(Location, -1, 0) is Location otherLoc && pawn.Location == otherLoc)
+                    validLocations.Add(LocationFactory.Build(otherLoc, 0, PieceColor == PieceColor.Light ? 1 : -1));
+            }
         }
 
         public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)

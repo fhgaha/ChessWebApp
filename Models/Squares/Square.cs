@@ -8,13 +8,13 @@ namespace ChessWebApp
 {
     public class Square
     {
+        public bool IsEnPassant { get; set; }
         public SquareColor SquareColor { get; }
         public Location Location { get; }
         public AbstractPiece CurrentPiece { get; set; }
         public bool IsOccupied { get; set; }
         public List<Square> AttackedByPiecesOnSquares { get; set; }
-        public bool IsValid { get; 
-            set; }
+        public bool IsValid { get; set; }
 
         public Square(Square originalSquare)
         {
@@ -37,16 +37,11 @@ namespace ChessWebApp
 
         public void MovePiece(Square to)
         {
-            //if (CurrentPiece is Pawn p && p.IsReadyToPromote)
-            //    p.IsReadyToPromote = false;
-
             CurrentPiece.isFirstMove = false;
             to.IsOccupied = true;
             to.CurrentPiece = this.CurrentPiece;
             to.CurrentPiece.Location = to.Location;
             Reset();
-
-            //if (to.CurrentPiece is Pawn pawn) pawn.UpdateValuesAfterMove();
         }
 
         public void Reset()
