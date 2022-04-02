@@ -143,7 +143,8 @@ namespace ChessWebApp
         {
             List<Square> candidates = new();
 
-            if (board.LocationSquareMap[new Location(File.C, rank)].IsOccupied
+            if (board.LocationSquareMap[new Location(File.B, rank)].IsOccupied
+                || board.LocationSquareMap[new Location(File.C, rank)].IsOccupied
                 || board.LocationSquareMap[new Location(File.D, rank)].IsOccupied)
                 return null;
 

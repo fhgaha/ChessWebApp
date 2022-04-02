@@ -29,8 +29,8 @@ namespace ChessWebApp
             var pieces =
                 //PieceFactory.GetStandartPiecePositions();
                 //PieceFactory.GetTwoKings();
-                //PieceFactory.GetCastlingSetup();
-                PieceFactory.GetPromotionSetup();
+                PieceFactory.GetCastlingSetup();
+                //PieceFactory.GetPromotionSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
@@ -67,8 +67,6 @@ namespace ChessWebApp
         }
 
 
-        public void SetAllSquaresNotValid() => LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
-
         public void PrintBoard()
         {
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
@@ -93,8 +91,11 @@ namespace ChessWebApp
             Console.WriteLine("\n");
         }
 
-        internal void RegisterPawnToPromote(Pawn pawn) => PawnToPromote = pawn;
-        internal void ApplyToAll(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
+        public void SetAllSquaresNotValid() => LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
+
+        public void RegisterPawnToPromote(Pawn pawn) => PawnToPromote = pawn;
+
+        public void ApplyToSquares(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
 
     }
 }

@@ -21,7 +21,7 @@ namespace ChessWebApp.Models
             set
             {
                 if (value == null) MoveManager.ClearValidMoves();
-                Board.LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
+                Board.SetAllSquaresNotValid();
                 fromSquare = value;
             }
         }

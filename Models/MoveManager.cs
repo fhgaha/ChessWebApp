@@ -32,8 +32,7 @@ namespace ChessWebApp
                 board.RegisterPawnToPromote((Pawn)toSquare.CurrentPiece);
             }
 
-            //board.ApplyToAll(sq => UpdateSquaresAttackedByPiece(board, sq));
-            board.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(board, sq));
+            board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
             board.PerformedMoves.Add(Tuple.Create(fromSquare, toSquare));
             return true;
@@ -47,7 +46,7 @@ namespace ChessWebApp
 
             square.CurrentPiece = piece;
 
-            board.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(board, sq));
+            board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
             board.SetAllSquaresNotValid();
 
@@ -58,25 +57,38 @@ namespace ChessWebApp
         {
             Square FromRookSquare = null;
             Square ToRookSquare = null;
+
+            //bottom left
             if (square.Location == new Location(File.C, 1))
             {
+                //if (board.LocationSquareMap[new Location(File.B, 1)].IsOccupied) return;
                 if (board.LocationSquareMap[new Location(File.D, 1)].IsOccupied) return;
 
                 FromRookSquare = board.LocationSquareMap[new Location(File.A, 1)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.D, 1)];
             }
+            //bottom right
             else if (square.Location == new Location(File.G, 1))
             {
+                if (board.LocationSquareMap[new Location(File.F, 1)].IsOccupied) return;
+
                 FromRookSquare = board.LocationSquareMap[new Location(File.H, 1)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.F, 1)];
             }
+            //top left
             else if (square.Location == new Location(File.C, 8))
             {
+                //if (board.LocationSquareMap[new Location(File.B, 8)].IsOccupied) return;
+                if (board.LocationSquareMap[new Location(File.D, 8)].IsOccupied) return;
+
                 FromRookSquare = board.LocationSquareMap[new Location(File.A, 8)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.D, 8)];
             }
+            //top right
             else if (square.Location == new Location(File.G, 8))
             {
+                if (board.LocationSquareMap[new Location(File.F, 8)].IsOccupied) return;
+
                 FromRookSquare = board.LocationSquareMap[new Location(File.H, 8)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.F, 8)];
             }

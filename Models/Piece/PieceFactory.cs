@@ -77,10 +77,16 @@ namespace ChessWebApp
             }
 
             //bishops
-            pieces.Add(new Location(File.C, 1), new Bishop(PieceColor.Light));
-            pieces.Add(new Location(File.F, 1), new Bishop(PieceColor.Light));
-            pieces.Add(new Location(File.C, 8), new Bishop(PieceColor.Dark));
-            pieces.Add(new Location(File.F, 8), new Bishop(PieceColor.Dark));
+            //pieces.Add(new Location(File.C, 1), new Bishop(PieceColor.Light));
+            //pieces.Add(new Location(File.F, 1), new Bishop(PieceColor.Light));
+            //pieces.Add(new Location(File.C, 8), new Bishop(PieceColor.Dark));
+            //pieces.Add(new Location(File.F, 8), new Bishop(PieceColor.Dark));
+
+            //knights
+            pieces.Add(new Location(File.B, 1), new Knight(PieceColor.Light));
+            pieces.Add(new Location(File.G, 1), new Knight(PieceColor.Light));
+            pieces.Add(new Location(File.B, 8), new Knight(PieceColor.Dark));
+            pieces.Add(new Location(File.G, 8), new Knight(PieceColor.Dark));
 
             //kings
             pieces.Add(new Location(File.E, 1), new King(PieceColor.Light));
