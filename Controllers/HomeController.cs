@@ -132,7 +132,7 @@ namespace ChessWebApp.Controllers
                 names[className],
                 color == "white" ? PieceColor.Light : PieceColor.Dark);
 
-            newPiece.Location = LocationFactory.Parse(location);
+            newPiece.Location = game.Board.PawnToPromote.Location; 
 
             game.PromotePawn(newPiece);
 

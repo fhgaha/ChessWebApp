@@ -25,6 +25,14 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare);
 
+            //pawn promotion
+            if (toSquare.CurrentPiece is Pawn pawn && (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
+                || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1))
+            {
+                board.RegisterPawnToPromote((Pawn)toSquare.CurrentPiece);
+            }
+
+            //board.ApplyToAll(sq => UpdateSquaresAttackedByPiece(board, sq));
             board.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(board, sq));
 
             board.PerformedMoves.Add(Tuple.Create(fromSquare, toSquare));
@@ -42,6 +50,8 @@ namespace ChessWebApp
             board.LocationSquareMap.Values.ToList().ForEach(sq => UpdateSquaresAttackedByPiece(board, sq));
 
             board.SetAllSquaresNotValid();
+
+            board.PawnToPromote = null;
         }
 
         public void HandleCastling(Board board, Square square)

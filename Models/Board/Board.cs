@@ -16,6 +16,7 @@ namespace ChessWebApp
         public List<AbstractPiece> DarkPieces { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
+        public Pawn PawnToPromote;
         public string message = "";
 
         public Board()
@@ -65,6 +66,7 @@ namespace ChessWebApp
             }
         }
 
+
         public void SetAllSquaresNotValid() => LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
 
         public void PrintBoard()
@@ -91,6 +93,8 @@ namespace ChessWebApp
             Console.WriteLine("\n");
         }
 
+        internal void RegisterPawnToPromote(Pawn pawn) => PawnToPromote = pawn;
+        internal void ApplyToAll(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
 
     }
 }

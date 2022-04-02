@@ -14,7 +14,6 @@ namespace ChessWebApp.Models
         public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
         public string message = "";
         public bool IsWhitesMove = true;
-        //public Pawn PawnToPromote;
         private Square fromSquare;
         private Square FromSquare
         {
