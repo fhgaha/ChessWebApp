@@ -47,18 +47,31 @@ namespace ChessWebApp.Controllers
             //return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
 
             ///this code section updates only changed squares
-            var currentSquares = new List<Square>();
-            currentSquares.Add(currentSquare);
-            currentSquares.AddRange(game.GetValidMoves().Select(loc => game.Board.LocationSquareMap[loc]));
-            currentSquares.Add(game.Board.LocationSquareMap[game.Board.WhiteKing.Location]);
-            currentSquares.Add(game.Board.LocationSquareMap[game.Board.BlackKing.Location]);
-
-            savedSquares.Enqueue(currentSquares);
+            savedSquares.Enqueue(GetChangedSquares(currentSquare));
             if (savedSquares.Count > 2) savedSquares.Dequeue();
 
             var squaresToUpdate = savedSquares.SelectMany(s => s).ToList();
 
             return Json(GetSquareStrings(squaresToUpdate, currentSquare));
+        }
+
+        private List<Square> GetChangedSquares(Square square)
+        {
+            var changedSquares = new List<Square>();
+            changedSquares.Add(square);
+            changedSquares.AddRange(game.GetValidMoves().Select(loc => game.Board.LocationSquareMap[loc]));
+            changedSquares.Add(game.Board.LocationSquareMap[game.Board.WhiteKing.Location]);
+            changedSquares.Add(game.Board.LocationSquareMap[game.Board.BlackKing.Location]);
+
+            //in case of castling update square where castling rook was
+            if (square.CurrentPiece is not null && square.CurrentPiece is King)
+                if (game.MoveManager.RookCastledFromThisSquare is Square sq && sq is not null)
+                {
+                    changedSquares.Add(sq);
+                    game.MoveManager.RookCastledFromThisSquare = null;
+                }
+
+            return changedSquares;
         }
 
         private Dictionary<string, string> GetSquareStrings(List<Square> squares, Square square)

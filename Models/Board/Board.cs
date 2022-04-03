@@ -27,9 +27,9 @@ namespace ChessWebApp
             LocationSquareMap = new Dictionary<Location, Square>();
 
             var pieces =
-                PieceFactory.GetStandartPiecePositions();
+                //PieceFactory.GetStandartPiecePositions();
                 //PieceFactory.GetTwoKings();
-                //PieceFactory.GetCastlingSetup();
+                PieceFactory.GetCastlingSetup();
                 //PieceFactory.GetPromotionSetup();
                 //PieceFactory.GetEnPassantSetup();
 

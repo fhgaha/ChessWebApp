@@ -8,6 +8,7 @@ namespace ChessWebApp
     public class MoveManager
     {
         public MoveValidator MoveValidator;
+        public Square RookCastledFromThisSquare { get; set; }
 
         public MoveManager()
         {
@@ -101,6 +102,7 @@ namespace ChessWebApp
                 ToRookSquare = board.LocationSquareMap[new Location(File.F, 8)];
             }
 
+            RookCastledFromThisSquare = FromRookSquare;
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromRookSquare);
             FromRookSquare.MovePiece(ToRookSquare);
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
