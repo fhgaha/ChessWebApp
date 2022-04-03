@@ -27,10 +27,10 @@ namespace ChessWebApp
             LocationSquareMap = new Dictionary<Location, Square>();
 
             var pieces =
-                //PieceFactory.GetStandartPiecePositions();
+                PieceFactory.GetStandartPiecePositions();
                 //PieceFactory.GetTwoKings();
                 //PieceFactory.GetCastlingSetup();
-                PieceFactory.GetPromotionSetup();
+                //PieceFactory.GetPromotionSetup();
                 //PieceFactory.GetEnPassantSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
