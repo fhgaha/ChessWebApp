@@ -8,7 +8,7 @@ namespace ChessWebApp
     public class MoveManager
     {
         public MoveValidator MoveValidator;
-        public Square RookCastledFromThisSquare { get; set; }
+        public Square AdditionalSquareToUpdate { get; set; }
 
         public MoveManager()
         {
@@ -31,10 +31,13 @@ namespace ChessWebApp
                 //en passant
                 if (fromSquare.Location.File != toSquare.Location.File)
                 {
-                    var pawnToRemoveLoc = LocationFactory.Build(toSquare.Location, 0,
+                    Location pawnToRemoveLoc = LocationFactory.Build(toSquare.Location, 0,
                         toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
 
-                    board.LocationSquareMap[pawnToRemoveLoc].Reset();
+                    Square pawnToRemoveSquare = board.LocationSquareMap[pawnToRemoveLoc];
+
+                    pawnToRemoveSquare.Reset();
+                    AdditionalSquareToUpdate = pawnToRemoveSquare;
                 }
 
                 //pawn promotion
@@ -102,7 +105,7 @@ namespace ChessWebApp
                 ToRookSquare = board.LocationSquareMap[new Location(File.F, 8)];
             }
 
-            RookCastledFromThisSquare = FromRookSquare;
+            AdditionalSquareToUpdate = FromRookSquare;
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromRookSquare);
             FromRookSquare.MovePiece(ToRookSquare);
             UpdateSquaresAttackedByPiece(board, ToRookSquare);

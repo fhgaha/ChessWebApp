@@ -28,7 +28,14 @@ namespace ChessWebApp.Models
 
         public Game()
         {
-            Board = new();
+            var pieces =
+            PieceFactory.GetStandartPiecePositions();
+            //PieceFactory.GetTwoKings();
+            //PieceFactory.GetCastlingSetup();
+            //PieceFactory.GetPromotionSetup();
+            //PieceFactory.GetEnPassantSetup();
+
+            Board = new(pieces);
             MoveManager = new();
         }
 

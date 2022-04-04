@@ -19,19 +19,14 @@ namespace ChessWebApp
         public Pawn PawnToPromote;
         public string message = "";
 
-        public Board()
+        public Board() : this(PieceFactory.GetStandartPiecePositions()) { }
+
+        public Board(Dictionary<Location, AbstractPiece> pieces)
         {
             BoardSquares = new Square[Constants.BoardLength, Constants.BoardLength];
             LightPieces = new List<AbstractPiece>();
             DarkPieces = new List<AbstractPiece>();
             LocationSquareMap = new Dictionary<Location, Square>();
-
-            var pieces =
-                //PieceFactory.GetStandartPiecePositions();
-                //PieceFactory.GetTwoKings();
-                PieceFactory.GetCastlingSetup();
-                //PieceFactory.GetPromotionSetup();
-                //PieceFactory.GetEnPassantSetup();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {

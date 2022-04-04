@@ -64,12 +64,12 @@ namespace ChessWebApp.Controllers
             changedSquares.Add(game.Board.LocationSquareMap[game.Board.BlackKing.Location]);
 
             //in case of castling update square where castling rook was
-            if (square.CurrentPiece is not null && square.CurrentPiece is King)
-                if (game.MoveManager.RookCastledFromThisSquare is Square sq && sq is not null)
-                {
-                    changedSquares.Add(sq);
-                    game.MoveManager.RookCastledFromThisSquare = null;
-                }
+            //or in case of en passant update where taken pawn was
+            if (game.MoveManager.AdditionalSquareToUpdate is Square sq && sq is not null)
+            {
+                changedSquares.Add(sq);
+                game.MoveManager.AdditionalSquareToUpdate = null;
+            }
 
             return changedSquares;
         }
