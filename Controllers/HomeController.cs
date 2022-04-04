@@ -24,6 +24,7 @@ namespace ChessWebApp.Controllers
         public IActionResult RestartGame()
         {
             game = null;
+            savedSquares.Clear();
             return RedirectToAction("Index");
         }
 
