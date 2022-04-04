@@ -85,4 +85,23 @@ $(function () {
             }
         })
     })
+
+
+    const lightThemeHref = "/lib/bootstrap/dist/css/bootstrap.min.css";
+    const darkThemeHref = "/lib/bootstrap/dist/css/bootstrapDark.min.css";
+
+    $(document).on("click", "#theme-button", function () {
+        var stylesheet = document.querySelector("link[rel=\"stylesheet\"]");
+        var href = document.querySelector("link[rel=\"stylesheet\"]").getAttribute("href");
+
+        if (href == lightThemeHref)
+            $("link[rel=\"stylesheet\"]").attr("href", darkThemeHref);
+        else
+            $("link[rel=\"stylesheet\"]").attr("href", lightThemeHref);
+
+        //styleshhet changes its href but does not reload itself?
+
+        var a = 5;
+    })
+
 });
