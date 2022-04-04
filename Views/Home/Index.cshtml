@@ -6,8 +6,8 @@
     .board-zone {
         border-collapse: collapse;
         /*to center the whole table:*/
-        margin-left: auto;
-        margin-right: auto;
+        /*margin-left: auto;
+        margin-right: auto;*/
     }
 
     .board-zone th {
@@ -63,6 +63,10 @@
         width: 70px;
         height: 70px;
     }
+
+    form {display: flex; justify-content: center;}
+    .container-left{justify-content: right;}
+    .container-right{justify-content: left;}
 </style>
 
 @{ ViewData["Title"] = "Index";
@@ -72,7 +76,11 @@
 
     }
 
+
 <form>
+    <div class="container-left">
+        <button class="btn btn-secondary" asp-controller="Home" asp-action="RestartGame">Restart</button>
+    </div>
 
     <table class="board-zone">
         <tbody>
@@ -126,6 +134,8 @@
 
         </tbody>
     </table>
+
+    <div class="container-right"></div>
 </form>
 
 
