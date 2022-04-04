@@ -21,6 +21,12 @@ namespace ChessWebApp.Controllers
 
         public HomeController(ILogger<HomeController> logger) => _logger = logger;
 
+        public IActionResult RestartGame()
+        {
+            game = null;
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Index()
         {
             if (game == null) game = new();
@@ -151,6 +157,8 @@ namespace ChessWebApp.Controllers
 
             return UpdateChangedSquaresJSON(newPiece.Location.File.ToString() + newPiece.Location.Rank.ToString());
         }
+
+        
 
 
         public IActionResult Privacy()
