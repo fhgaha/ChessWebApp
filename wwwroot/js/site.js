@@ -86,22 +86,20 @@ $(function () {
         })
     })
 
-
-    const lightThemeHref = "/lib/bootstrap/dist/css/bootstrap.min.css";
-    const darkThemeHref = "/lib/bootstrap/dist/css/bootstrapDark.min.css";
+    
+    var currentTheme = "Light";
 
     $(document).on("click", "#theme-button", function () {
-        var stylesheet = document.querySelector("link[rel=\"stylesheet\"]");
-        var href = document.querySelector("link[rel=\"stylesheet\"]").getAttribute("href");
+        event.preventDefault();
 
-        if (href == lightThemeHref)
-            $("link[rel=\"stylesheet\"]").attr("href", darkThemeHref);
-        else
-            $("link[rel=\"stylesheet\"]").attr("href", lightThemeHref);
-
-        //styleshhet changes its href but does not reload itself?
-
-        var a = 5;
+        if (currentTheme == "Light") {
+            $('#dynamicCss').attr('href', '/css/site-dark.css');
+            currentTheme = "Dark";
+        }
+        else {
+            $('#dynamicCss').attr('href', '/css/site-light.css');
+            currentTheme = "Light";
+        }
     })
 
 });

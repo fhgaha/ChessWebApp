@@ -10,27 +10,27 @@
         margin-right: auto;*/
     }
 
-    .board-zone th {
-        padding: .5em;
-        font-size: large;
-        text-align: center;
-    }
+        .board-zone th {
+            padding: .5em;
+            font-size: large;
+            text-align: center;
+        }
 
-    .board-zone td {
-        position: relative;
-        width: 70px;
-        height: 70px;
-        padding: 0;
-    }
+        .board-zone td {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            padding: 0;
+        }
 
-    .board-zone button {
-        border: none;
-        background-color: transparent;
-        height: 100%;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-    }
+        .board-zone button {
+            border: none;
+            background-color: transparent;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
 
     .oneSquare {
         position: relative;
@@ -64,9 +64,18 @@
         height: 70px;
     }
 
-    form {display: flex; justify-content: center;}
-    .container-left{justify-content: right;}
-    .container-right{justify-content: left;}
+    form {
+        display: flex;
+        justify-content: center;
+    }
+
+    .container-left {
+        justify-content: right;
+    }
+
+    .container-right {
+        justify-content: left;
+    }
 </style>
 
 @{ ViewData["Title"] = "Index";
@@ -74,7 +83,7 @@
     string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
     var squares = Model.BoardSquares;
 
-    }
+}
 
 
 <form>
@@ -85,44 +94,45 @@
     <table class="board-zone">
         <tbody>
 
-        @for (int i = 0; i < squares.GetLength(0); i++)
-        {
-            <tr>
+            @for (int i = 0; i < squares.GetLength(0); i++)
+            {
+                <tr>
 
-            @{ var rank = Constants.BoardLength - i + " ";}
+                    @{ var rank = Constants.BoardLength - i + " ";}
 
-                <th class="rank-number">@rank</th>
+                    <th class="rank-number">@rank</th>
 
-                @for (int j = 0; j < squares.GetLength(1); j++)
-                {
-                    var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
-
-                    if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
+                    @for (int j = 0; j < squares.GetLength(1); j++)
                     {
-                        squareColor = "#5c9c6f";    //green
+                        var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
+
+                        if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
+                        {
+                            squareColor = "#5c9c6f";    //green
+                        }
+
+                        <td style="background: @squareColor;">
+                            <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
+                                <button class="square-button" name="location"
+                                        value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
+                                        asp-controller="Home" asp-action="HandleButtonClick">
+                                    @if (squares[i, j].IsOccupied)
+                                    {
+                                        var piece = squares[i, j].CurrentPiece;
+
+                                        string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
+                                        string pieceClass = piece.GetType().Name;
+                                        string fileType = ".png";
+
+                                        <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                    }
+                                </button>
+                            </div>
+                        </td>
                     }
+                </tr>
 
-                    <td style="background: @squareColor;">
-                        <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                            <button class="square-button" name="location" 
-                                    value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
-                                    asp-controller="Home" asp-action="HandleButtonClick">
-                                @if (squares[i, j].IsOccupied)
-                                {
-                                    var piece = squares[i, j].CurrentPiece;
-
-                                    string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
-                                    string pieceClass = piece.GetType().Name;
-                                    string fileType = ".png";
-
-                                    <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-                                }
-                            </button>
-                        </div>
-                    </td>
-                }
-            </tr>            
-        }
+            }
 
             <tr>
                 <th></th>
@@ -139,6 +149,7 @@
     <div class="container-right">
         <button id="theme-button" class="btn btn-secondary">Change Theme</button>
     </div>
+
 </form>
 
 
@@ -153,7 +164,7 @@
                     string _fileType = ".png";
 
                     var pieces = new List<AbstractPiece>
-                    {
+                            {
                         new Queen(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)},
                         new Knight(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)},
                         new Rook(ChessWebApp.PieceColor.Light) { Location = new Location(File.A, 1)},
@@ -171,8 +182,8 @@
 
                             <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
 
-                        </button> 
-                    } 
+                        </button>
+                    }
                 }
             </div>
         </div>
@@ -188,7 +199,7 @@
 
                 @{ //color is always white
                     pieces = new List<AbstractPiece>
-                                    {
+                                            {
                         new Queen(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)},
                         new Knight(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)},
                         new Rook(ChessWebApp.PieceColor.Dark) { Location = new Location(File.A, 1)},
@@ -202,15 +213,16 @@
 
                         <button id="@i" class="promotion-button" type="submit" name="location"
                                 value="@pieceClass @color @pieces[i].Location.File @pieces[i].Location.Rank"
-                                asp-controller="Home" asp-action="PromotePawn" 
+                                asp-controller="Home" asp-action="PromotePawn"
                                 data-dismiss="modal">
 
                             <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
 
-                        </button> 
-                    } 
+                        </button>
+                    }
                 }
             </div>
         </div>
     </div>
 </div>
+
