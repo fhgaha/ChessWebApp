@@ -73,9 +73,9 @@
         justify-content: right;
     }
 
-    .container-right {
+    /*.container-right {
         justify-content: left;
-    }
+    }*/
 </style>
 
 @{ ViewData["Title"] = "Index";
@@ -87,69 +87,74 @@
 
 
 <form>
-    <div class="container-left">
-        <button class="btn btn-secondary" asp-controller="Home" asp-action="RestartGame">Restart</button>
-    </div>
+    <div class="row">
+        <div class="col g-0" align="right">
+            <button class="btn btn-secondary" align="end" asp-controller="Home" asp-action="RestartGame">Restart</button>
+        </div>
 
-    <table class="board-zone">
-        <tbody>
+        <div class="col container-center col-100">
+            
+            <table class="board-zone">
+                <tbody>
 
-            @for (int i = 0; i < squares.GetLength(0); i++)
-            {
-                <tr>
-
-                    @{ var rank = Constants.BoardLength - i + " ";}
-
-                    <th class="rank-number">@rank</th>
-
-                    @for (int j = 0; j < squares.GetLength(1); j++)
+                    @for (int i = 0; i < squares.GetLength(0); i++)
                     {
-                        var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
+                        <tr>
 
-                        if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
-                        {
-                            squareColor = "#5c9c6f";    //green
-                        }
+                            @{ var rank = Constants.BoardLength - i + " ";}
 
-                        <td style="background: @squareColor;">
-                            <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                                <button class="square-button" name="location"
-                                        value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
-                                        asp-controller="Home" asp-action="HandleButtonClick">
-                                    @if (squares[i, j].IsOccupied)
-                                    {
-                                        var piece = squares[i, j].CurrentPiece;
+                            <th class="rank-number">@rank</th>
 
-                                        string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
-                                        string pieceClass = piece.GetType().Name;
-                                        string fileType = ".png";
+                            @for (int j = 0; j < squares.GetLength(1); j++)
+                            {
+                                var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
 
-                                        <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-                                    }
-                                </button>
-                            </div>
-                        </td>
+                                if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
+                                {
+                                    squareColor = "#5c9c6f";    //green
+                                }
+
+                                <td style="background: @squareColor;">
+                                    <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
+                                        <button class="square-button" name="location"
+                                                value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
+                                                asp-controller="Home" asp-action="HandleButtonClick">
+                                            @if (squares[i, j].IsOccupied)
+                                            {
+                                                var piece = squares[i, j].CurrentPiece;
+
+                                                string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
+                                                string pieceClass = piece.GetType().Name;
+                                                string fileType = ".png";
+
+                                                <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                            }
+                                        </button>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+
                     }
-                </tr>
 
-            }
+                    <tr>
+                        <th></th>
+                        @*ABCDEFGH*@
+                        @foreach (var file in Enum.GetValues(typeof(File)))
+                        {
+                            <th class="file-letter">@file</th>
+                        }
+                    </tr>
 
-            <tr>
-                <th></th>
-                @*ABCDEFGH*@
-                @foreach (var file in Enum.GetValues(typeof(File)))
-                {
-                    <th class="file-letter">@file</th>
-                }
-            </tr>
+                </tbody>
+            </table>
+               
+        </div>
 
-        </tbody>
-    </table>
-
-    <div class="container-right">
-        <button id="theme-button" class="btn btn-secondary">Change Theme</button>
+        <div class="col">
+            <button id="theme-button" class="btn btn-secondary" onclick="toggle()">Theme</button>
+        </div>
     </div>
-
 </form>
 
 
