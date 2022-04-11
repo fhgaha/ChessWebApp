@@ -88,11 +88,7 @@
 
 <form>
     <div class="row">
-        <div class="col g-0" align="right">
-            <button class="btn btn-secondary fw-bold text-white" align="end" asp-controller="Home" asp-action="RestartGame">Restart</button>
-        </div>
-        
-        <div class="col container-center col-100">
+        <div class="col container-center order-lg-1">
             
             <table class="board-zone">
                 <tbody>
@@ -150,8 +146,12 @@
             </table>
                
         </div>
+        
+        <div class="col g-0 order-lg-0" align="right">
+            <button class="btn btn-secondary fw-bold text-white" align="end" asp-controller="Home" asp-action="RestartGame">Restart</button>
+        </div>
 
-        <div class="col">
+        <div class="col order-lg-2">
             <button id="theme-button" class="btn btn-secondary fw-bold text-white" onclick="toggle()">Theme</button>
         </div>
     </div>
