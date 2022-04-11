@@ -79,11 +79,7 @@
 
     string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
     var squares = Model.BoardSquares;
-
-    var whiteSquareColor = "#eee";
-    var blackSquareColor = "#aaa";
 }
-
 
 <form>
     <div class="row">
@@ -102,12 +98,13 @@
 
                             @for (int j = 0; j < squares.GetLength(1); j++)
                             {
-                                var squareColor = squares[i, j].SquareColor == SquareColor.Light ? whiteSquareColor : blackSquareColor;
+                                var squareColor = squares[i, j].SquareColor == SquareColor.Light ? Global.WhiteSquareColor : Global.BlackSquareColor;
 
-                                if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
-                                {
-                                    squareColor = "#5c9c6f";    //green
-                                }
+                                if (squares[i, j].IsValid)
+                                    squareColor = Global.GreenSquareColor;
+
+                                if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
+                                    squareColor = Global.RedSquareColor;
 
                                 <td style="background: @squareColor;">
                                     <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">

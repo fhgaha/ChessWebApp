@@ -1,11 +1,16 @@
 ﻿@model ChessWebApp.Square
 
 @{
-    var squareColor = Model.SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
+    var whiteSquareColor = "#eee";
+    var blackSquareColor = "#aaa";
+    var greenSquareColor = "#5c9c6f";
+    var redSquareColor = "#9c5c5f";
+
+    var squareColor = Model.SquareColor == SquareColor.Light ? whiteSquareColor : blackSquareColor;
     if (Model.IsValid)
-        squareColor = "#5c9c6f";    //green
+        squareColor = greenSquareColor;
     if (Model.CurrentPiece is King king && king.IsUnderCheck)
-        squareColor = "#9c5c5f";    //red
+        squareColor = redSquareColor;
 }
 
 <button class="square-button" type="submit" name="location" value="@Model.Location.File@Model.Location.Rank"
