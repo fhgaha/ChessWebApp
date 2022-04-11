@@ -29,28 +29,13 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is Pawn pawn)
             {
                 //en passant
-                if (fromSquare.Location.File != toSquare.Location.File
-                    && board.PawnToBeTakenEnPassant is not null)
-                {
-                    Location candidateLoc = LocationFactory.Build(toSquare.Location, 0,
-                        toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
-
-                    Square candidateSquare = board.LocationSquareMap[candidateLoc];
-
-                    if (candidateSquare.CurrentPiece is not null
-                        && candidateSquare.CurrentPiece == board.PawnToBeTakenEnPassant)
-                    {
-                        candidateSquare.Reset();
-                        AdditionalSquareToUpdate = candidateSquare;
-                    }
-                }
+                if (fromSquare.Location.File != toSquare.Location.File && board.PawnToBeTakenEnPassant is not null)
+                    HandleEnPassant(board, toSquare);
 
                 //pawn promotion
-                if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
+                if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8 
                     || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
-                {
-                    board.RegisterPawnToPromote((Pawn)toSquare.CurrentPiece);
-                }
+                    board.RegisterPawnToPromote(pawn);
             }
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
@@ -60,6 +45,21 @@ namespace ChessWebApp
             if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
 
             return true;
+        }
+
+        private void HandleEnPassant(Board board, Square toSquare)
+        {
+            Location candidateLoc = LocationFactory.Build(toSquare.Location, 0,
+                                    toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
+
+            Square candidateSquare = board.LocationSquareMap[candidateLoc];
+
+            if (candidateSquare.CurrentPiece is not null
+                && candidateSquare.CurrentPiece == board.PawnToBeTakenEnPassant)
+            {
+                candidateSquare.Reset();
+                AdditionalSquareToUpdate = candidateSquare;
+            }
         }
 
         public void PromotePawn(Board board, AbstractPiece piece)
@@ -119,6 +119,7 @@ namespace ChessWebApp
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
         }
 
+
         public void UpdateSquaresAttackedByPiece(Board board, Square attacker)
         {
             if (attacker.CurrentPiece == null) return;
@@ -130,15 +131,19 @@ namespace ChessWebApp
             attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPiecesOnSquares.Add(attacker));
         }
 
+
         public void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker) =>
             board.LocationSquareMap.Values
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
 
+
         public void ClearValidMoves() => MoveValidator.ValidMoves.Clear();
+
 
         public void UpdateValidSquares(Board board, King king, Square square)
             => MoveValidator.UpdateValidSquares(board, king, square);
+
 
         public List<Location> GetValidMoves() => MoveValidator.ValidMoves;
     }

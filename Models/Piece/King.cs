@@ -89,10 +89,11 @@ namespace ChessWebApp
 
         private List<Location> GetCastlingMoves(Board board)
         {
-            //check if king ever moved
-
             List<Location> moves = new();
 
+            if (IsUnderCheck) return moves;
+
+            //check if king ever moved
             if (!isFirstMove)
             {
                 isAbleToCastle = false;
