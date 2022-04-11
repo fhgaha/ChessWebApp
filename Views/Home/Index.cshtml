@@ -148,7 +148,8 @@
         </div>
         
         <div class="col g-0 order-lg-0" align="right">
-            <button class="btn btn-secondary fw-bold text-white" align="end" asp-controller="Home" asp-action="RestartGame">Restart</button>
+            <button class="btn btn-secondary fw-bold text-white" align="end" asp-controller="Home" asp-action="RestartGame">
+            Restart</button>
         </div>
 
         <div class="col order-lg-2">
@@ -159,7 +160,7 @@
 
 
 <!-- White Pieces Modal -->
-<div class="modal" id="WhitePromotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+<div class="modal" id="WhitePromotionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -183,7 +184,7 @@
 
                         <button id="@i" class="promotion-button" type="submit" name="location"
                                 value="@pieceClass @color @pieces[i].Location.File @pieces[i].Location.Rank"
-                                asp-controller="Home" asp-action="PromotePawn" data-dismiss="modal">
+                                asp-controller="Home" asp-action="PromotePawn" data-bs-dismiss="modal">
 
                             <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
 
@@ -196,7 +197,7 @@
 </div>
 
 <!-- Black Pieces Modal -->
-<div class="modal" id="BlackPromotionModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+<div class="modal" id="BlackPromotionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -218,8 +219,7 @@
 
                         <button id="@i" class="promotion-button" type="submit" name="location"
                                 value="@pieceClass @color @pieces[i].Location.File @pieces[i].Location.Rank"
-                                asp-controller="Home" asp-action="PromotePawn"
-                                data-dismiss="modal">
+                                asp-controller="Home" asp-action="PromotePawn" data-bs-dismiss="modal">
 
                             <img width="40" src="~/img/pieceImgs/@color@pieceClass@_fileType" />
 
