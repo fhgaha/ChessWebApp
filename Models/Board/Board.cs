@@ -16,7 +16,8 @@ namespace ChessWebApp
         public List<AbstractPiece> DarkPieces { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
-        public Pawn PawnToPromote;
+        public Pawn PawnToPromote { get; set; }
+        public Pawn PawnToBeTakenEnPassant { get; set; }
         public string message = "";
 
         public Board() : this(PieceFactory.GetStandartPiecePositions()) { }

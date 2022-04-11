@@ -5,9 +5,6 @@
 
     .board-zone {
         border-collapse: collapse;
-        /*to center the whole table:*/
-        /*margin-left: auto;
-        margin-right: auto;*/
     }
 
         .board-zone th {
@@ -83,6 +80,8 @@
     string[] squareImgNames = { "lightSquare.png", "darkSquare.png" };
     var squares = Model.BoardSquares;
 
+    var whiteSquareColor = "#eee";
+    var blackSquareColor = "#aaa";
 }
 
 
@@ -103,7 +102,7 @@
 
                             @for (int j = 0; j < squares.GetLength(1); j++)
                             {
-                                var squareColor = squares[i, j].SquareColor == SquareColor.Light ? "#eee" : "#aaa";   //black and white;
+                                var squareColor = squares[i, j].SquareColor == SquareColor.Light ? whiteSquareColor : blackSquareColor;
 
                                 if (Model.LocationSquareMap[squares[i, j].Location].IsValid)
                                 {

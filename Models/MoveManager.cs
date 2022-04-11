@@ -29,15 +29,20 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is Pawn pawn)
             {
                 //en passant
-                if (fromSquare.Location.File != toSquare.Location.File)
+                if (fromSquare.Location.File != toSquare.Location.File
+                    && board.PawnToBeTakenEnPassant is not null)
                 {
-                    Location pawnToRemoveLoc = LocationFactory.Build(toSquare.Location, 0,
+                    Location candidateLoc = LocationFactory.Build(toSquare.Location, 0,
                         toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
 
-                    Square pawnToRemoveSquare = board.LocationSquareMap[pawnToRemoveLoc];
+                    Square candidateSquare = board.LocationSquareMap[candidateLoc];
 
-                    pawnToRemoveSquare.Reset();
-                    AdditionalSquareToUpdate = pawnToRemoveSquare;
+                    if (candidateSquare.CurrentPiece is not null
+                        && candidateSquare.CurrentPiece == board.PawnToBeTakenEnPassant)
+                    {
+                        candidateSquare.Reset();
+                        AdditionalSquareToUpdate = candidateSquare;
+                    }
                 }
 
                 //pawn promotion
@@ -51,6 +56,9 @@ namespace ChessWebApp
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
             board.PerformedMoves.Add(Tuple.Create(fromSquare, toSquare));
+
+            if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
+
             return true;
         }
 
