@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
@@ -13,17 +13,21 @@
         <link rel="stylesheet" href="~/css/site.css" />*@
 
     <!--custom css-->
-    @*<link rel="stylesheet" id="dynamicCss" href="~/css/site-light.css" />*@
+    <link rel="stylesheet" id="dynamicCss" href="~/css/cover.css" />
+
 
 </head>
-<body>
+<body class="text-white bg-dark h-100">
 
     <header>
         <partial name="_navbar.cshtml" />
     </header>
 
+
+
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="px-3">
             @RenderBody()
         </main>
     </div>

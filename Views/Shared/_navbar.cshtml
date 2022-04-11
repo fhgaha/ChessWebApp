@@ -1,43 +1,19 @@
-﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Chess Web App</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+﻿@*class @Html.ActiveClass("Home", "Index") returns "active" or "" to display active page link*@
 
-@* dark theme: *@
-@*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+<nav class="nav-masthead navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark box-shadow mb-3">
     <div class="container">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Chess Web App</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">My Chess Project</a>
+      
+        <div class="justify-content-center float-md-end">
             <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <li class="nav-item ">
+                    <a class="nav-link @Html.ActiveClass("Home", "Index")" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link @Html.ActiveClass("Home", "Privacy")" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </li>
             </ul>
         </div>
     </div>
-</nav>*@
+</nav>
 
-@*
-    light theme:
-    navbar-light bg-white
-
-    dark theme:
-    from li removed  text-light
-    navbar-dark bg-primary
-*@
