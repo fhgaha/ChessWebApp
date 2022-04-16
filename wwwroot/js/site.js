@@ -86,15 +86,13 @@ $(function () {
         })
     })
 
+    
 });
 
 
 
 function toggle() {
     //event.preventDefault();
-
-
-
     var styleSheet = document.getElementById("dynamicCss");
     //var oldHref = styleSheet.getAttribute('href');
 
@@ -147,3 +145,4 @@ const handleThemeSelectorChange = (s, e) => {
     }, 300)
     window.localStorage.setItem('currentTheme', themeName);
 }
+

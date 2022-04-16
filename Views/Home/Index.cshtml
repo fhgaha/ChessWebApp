@@ -6,33 +6,19 @@
         border-collapse: collapse;
     }
 
-        .board-zone tbody{
-            width: 90%;
-
+        .board-body{
         }
 
-        .board-zone th {
-            /*padding: .5em;*/
-            padding: 0;
-            font-size: inherit;
-            text-align: center;
-        }
-
-        .board-zone td {
+        .board-cell {
             position: relative;
-            /*width: 70px;
-            height: 70px;*/
             padding: 0;
-      /*      min-width: 36px;
-            min-height: 36px;*/
-            /*width: 12%;*/
         }
 
-        .board-zone td:after {
-            content: '';
-            display: block;
-            margin-top: 100%;
-        }
+            .board-cell:after {
+                content: '';
+                display: block;
+                margin-top: 100%;
+            }
 
         .board-zone button {
             border: none;
@@ -44,18 +30,40 @@
         }
 
     .oneSquare {
-    /*    position: relative;
-        width: fit-content;
-        height: fit-content;*/
-
         position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
-        /*background: gold;*/
     }
 
+    img {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    form {
+        /*display: flex;*/
+        justify-content: center;
+    }
+
+    .container-left {
+        justify-content: right;
+    }
+
+    .container-board {
+        min-width: 219px;
+        max-width: 425px;
+        /*max-height: 100vh;*/
+        width: calc(100vh - 100px);
+    }
+
+    @@media screen and (min-width: 768px) {
+        .container-board {
+            min-width: 50%;
+        }
+    }
 
     .modal-body {
         display: inline-flex;
@@ -75,36 +83,6 @@
         padding: 0;
         margin: 0;
     }
-
-    img {
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
-
-    form {
-        /*display: flex;*/
-        justify-content: center;
-    }
-
-    .container-left {
-        justify-content: right;
-    }
-
-    .container-board {
-        min-width: 250px;
-        max-width: 532px;
-    }
-
-    @@media screen and (min-width: 768px) {
-        .container-board {
-            min-width: 532px;
-        }
-    }
-
-   /* @@media-desktop {
-        .container-board{width: 532px;}
-    }*/
 </style>
 
 @{ ViewData["Title"] = "Index";
@@ -114,14 +92,14 @@
 }
 
 <form>
-    <div class="row d-block d-md-flex">
+    <div class="row d-grid d-md-flex">
         <div class="col container-board g-0 d-grid order-md-1">
-            <table class="board-zone">
-                <tbody>
+            <div class="board-zone d-grid">
+                <div class="board-body d-table">
 
                     @for (int i = 0; i < squares.GetLength(0); i++)
                     {
-                        <tr>
+                        <div class="board-row d-table-row">
 
                             @{ var rank = Constants.BoardLength - i + " ";}
 
@@ -137,7 +115,7 @@
                                 if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
                                     squareColor = Global.RedSquareColor;
 
-                                <td style="background: @squareColor; opacity: 0.9">
+                                <div class="board-cell d-table-cell" style="background: @squareColor; opacity: 0.9">
                                     <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
                                         <button class="square-button" name="location"
                                                 value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
@@ -154,9 +132,9 @@
                                             }
                                         </button>
                                     </div>
-                                </td>
+                                </div>
                             }
-                        </tr>
+                        </div>
 
                     }
 
@@ -169,12 +147,12 @@
                         }
                     </tr>-->
 
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
         
         <div class="col px-0 py-3 px-md-3 py-md-0 order-md-0" align="right">
-            <button class="btn btn-secondary fw-bold text-white" @*align="end"*@ asp-controller="Home" asp-action="RestartGame">
+            <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
             Restart</button>
         </div>
 
