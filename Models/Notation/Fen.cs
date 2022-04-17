@@ -8,6 +8,7 @@ namespace ChessWebApp.Models.Notation
 {
     public class Fen
     {
+        private int halfmoveCount = 0;
         public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         /*
         rnbqkbnr — расположение фигур на 8-й горизонтали слева направо,
@@ -19,7 +20,8 @@ namespace ChessWebApp.Models.Notation
         w — предстоит ход белых,
         KQkq — возможны короткие и длинные рокировки белых и чёрных,
         - — не было предыдущего хода пешкой на два поля,
-        0 — последних ходов без взятий или движения пешек не было,
+        0 — 50-move draw rule. When this counter reaches 100 (allowing each player to make 50 moves), 
+            the game ends in a draw
         1 — предстоит первый ход.
 
         Позиция после хода 1. e4: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
@@ -45,29 +47,61 @@ namespace ChessWebApp.Models.Notation
                         continue;
                     }
 
-                    if (emptySquareCount != 0)
-                    {
-                        builder.Append(emptySquareCount);
-                        emptySquareCount = 0;
-                    }
+                    emptySquareCount = TryWriteNumber(builder, emptySquareCount);
 
                     var letter = GetLetter(square.CurrentPiece);
                     builder.Append(letter);
                 }
+
+                emptySquareCount = TryWriteNumber(builder, emptySquareCount);
                 builder.Append('/');
             }
 
             builder.Remove(builder.Length - 1, 1);
 
-            builder.Append(GetWhosMoveIsNext(board));
-            builder.Append(GetCastlingLetters(board));
+            builder.Append(" " + GetWhosMoveIsNext(board));
+            builder.Append(" " + GetCastlingLetters(board));
+            builder.Append(" " + GetEnPassantCandidate(board));
+            builder.Append(" " + Get50MoveDrawCount(board));
+            builder.Append(" " + GetFullmovesCount(board));
 
             return builder.ToString();
         }
 
+        private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
+
+        private string Get50MoveDrawCount(Board board)
+        {
+            if (board.LastMove is null) return "-";
+
+            //NB!
+            //what to do if pawn promoted? should check fen after moving pawn to the last rank and before 
+            //changing pawn to a piece
+            if (board.LastMove.Item2.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
+                halfmoveCount = 0;
+            else
+                halfmoveCount++;
+
+            return halfmoveCount.ToString();
+        }
+
+        private string GetEnPassantCandidate(Board board)
+            => LocationFactory.Parse(board.PawnToBeTakenEnPassant.Location);
+
+        private static int TryWriteNumber(StringBuilder builder, int emptySquareCount)
+        {
+            if (emptySquareCount != 0)
+            {
+                builder.Append(emptySquareCount);
+                emptySquareCount = 0;
+            }
+
+            return emptySquareCount;
+        }
+
         private string GetCastlingLetters(Board board)
         {
-            string result = " ";
+            string result = "";
 
             if (board.WhiteKing.isAbleToCastle)
             {
@@ -95,12 +129,12 @@ namespace ChessWebApp.Models.Notation
                     result += "q";
             }
 
-            return result == " " ? result + "-" : result;
+            return result == "" ? result + "-" : result;
         }
 
         private string GetWhosMoveIsNext(Board board)
         {
-            bool lastMovePieceColorIsWhite = board.PerformedMoves.Last().Item2.CurrentPiece.PieceColor == PieceColor.Light;
+            bool lastMovePieceColorIsWhite = board.LastMove.Item2.CurrentPiece.PieceColor == PieceColor.Light;
             return lastMovePieceColorIsWhite ? " b" : " w";
         }
 

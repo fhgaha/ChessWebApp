@@ -20,6 +20,10 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, fromSquare);
 
+            if (board.PieceCapturedOnLastMove is not null) board.PieceCapturedOnLastMove = null;
+
+            if (toSquare.IsOccupied) board.PieceCapturedOnLastMove = toSquare.CurrentPiece;
+
             fromSquare.MovePiece(toSquare);
 
             //castling

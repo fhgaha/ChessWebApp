@@ -37,5 +37,7 @@ namespace ChessWebApp
 
             return new Location(file, rank);
         }
+
+        public static string Parse(Location location) => location.File.ToString() + location.Rank.ToString();
     }
 }

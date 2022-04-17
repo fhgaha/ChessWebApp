@@ -10,6 +10,7 @@ namespace ChessWebApp
     {
         public bool IsReal = true;
         public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
+        public Tuple<Square, Square> LastMove { get => PerformedMoves.LastOrDefault(); }
         public Square[,] BoardSquares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public List<AbstractPiece> LightPieces { get; private set; }
@@ -18,6 +19,8 @@ namespace ChessWebApp
         public King BlackKing { get; private set; }
         public Pawn PawnToPromote { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
+        public AbstractPiece PieceCapturedOnLastMove { get; internal set; }
+
         public string message = "";
 
         public Board() : this(PieceFactory.GetStandartPiecePositions()) { }

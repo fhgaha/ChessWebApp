@@ -11,7 +11,7 @@ namespace ChessWebApp.Models
         public Board Board;
         public MoveManager MoveManager;
 
-        public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
+        //public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
         public string message = "";
         public bool IsWhitesMove = true;
         private Square fromSquare;
