@@ -24,7 +24,7 @@ namespace ChessWebApp
 
         public Board(Dictionary<Location, AbstractPiece> pieces)
         {
-            BoardSquares = new Square[Constants.BoardLength, Constants.BoardLength];
+            BoardSquares = new Square[Global.BoardLength, Global.BoardLength];
             LightPieces = new List<AbstractPiece>();
             DarkPieces = new List<AbstractPiece>();
             LocationSquareMap = new Dictionary<Location, Square>();
@@ -36,7 +36,7 @@ namespace ChessWebApp
 
                 foreach (File file in Enum.GetValues(typeof(File)))
                 {
-                    var newSquare = new Square(currentColor, new Location(file, Constants.BoardLength - i));
+                    var newSquare = new Square(currentColor, new Location(file, Global.BoardLength - i));
                     if (pieces.ContainsKey(newSquare.Location))
                     {
                         var piece = pieces[newSquare.Location];
@@ -68,7 +68,7 @@ namespace ChessWebApp
         {
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
             {
-                Console.Write(Constants.BoardLength - i + " ");
+                Console.Write(Global.BoardLength - i + " ");
                 for (int j = 0; j < BoardSquares.GetLength(1); j++)
                 {
                     if (BoardSquares[i, j].IsOccupied)

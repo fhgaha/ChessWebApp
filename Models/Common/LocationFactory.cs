@@ -15,11 +15,11 @@ namespace ChessWebApp
             int currentFile = (int)current.File;
 
             int newFileValue = currentFile + fileOffset;
-            if (newFileValue < 0 || newFileValue > Constants.BoardLength - 1) 
+            if (newFileValue < 0 || newFileValue > Global.BoardLength - 1) 
                 return null;
 
             int newRankValue = current.Rank + rankOffset;
-            if (newRankValue < 1 || newRankValue > Constants.BoardLength) 
+            if (newRankValue < 1 || newRankValue > Global.BoardLength) 
                 return null;
 
             return new Location(files[newFileValue], newRankValue);

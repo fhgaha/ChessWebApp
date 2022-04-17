@@ -6,28 +6,25 @@
         border-collapse: collapse;
     }
 
-        .board-body{
+    .board-cell {
+        position: relative;
+        padding: 0;
+    }
+
+        .board-cell:after {
+            content: '';
+            display: block;
+            margin-top: 100%;
         }
 
-        .board-cell {
-            position: relative;
-            padding: 0;
-        }
-
-            .board-cell:after {
-                content: '';
-                display: block;
-                margin-top: 100%;
-            }
-
-        .board-zone button {
-            border: none;
-            background-color: transparent;
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
+    .board-zone button {
+        border: none;
+        background-color: transparent;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
 
     .oneSquare {
         position: absolute;
@@ -44,7 +41,6 @@
     }
 
     form {
-        /*display: flex;*/
         justify-content: center;
     }
 
@@ -55,7 +51,6 @@
     .container-board {
         min-width: 219px;
         max-width: 425px;
-        /*max-height: 100vh;*/
         width: calc(100vh - 100px);
     }
 
@@ -101,13 +96,14 @@
                     {
                         <div class="board-row d-table-row">
 
-                            @{ var rank = Constants.BoardLength - i + " ";}
+                            @{ var rank = Global.BoardLength - i + " ";}
 
                           @*  <th class="rank-number">@rank</th>*@
 
                             @for (int j = 0; j < squares.GetLength(1); j++)
                             {
-                                var squareColor = squares[i, j].SquareColor == SquareColor.Light ? Global.WhiteSquareColor : Global.BlackSquareColor;
+                                var squareColor = squares[i, j].SquareColor == SquareColor.Light
+                                    ? Global.WhiteSquareColor : Global.BlackSquareColor;
 
                                 if (squares[i, j].IsValid)
                                     squareColor = Global.GreenSquareColor;
