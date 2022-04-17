@@ -25,7 +25,7 @@ namespace ChessWebApp
             moveCandidates.Add(LocationFactory.Build(start.Location, 0, rankOffset));
             moveCandidates.Add(LocationFactory.Build(start.Location, 1, rankOffset));
             moveCandidates.Add(LocationFactory.Build(start.Location, -1, rankOffset));
-            if (isFirstMove) moveCandidates.Add(LocationFactory.Build(start.Location, 0, rankOffset * 2));
+            if (IsFirstMove) moveCandidates.Add(LocationFactory.Build(start.Location, 0, rankOffset * 2));
 
             var validLocations = moveCandidates.Where(c => c != null).Where(candidate =>
             {

@@ -137,17 +137,10 @@ namespace ChessWebApp.Controllers
             string className = data[0];
             string color = data[1];
             string location = string.Concat(data[2], data[3]);
-
-            var names = new Dictionary<string, Type>
-            {
-                [typeof(Queen).Name] = typeof(Queen),
-                [typeof(Knight).Name] = typeof(Knight),
-                [typeof(Rook).Name] = typeof(Rook),
-                [typeof(Bishop).Name] = typeof(Bishop)
-            };
+            Type type = PieceFactory.AbstractPieceSubclasses[className];
 
             AbstractPiece newPiece = (AbstractPiece)Activator.CreateInstance(
-                names[className],
+                type,
                 color == "white" ? PieceColor.Light : PieceColor.Dark);
 
             newPiece.Location = game.Board.PawnToPromote.Location; 

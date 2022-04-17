@@ -6,7 +6,7 @@ namespace ChessWebApp
 {
     public class King : AbstractPiece
     {
-        bool isAbleToCastle = true;
+        public bool isAbleToCastle = true;
         public bool IsUnderCheck = false;
         public bool UpdateIsUnderCheck(Square kingSquare)
         {
@@ -94,7 +94,7 @@ namespace ChessWebApp
             if (IsUnderCheck) return moves;
 
             //check if king ever moved
-            if (!isFirstMove)
+            if (!IsFirstMove)
             {
                 isAbleToCastle = false;
                 return moves;
@@ -109,7 +109,7 @@ namespace ChessWebApp
             }
             .Where(r => r != null).ToList();
 
-            if (rooks.Count == 2 && rooks[0].isFirstMove == false && rooks[1].isFirstMove == false)
+            if (rooks.Count == 2 && rooks[0].IsFirstMove == false && rooks[1].IsFirstMove == false)
             {
                 isAbleToCastle = false;
                 return moves;
@@ -167,7 +167,7 @@ namespace ChessWebApp
             //check if rooks have moved
 
             var rooks = candidates.Where(sq => sq.CurrentPiece is Rook)
-                            .Where(r => r.CurrentPiece.isFirstMove).ToList();
+                            .Where(r => r.CurrentPiece.IsFirstMove).ToList();
 
             if (rooks.Count == 0) return null;
 

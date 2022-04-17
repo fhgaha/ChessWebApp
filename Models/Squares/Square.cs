@@ -36,7 +36,7 @@ namespace ChessWebApp
 
         public void MovePiece(Square to)
         {
-            CurrentPiece.isFirstMove = false;
+            CurrentPiece.IsFirstMove = false;
             to.IsOccupied = true;
             to.CurrentPiece = this.CurrentPiece;
             to.CurrentPiece.Location = to.Location;

@@ -6,8 +6,6 @@ namespace ChessWebApp
 {
     public class Rook : AbstractPiece
     {
-        public bool IsFirstMove = true;
-
         public Rook(PieceColor pieceColor) : base(pieceColor)
         {
             Name = "Rook";

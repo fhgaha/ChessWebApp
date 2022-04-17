@@ -8,6 +8,13 @@ namespace ChessWebApp
 {
     public sealed class PieceFactory
     {
+        public static Dictionary<string, Type> AbstractPieceSubclasses = new Dictionary<string, Type>
+        {
+            [typeof(Queen).Name] = typeof(Queen),
+            [typeof(Knight).Name] = typeof(Knight),
+            [typeof(Rook).Name] = typeof(Rook),
+            [typeof(Bishop).Name] = typeof(Bishop)
+        };
 
         public static Dictionary<Location, AbstractPiece> GetStandartPiecePositions()
         {

@@ -10,7 +10,7 @@ namespace ChessWebApp
     {
         public string Name { get; protected set; }
         public PieceColor PieceColor { get; protected set; }
-        public bool isFirstMove = true;
+        public bool IsFirstMove = true;
         public Location Location { get; set; }
 
         protected AbstractPiece(PieceColor pieceColor)
