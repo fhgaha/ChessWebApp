@@ -68,25 +68,18 @@ namespace ChessWebApp.Models.Notation
             return builder.ToString();
         }
 
-        private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
 
-        private string Get50MoveDrawCount(Board board)
+        private string GetLetter(AbstractPiece piece)
         {
-            if (board.LastMove is null) return "-";
+            //probably class will always be AbstractPiece
+            string letter = piece.GetType().Name.First().ToString();
 
-            //NB!
-            //what to do if pawn promoted? should check fen after moving pawn to the last rank and before 
-            //changing pawn to a piece
-            if (board.LastMove.Item2.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
-                halfmoveCount = 0;
-            else
-                halfmoveCount++;
+            if (piece.GetType() == typeof(Knight)) letter = "n";
 
-            return halfmoveCount.ToString();
+            letter = piece.PieceColor == PieceColor.Light ? letter.ToUpper() : letter.ToLower();
+
+            return letter;
         }
-
-        private string GetEnPassantCandidate(Board board)
-            => LocationFactory.Parse(board.PawnToBeTakenEnPassant.Location);
 
         private static int TryWriteNumber(StringBuilder builder, int emptySquareCount)
         {
@@ -97,6 +90,12 @@ namespace ChessWebApp.Models.Notation
             }
 
             return emptySquareCount;
+        }
+
+        private string GetWhosMoveIsNext(Board board)
+        {
+            bool lastMovePieceColorIsWhite = board.LastMove.Item2.CurrentPiece.PieceColor == PieceColor.Light;
+            return lastMovePieceColorIsWhite ? " b" : " w";
         }
 
         private string GetCastlingLetters(Board board)
@@ -132,22 +131,24 @@ namespace ChessWebApp.Models.Notation
             return result == "" ? result + "-" : result;
         }
 
-        private string GetWhosMoveIsNext(Board board)
+        private string GetEnPassantCandidate(Board board)
+            => LocationFactory.Parse(board.PawnToBeTakenEnPassant.Location);
+
+        private string Get50MoveDrawCount(Board board)
         {
-            bool lastMovePieceColorIsWhite = board.LastMove.Item2.CurrentPiece.PieceColor == PieceColor.Light;
-            return lastMovePieceColorIsWhite ? " b" : " w";
+            if (board.LastMove is null) return "-";
+
+            //NB!
+            //what to do if pawn promoted? should check fen after moving pawn to the last rank and before 
+            //changing pawn to a piece
+            if (board.LastMove.Item2.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
+                halfmoveCount = 0;
+            else
+                halfmoveCount++;
+
+            return halfmoveCount.ToString();
         }
 
-        private string GetLetter(AbstractPiece piece)
-        {
-            //probably class will always be AbstractPiece
-            string letter = piece.GetType().Name.First().ToString();
-
-            if (piece.GetType() == typeof(Knight)) letter = "n";
-
-            letter = piece.PieceColor == PieceColor.Light ? letter.ToUpper() : letter.ToLower();
-
-            return letter;
-        }
+        private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
     }
 }
