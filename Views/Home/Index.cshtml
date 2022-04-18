@@ -6,15 +6,15 @@
         justify-content: center;
     }
 
-    .row.d-grid.d-md-flex {
+    .row.d-grid {
         grid-gap: 1em;
     }
 
     .board-zone {
         grid-template-columns: repeat(8, 1fr);
         grid-gap: 0px;
-        /* min-width: 219px;
-        max-width: 425px;*/
+        /*min-width: 219px;*/
+        max-width: 425px;
         /*height: 75vh;*/
     }
 
@@ -41,6 +41,7 @@
         padding: 0;
         width: 100%;
         height: 100%;
+        vertical-align: inherit;
     }
 
     .container-left {
@@ -66,9 +67,8 @@
 }
 
 <form>
-    <div class="row d-grid d-md-flex">
-
-        <div class="board-zone col g-0 d-grid order-md-1">
+    <div class="row d-grid">
+        <div class="board-zone col g-0 d-grid">
 
             @for (int i = 0; i < squares.GetLength(0); i++)
             {
@@ -108,10 +108,10 @@
                 }
             }
 
-                    <!--<tr>
-            <th></th>-->
-                    @*ABCDEFGH*@
-                    <!--@foreach (var file in Enum.GetValues(typeof(File)))
+            <!--<tr>
+        <th></th>-->
+            @*ABCDEFGH*@
+            <!--@foreach (var file in Enum.GetValues(typeof(File)))
             {
                 <th class="file-letter">@file</th>
             }
@@ -119,18 +119,19 @@
 
         </div>
 
-        <div class="col p-0 px-md-3 order-md-0" align="right">
-            <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
-            Restart</button>
-        </div>
-
-        <div class="col fen-zone p-0 order-md-2">
+        <div class="col fen-zone p-0">
             <div class="input-group">
                 <span class="input-group-text bg-dark text-white" id="basic-addon1">FEN</span>
-                <input id="fen-input" type="text" class="form-control bg-dark text-white-50" 
+                <input id="fen-input" type="text" class="form-control bg-dark text-white-50"
                        value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
                        placeholder="" aria-label="Username" aria-describedby="basic-addon1">
             </div>
+        </div>
+
+        <div class="col p-0 px-md-3" align="right">
+            <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
+                Restart
+            </button>
         </div>
     </div>
 </form>
