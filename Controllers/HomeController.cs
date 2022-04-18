@@ -1,4 +1,5 @@
 ﻿using ChessWebApp.Models;
+using ChessWebApp.Models.Notation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -18,8 +19,14 @@ namespace ChessWebApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private static Game game;
         private static Queue<List<Square>> savedSquares = new Queue<List<Square>>();
+        private Fen fen = new();
 
         public HomeController(ILogger<HomeController> logger) => _logger = logger;
+
+        public string GetFen()
+        {
+            return fen.Get(game.Board);
+        }
 
         public IActionResult RestartGame()
         {
@@ -151,9 +158,6 @@ namespace ChessWebApp.Controllers
 
             return UpdateChangedSquaresJSON(newPiece.Location.File.ToString() + newPiece.Location.Rank.ToString());
         }
-
-        
-
 
         public IActionResult Privacy()
         {

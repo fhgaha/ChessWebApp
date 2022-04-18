@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessWebApp.Models.Notation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace ChessWebApp.Models
         public bool IsOver = false;
         public Board Board;
         public MoveManager MoveManager;
+        public Fen Fen;
 
         //public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
         public string message = "";
@@ -37,6 +39,7 @@ namespace ChessWebApp.Models
 
             Board = new(pieces);
             MoveManager = new();
+            Fen = new();
         }
 
         public bool HandleClick(Square square)
@@ -99,7 +102,10 @@ namespace ChessWebApp.Models
             return isMovePerformed;
         }
 
-        public void PromotePawn(AbstractPiece piece) => MoveManager.PromotePawn(Board, piece);
+        public void PromotePawn(AbstractPiece piece)
+        {
+            MoveManager.PromotePawn(Board, piece);
+        }
 
         public List<Location> GetValidMoves() => MoveManager.GetValidMoves();
     }

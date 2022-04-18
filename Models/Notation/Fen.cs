@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessWebApp.Models.Notation
 {
-    public class Fen
-    {
-        private int halfmoveCount = 0;
-        public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        /*
+    /*
         rnbqkbnr — расположение фигур на 8-й горизонтали слева направо,
         / — разделитель,
         pppppppp — расположение фигур на 7-й горизонтали,
@@ -29,6 +25,10 @@ namespace ChessWebApp.Models.Notation
         После хода 2. Nf3: rnbqkbnr/ppp1pppp/8/3p4/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
         После хода 2. ... Kd7: rnbq1bnr/pppkpppp/8/3p4/4P3/5N2/PPPP1PPP/RNBQKB1R w KQ - 2 3
         */
+    public class Fen
+    {
+        private int halfmoveCount = 0;
+        public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         public string Get(Board board)
         {
@@ -94,7 +94,7 @@ namespace ChessWebApp.Models.Notation
 
         private string GetWhosMoveIsNext(Board board)
         {
-            bool lastMovePieceColorIsWhite = board.LastMove.Item2.CurrentPiece.PieceColor == PieceColor.Light;
+            bool lastMovePieceColorIsWhite = board.LastMove?.Item2.CurrentPiece.PieceColor == PieceColor.Light;
             return lastMovePieceColorIsWhite ? " b" : " w";
         }
 
@@ -132,15 +132,15 @@ namespace ChessWebApp.Models.Notation
         }
 
         private string GetEnPassantCandidate(Board board)
-            => LocationFactory.Parse(board.PawnToBeTakenEnPassant.Location);
+        {
+            if (board.PawnToBeTakenEnPassant is null) return "";
+            return LocationFactory.Parse(board.PawnToBeTakenEnPassant.Location);
+        }
 
         private string Get50MoveDrawCount(Board board)
         {
             if (board.LastMove is null) return "-";
 
-            //NB!
-            //what to do if pawn promoted? should check fen after moving pawn to the last rank and before 
-            //changing pawn to a piece
             if (board.LastMove.Item2.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
                 halfmoveCount = 0;
             else

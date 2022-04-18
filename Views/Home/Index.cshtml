@@ -51,7 +51,7 @@
     .container-board {
         min-width: 219px;
         max-width: 425px;
-        width: calc(100vh - 100px);
+        /*width: calc(100vh - 100px);*/
     }
 
     @@media screen and (min-width: 768px) {
@@ -78,6 +78,8 @@
         padding: 0;
         margin: 0;
     }
+
+    #fen-input{font-size: smaller;}
 </style>
 
 @{ ViewData["Title"] = "Index";
@@ -155,7 +157,9 @@
         <div class="col fen-zone  order-md-2">
             <div class="input-group">
                 <span class="input-group-text bg-dark text-white" id="basic-addon1">FEN</span>
-                <input type="text" class="form-control bg-dark text-white-50" placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" aria-label="Username" aria-describedby="basic-addon1">
+                <input id="fen-input" type="text" class="form-control bg-dark text-white-50" 
+                       value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+                       placeholder="" aria-label="Username" aria-describedby="basic-addon1">
             </div>
         </div>
     </div>

@@ -11,6 +11,7 @@ $(function () {
         console.log("%c you clicked on: " + squareLoc, green);
 
         doSquareUpdate(squareLoc);
+        doFenUpdate();
     })
 
     function doSquareUpdate(squareLoc) {
@@ -18,9 +19,7 @@ $(function () {
             //dataType: "json",
             method: "POST",
             url: "/Home/UpdateChangedSquaresJSON",
-            data: {
-                "location": squareLoc
-            },
+            data: { "location": squareLoc },
             error: function (jqXHR) {
                 console.log(jqXHR.statusText, red);
                 console.log(jqXHR, red);
@@ -42,9 +41,7 @@ $(function () {
     function TryOpenPromotionModal(squareLoc) {
         $.ajax({
             type: "json",
-            data: {
-                "location": squareLoc
-            },
+            data: { "location": squareLoc },
             url: "/Home/CheckPromotionJSON",
             success: function (data) {
                 console.log("Square data:");
@@ -52,7 +49,7 @@ $(function () {
 
                 if (data != null && data.name == "Pawn"
                     && (data.location.rank == 8 && data.pieceColor == 0
-                     || data.location.rank == 1 && data.pieceColor == 1 )) {
+                        || data.location.rank == 1 && data.pieceColor == 1)) {
 
                     if (data.pieceColor == "0")
                         $('#WhitePromotionModal').modal('show');
@@ -61,6 +58,15 @@ $(function () {
                 }
             }
         })
+    }
+
+    function doFenUpdate() {
+        $.ajax({
+            url: "/Home/GetFen",
+            success: function (data) {
+                $('#fen-input').val(data);
+            }
+        });
     }
 
     $(document).on("click", ".promotion-button", function () {
@@ -86,63 +92,6 @@ $(function () {
         })
     })
 
-    
+
 });
-
-
-
-function toggle() {
-    //event.preventDefault();
-    var styleSheet = document.getElementById("dynamicCss");
-    //var oldHref = styleSheet.getAttribute('href');
-
-    var oldHref = window.localStorage.getItem('currentTheme');
-
-    var newHref = oldHref == "/css/site-light.css"
-        ? '/css/site-dark.css' : '/css/site-light.css';
-
-    //styleSheet.setAttribute('href', newHref);
-
-    const oldStyleSheet = $('#dynamicCss');
-    const newStyleSheet = oldStyleSheet.clone();
-    //oldStyleSheet.attr('id', 'old-theme');
-    newStyleSheet.attr('href', newHref);
-    ts.after(newStyleSheet);
-    setTimeout(() => {
-        $('#dynamicCss').remove()
-    }, 300);
-
-    window.localStorage.setItem('currentTheme', newHref);
-}
-
-
-
-
-//const themeName = themeSelector.value;
-//$('#theme-styles').attr('href', `/bootswatch/dist/${themeName}/bootstrap.min.css`);
-
-const handleThemeSelectorChange = (s, e) => {
-    const themeName = themeSelector.value;
-    const href = `/bootswatch/dist/${themeName}/bootstrap.min.css`;
-
-    // Changing the href of a stylesheet link immediately takes that stylesheet out 
-    // of the set of styles and the default styles will be applied in the interval 
-    // between the new href and the old href. The effect is a noticeable flicker as 
-    // elements change size, shape, and color. We can work around this by creating a
-    // new stylesheet with the new href and sliding it below the original 
-    // stylesheet. We then give it a just a few milliseconds to apply the new styles
-    // before removing the original stylesheet. If we change the theme rapid fire, 
-    // we could wind up with several old stylesheets for just a beat. But we're 
-    // using jQuery to remove them all, leaving only the new one. The effect is a 
-    // much smoother transition between themes.
-    const ts = $('#dynamicCss');
-    const ss = ts.clone();
-    ts.attr('id', 'old-theme');
-    ss.attr('href', href);
-    ts.after(ss);
-    setTimeout(() => {
-        $('#old-theme').remove()
-    }, 300)
-    window.localStorage.setItem('currentTheme', themeName);
-}
 
