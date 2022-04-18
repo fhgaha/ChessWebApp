@@ -59,11 +59,21 @@ namespace ChessWebApp.Models.Notation
 
             builder.Remove(builder.Length - 1, 1);
 
-            builder.Append(" " + GetWhosMoveIsNext(board));
-            builder.Append(" " + GetCastlingLetters(board));
-            builder.Append(" " + GetEnPassantCandidate(board));
-            builder.Append(" " + Get50MoveDrawCount(board));
-            builder.Append(" " + GetFullmovesCount(board));
+            builder.Append(string.Join(' ', new[] 
+            {
+                GetWhosMoveIsNext(board),
+                GetCastlingLetters(board),
+                GetEnPassantCandidate(board),
+                Get50MoveDrawCount(board),
+                GetFullmovesCount(board)
+            }.Where(e => e != null)
+            ));
+
+            //builder.Append(" " + GetWhosMoveIsNext(board));
+            //builder.Append(" " + GetCastlingLetters(board));
+            //builder.Append(" " + GetEnPassantCandidate(board));
+            //builder.Append(" " + Get50MoveDrawCount(board));
+            //builder.Append(" " + GetFullmovesCount(board));
 
             return builder.ToString();
         }
@@ -95,7 +105,7 @@ namespace ChessWebApp.Models.Notation
         private string GetWhosMoveIsNext(Board board)
         {
             bool lastMovePieceColorIsWhite = board.LastMove?.Item2.CurrentPiece.PieceColor == PieceColor.Light;
-            return lastMovePieceColorIsWhite ? " b" : " w";
+            return lastMovePieceColorIsWhite ? "b" : " w";
         }
 
         private string GetCastlingLetters(Board board)
