@@ -3,21 +3,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     .board-zone {
-        border-collapse: collapse;
+        grid-template-columns: repeat(8, 1fr);
+        grid-gap: 0px;
+    }
+
+    .oneSquare{
+        width: 100%;
+        height: 100%;
     }
 
     .board-cell {
-        position: relative;
-        padding: 0;
+        aspect-ratio: 1;
+        opacity: 0.9;
     }
 
-        .board-cell:after {
-            content: '';
-            display: block;
-            margin-top: 100%;
-        }
-
-    .board-zone button {
+    .square-button {
         border: none;
         background-color: transparent;
         width: 100%;
@@ -26,15 +26,7 @@
         margin: 0;
     }
 
-    .oneSquare {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-
-    img {
+    .piece-img {
         padding: 0;
         width: 100%;
         height: 100%;
@@ -60,25 +52,6 @@
         }
     }
 
-    .modal-body {
-        display: inline-flex;
-    }
-
-    .modal-content {
-        margin: 10% auto;
-        width: min-content;
-        border-radius: 0;
-    }
-
-    .promotion-button {
-        border: none;
-        background-color: transparent;
-        width: 70px;
-        height: 70px;
-        padding: 0;
-        margin: 0;
-    }
-
     #fen-input{font-size: smaller;}
 </style>
 
@@ -90,63 +63,62 @@
 
 <form>
     <div class="row d-grid d-md-flex">
-        <div class="col container-board g-0 d-grid order-md-1">
-            <div class="board-zone d-grid">
-                <div class="board-body d-table">
 
-                    @for (int i = 0; i < squares.GetLength(0); i++)
-                    {
-                        <div class="board-row d-table-row">
+        <div class="board-zone col container-board g-0 d-grid order-md-1">
 
-                            @{ var rank = Global.BoardLength - i + " ";}
+            @for (int i = 0; i < squares.GetLength(0); i++)
+            {
 
-                          @*  <th class="rank-number">@rank</th>*@
+                var rank = Global.BoardLength - i + " ";
 
-                            @for (int j = 0; j < squares.GetLength(1); j++)
-                            {
-                                var squareColor = squares[i, j].SquareColor == SquareColor.Light
-                                    ? Global.WhiteSquareColor : Global.BlackSquareColor;
+                @* <th class="rank-number">@rank</th>*@
 
-                                if (squares[i, j].IsValid)
-                                    squareColor = Global.GreenSquareColor;
+                @for (int j = 0; j < squares.GetLength(1); j++)
+                {
+                    var squareColor = squares[i, j].SquareColor == SquareColor.Light
+                        ? Global.WhiteSquareColor : Global.BlackSquareColor;
 
-                                if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
-                                    squareColor = Global.RedSquareColor;
+                    if (squares[i, j].IsValid)
+                        squareColor = Global.GreenSquareColor;
 
-                                <div class="board-cell d-table-cell" style="background: @squareColor; opacity: 0.9">
-                                    <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                                        <button class="square-button" name="location"
-                                                value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
-                                                asp-controller="Home" asp-action="HandleButtonClick">
-                                            @if (squares[i, j].IsOccupied)
-                                            {
-                                                var piece = squares[i, j].CurrentPiece;
+                    if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
+                        squareColor = Global.RedSquareColor;
 
-                                                string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
-                                                string pieceClass = piece.GetType().Name;
-                                                string fileType = ".png";
+                    <div class="board-cell" style="background: @squareColor;">
+                        <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
+                            <button class="square-button" name="location"
+                                    value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
+                                    asp-controller="Home" asp-action="HandleButtonClick">
+                                @if (squares[i, j].IsOccupied)
+                                {
+                                    var piece = squares[i, j].CurrentPiece;
 
-                                                <img width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-                                            }
-                                        </button>
-                                    </div>
-                                </div>
-                            }
+                                    string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
+                                    string pieceClass = piece.GetType().Name;
+                                    string fileType = ".png";
+
+                                    <img class="piece-img" width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                }
+                            </button>
                         </div>
-
-                    }
+                    </div>
+                }
+            }
 
                     <!--<tr>
-                        <th></th>-->
-                        @*ABCDEFGH*@
-                        <!--@foreach (var file in Enum.GetValues(typeof(File)))
-                        {
-                            <th class="file-letter">@file</th>
-                        }
-                    </tr>-->
+            <th></th>-->
+                    @*ABCDEFGH*@
+                    <!--@foreach (var file in Enum.GetValues(typeof(File)))
+            {
+                <th class="file-letter">@file</th>
+            }
+        </tr>-->
 
-                </div>
-            </div>
+        </div>
+
+
+        <div class="">
+            
         </div>
         
         <div class="col px-0 py-3 px-md-3 py-md-0 order-md-0" align="right">
@@ -165,6 +137,27 @@
     </div>
 </form>
 
+
+<style>
+    .modal-body {
+        display: inline-flex;
+    }
+
+    .modal-content {
+        margin: 10% auto;
+        width: min-content;
+        border-radius: 0;
+    }
+
+    .promotion-button {
+        border: none;
+        background-color: transparent;
+        width: 70px;
+        height: 70px;
+        padding: 0;
+        margin: 0;
+    }
+</style>
 
 <!-- White Pieces Modal -->
 <div class="modal" id="WhitePromotionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
