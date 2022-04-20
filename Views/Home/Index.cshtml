@@ -51,7 +51,21 @@
     .container-board {
     }
 
+  
+
     @@media screen and (min-width: 768px) {
+        .board-and-numbers{grid-area: board-and-numbers;}
+        .fen-zone{grid-area: fen-zone;}
+        .buttons-zone{grid-area: buttons-zone;}
+        .debute-zone{grid-area: debute-zone;}
+
+        .row.d-grid {
+            display: grid !important;
+            grid-template-columns: auto auto;
+            grid-template-areas: "board-and-numbers buttons-zone"
+                                 "fen-zone debute-zone";
+        }
+
         .container-board {
             min-width: 50%;
         }
@@ -68,55 +82,57 @@
 
 <form>
     <div class="row d-grid">
-        <div class="board-zone col g-0 d-grid">
+        <div class="board-and-numbers d-grid p-0">
+            <div class="board-zone col g-0 d-grid">
 
-            @for (int i = 0; i < squares.GetLength(0); i++)
-            {
-                var rank = Global.BoardLength - i + " ";
-
-                @* <th class="rank-number">@rank</th>*@
-
-                @for (int j = 0; j < squares.GetLength(1); j++)
+                @for (int i = 0; i < squares.GetLength(0); i++)
                 {
-                    var squareColor = squares[i, j].SquareColor == SquareColor.Light
-                        ? Global.WhiteSquareColor : Global.BlackSquareColor;
+                    var rank = Global.BoardLength - i + " ";
 
-                    if (squares[i, j].IsValid)
-                        squareColor = Global.GreenSquareColor;
+                    @* <th class="rank-number">@rank</th>*@
 
-                    if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
-                        squareColor = Global.RedSquareColor;
+                    @for (int j = 0; j < squares.GetLength(1); j++)
+                    {
+                        var squareColor = squares[i, j].SquareColor == SquareColor.Light
+                            ? Global.WhiteSquareColor : Global.BlackSquareColor;
 
-                    <div class="board-cell" style="background: @squareColor;">
-                        <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                            <button class="square-button" name="location"
-                                    value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
-                                    asp-controller="Home" asp-action="HandleButtonClick">
-                                @if (squares[i, j].IsOccupied)
-                                {
-                                    var piece = squares[i, j].CurrentPiece;
+                        if (squares[i, j].IsValid)
+                            squareColor = Global.GreenSquareColor;
 
-                                    string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
-                                    string pieceClass = piece.GetType().Name;
-                                    string fileType = ".png";
+                        if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
+                            squareColor = Global.RedSquareColor;
 
-                                    <img class="piece-img" width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-                                }
-                            </button>
+                        <div class="board-cell" style="background: @squareColor;">
+                            <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
+                                <button class="square-button" name="location"
+                                        value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
+                                        asp-controller="Home" asp-action="HandleButtonClick">
+                                    @if (squares[i, j].IsOccupied)
+                                    {
+                                        var piece = squares[i, j].CurrentPiece;
+
+                                        string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
+                                        string pieceClass = piece.GetType().Name;
+                                        string fileType = ".png";
+
+                                        <img class="piece-img" width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                    }
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
 
-            <!--<tr>
-        <th></th>-->
-            @*ABCDEFGH*@
-            <!--@foreach (var file in Enum.GetValues(typeof(File)))
-            {
-                <th class="file-letter">@file</th>
-            }
-        </tr>-->
+                <!--<tr>
+            <th></th>-->
+                @*ABCDEFGH*@
+                <!--@foreach (var file in Enum.GetValues(typeof(File)))
+                {
+                    <th class="file-letter">@file</th>
+                }
+            </tr>-->
 
+            </div>
         </div>
 
         <div class="col fen-zone p-0">
@@ -128,10 +144,14 @@
             </div>
         </div>
 
-        <div class="col p-0 px-md-3" align="right">
+        <div class="col buttons-zone p-0">
             <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
                 Restart
             </button>
+        </div>
+
+        <div class="col debute-zone buttons-zone p-0">
+            debute zone
         </div>
     </div>
 </form>
