@@ -6,9 +6,13 @@
         justify-content: center;
     }
 
-    .row.d-grid {
+    .main_grid {
         grid-gap: 1em;
+        /*grid-template-columns: max-content;*/
+        
     }
+
+    .board-and-numbers{}
 
     .board-zone {
         grid-template-columns: repeat(8, 1fr);
@@ -51,7 +55,9 @@
     .container-board {
     }
 
-  
+    .fen-zone{}
+    .buttons-zone{}
+    .debute-zone{}
 
     @@media screen and (min-width: 768px) {
         .board-and-numbers{grid-area: board-and-numbers;}
@@ -59,11 +65,11 @@
         .buttons-zone{grid-area: buttons-zone;}
         .debute-zone{grid-area: debute-zone;}
 
-        .row.d-grid {
+        .main_grid {
             display: grid !important;
-            grid-template-columns: auto auto;
+            grid-template-columns: max-content auto;
             grid-template-areas: "board-and-numbers buttons-zone"
-                                 "fen-zone debute-zone";
+                                 "fen-zone .";
         }
 
         .container-board {
@@ -72,6 +78,15 @@
     }
 
     #fen-input{font-size: smaller;}
+
+    #aaaaaaaaa {
+        grid-template-columns: 
+            minmax(
+                calc(70vmin * var(--board-scale)), 
+                calc(100vh * var(--board-scale) - calc(var(--site-header-height) + var(--site-header-margin)) - 3rem)) 
+            var(--gauge-gap) minmax(240px, 400px);
+        grid-template-rows: fit-content;
+    }
 </style>
 
 @{ ViewData["Title"] = "Index";
@@ -81,7 +96,7 @@
 }
 
 <form>
-    <div class="row d-grid">
+    <div class="main_grid row d-grid">
         <div class="board-and-numbers d-grid p-0">
             <div class="board-zone col g-0 d-grid">
 
@@ -151,7 +166,7 @@
         </div>
 
         <div class="col debute-zone buttons-zone p-0">
-            debute zone
+            
         </div>
     </div>
 </form>
