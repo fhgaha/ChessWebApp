@@ -8,18 +8,39 @@
 
     .main_grid {
         grid-gap: 1em;
-        /*grid-template-columns: max-content;*/
         
     }
 
-    .board-and-numbers{}
+    .board-and-numbers {
+        display: grid;
+        grid-template-areas: "ranks board-zone"
+                             "empty-space-between-ranks-and-files files";
+    }
+
+    .ranks{
+        
+        display: grid;
+        grid-template-rows: repeat(8, 1fr);
+        align-content: center;
+    }
+    .empty-space-between-ranks-and-files{}
+    .files {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+    }
+
+        .ranks h6, .files h6 {
+            color: rgba(255, 255, 255, .5);
+            margin: 0;
+            padding: 0.3em;
+            align-self: center;
+            justify-self: center;
+        }
 
     .board-zone {
         grid-template-columns: repeat(8, 1fr);
         grid-gap: 0px;
-        /*min-width: 219px;*/
         max-width: 425px;
-        /*height: 75vh;*/
     }
 
     .board-cell {
@@ -52,25 +73,24 @@
         justify-content: right;
     }
 
-    .container-board {
-    }
+    .container-board {}
 
     .fen-zone{}
     .buttons-zone{}
     .debute-zone{}
 
     @@media screen and (min-width: 768px) {
-        .board-and-numbers{grid-area: board-and-numbers;}
-        .fen-zone{grid-area: fen-zone;}
-        .buttons-zone{grid-area: buttons-zone;}
-        .debute-zone{grid-area: debute-zone;}
-
         .main_grid {
             display: grid !important;
             grid-template-columns: max-content auto;
             grid-template-areas: "board-and-numbers buttons-zone"
                                  "fen-zone .";
         }
+
+        .board-and-numbers{grid-area: board-and-numbers;}
+        .fen-zone{grid-area: fen-zone;}
+        .buttons-zone{grid-area: buttons-zone;}
+        .debute-zone{grid-area: debute-zone;}
 
         .container-board {
             min-width: 50%;
@@ -97,7 +117,17 @@
 
 <form>
     <div class="main_grid row d-grid">
-        <div class="board-and-numbers d-grid p-0">
+        <div class="board-and-numbers p-0">
+            <div class="ranks">
+                <h6>1</h6>
+                <h6>2</h6>
+                <h6>3</h6>
+                <h6>4</h6>
+                <h6>5</h6>
+                <h6>6</h6>
+                <h6>7</h6>
+                <h6>8</h6>
+            </div>
             <div class="board-zone col g-0 d-grid">
 
                 @for (int i = 0; i < squares.GetLength(0); i++)
@@ -139,14 +169,25 @@
                 }
 
                 <!--<tr>
-            <th></th>-->
+        <th></th>-->
                 @*ABCDEFGH*@
                 <!--@foreach (var file in Enum.GetValues(typeof(File)))
-                {
-                    <th class="file-letter">@file</th>
-                }
-            </tr>-->
+            {
+                <th class="file-letter">@file</th>
+            }
+        </tr>-->
 
+            </div>
+            <div class="empty-space-between-ranks-and-files"></div>
+            <div class="files">
+                <h6>A</h6>
+                <h6>B</h6>
+                <h6>C</h6>
+                <h6>D</h6>
+                <h6>E</h6>
+                <h6>F</h6>
+                <h6>G</h6>
+                <h6>H</h6>
             </div>
         </div>
 
