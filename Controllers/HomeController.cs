@@ -24,7 +24,15 @@ namespace ChessWebApp.Controllers
 
         public string GetFen()
         {
-            return fen.Get(game.Board);
+            return fen.Parse(game.Board);
+        }
+
+        [HttpPost]
+        public IActionResult SetFen(string fenCode)
+        {
+            game = new(fenCode);
+            savedSquares.Clear();
+            return RedirectToAction("Index");
         }
 
         public IActionResult RestartGame()

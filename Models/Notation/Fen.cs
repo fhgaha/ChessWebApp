@@ -30,7 +30,7 @@ namespace ChessWebApp.Models.Notation
         private int halfmoveCount = 0;
         public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        public string Get(Board board)
+        public string Parse(Board board)
         {
             StringBuilder builder = new();
             int emptySquareCount = 0;
@@ -68,12 +68,6 @@ namespace ChessWebApp.Models.Notation
                 GetFullmovesCount(board)
             }.Where(e => e != null)
             ));
-
-            //builder.Append(" " + GetWhosMoveIsNext(board));
-            //builder.Append(" " + GetCastlingLetters(board));
-            //builder.Append(" " + GetEnPassantCandidate(board));
-            //builder.Append(" " + Get50MoveDrawCount(board));
-            //builder.Append(" " + GetFullmovesCount(board));
 
             return builder.ToString();
         }
@@ -160,5 +154,26 @@ namespace ChessWebApp.Models.Notation
         }
 
         private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
+
+        internal Dictionary<Location, AbstractPiece> Parse(string value)
+        {
+            //  rnbqkbnr / pppppppp / 8 / 8 / 8 / 8 / PPPPPPPP / RNBQKBNR w KQkq -0 1
+
+            var pieces = new Dictionary<Location, AbstractPiece>();
+
+            var rows = value.Split('/', ' ').Take(8);
+            var whosMoveIsNext = value.Split('/', ' ').Skip(8).First();
+            var castlingAbility = value.Split('/', ' ').Skip(9).First();
+            var halfMovesCount = value.Split('/', ' ').SkipLast(1).Last();
+            var fullMovesCount = value.Split('/', ' ').Last();
+
+
+
+            //rooks
+            //pieces.Add(new Location(File.A, 1), new Rook(PieceColor.Light));
+
+
+            return pieces;
+        }
     }
 }

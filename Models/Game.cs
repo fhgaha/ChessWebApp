@@ -47,9 +47,16 @@ namespace ChessWebApp.Models
             //PieceFactory.GetPromotionSetup();
             //PieceFactory.GetEnPassantSetup();
 
+            Fen = new();
             Board = new(pieces);
             MoveManager = new();
+        }
+
+        public Game(string fenCode)
+        {
             Fen = new();
+            Board = new(Fen.Parse(fenCode));
+            MoveManager = new();
         }
 
         public bool HandleClick(Square square)

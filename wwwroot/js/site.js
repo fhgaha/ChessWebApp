@@ -97,7 +97,7 @@ $(function () {
 //changing main-grid cells width to match board size
 //for some reason this can make <html> more narrow than main-grid. lichess has the same issue though.
 jQuery(document).ready(function ($) { //wait for the document to load
-    $('.main_grid').each(function () { //loop through each element with the .dynamic-height class
+    $('.main_grid').each(function () { //loop through each element with the .main_grid class
         $(this).css({
             'grid-template-columns': $('.board-zone').outerWidth() + 'px', //adjust the css rule for margin-top to equal the element height - 10px and add the measurement unit "px" for valid CSS
         });
