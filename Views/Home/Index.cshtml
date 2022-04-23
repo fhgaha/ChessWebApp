@@ -133,7 +133,7 @@
     var squares = Model.BoardSquares;
 }
 
-<form>
+@*<form>*@
     <div class="main_grid row ">
         <div class="board-and-numbers p-0">
             <div class="ranks">
@@ -210,12 +210,14 @@
         </div>
 
         <div class="col fen-zone p-0">
-            <div class="input-group">
+            <div class="input-group" >
                 <span class="input-group-text bg-dark text-white" id="basic-addon1">FEN</span>
-                <input id="fen-input" type="text" class="form-control bg-dark text-white-50"
-                       value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-                       @*placeholder="" aria-label="Username" aria-describedby="basic-addon1"*@
-                       asp-controller="Home" asp-action="SetFen">
+                <form asp-controller="Home" asp-action="SetFen">
+                    <input id="fen-input" name="fenCode" type="text" class="form-control bg-dark text-white-50"
+                           value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+                           @*placeholder="" aria-label="Username" aria-describedby="basic-addon1"*@
+                           >
+                </form>
             </div>
         </div>
 
@@ -225,7 +227,7 @@
             </button>
         </div>
     </div>
-</form>
+@*</form>*@
 
 
 <style>
