@@ -31,7 +31,7 @@ $(function () {
                 TryOpenPromotionModal(squareLoc);
 
                 for (var d in data) {
-                    //console.log(data[d]);
+                    console.log(data[d]);
                     $("#" + d).html(data[d]);
                 }
             }
@@ -73,7 +73,7 @@ $(function () {
         event.preventDefault();
 
         var pieceData = $(this).val();    //"Rook white A 1"
-        console.log("You clicked on promotion button " + pieceData);
+        //console.log("You clicked on promotion button " + pieceData);
 
         $.ajax({
             type: "text",

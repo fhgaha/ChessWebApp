@@ -22,8 +22,18 @@ namespace ChessWebApp.Models
             get => fromSquare;
             set
             {
-                if (value == null) MoveManager.ClearValidMoves();
+                if (value is null)
+                {
+                    MoveManager.ClearValidMoves();
+                    if (fromSquare is not null) fromSquare.IsSelected = false;
+                    Board.SetAllSquaresNotValid();
+                    fromSquare = value;
+                    return;
+                }
+
+                if (fromSquare is not null) fromSquare.IsSelected = false;
                 Board.SetAllSquaresNotValid();
+                value.IsSelected = true;
                 fromSquare = value;
             }
         }

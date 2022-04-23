@@ -6,6 +6,8 @@
         squareColor = Global.GreenSquareColor;
     if (Model.CurrentPiece is King king && king.IsUnderCheck)
         squareColor = Global.RedSquareColor;
+    if (Model.IsSelected)
+        squareColor = Global.SelectedPieceColor;
 }
 
 <button class="square-button" type="submit" name="location" value="@Model.Location.File@Model.Location.Rank"

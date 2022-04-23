@@ -14,6 +14,7 @@ namespace ChessWebApp
         public bool IsOccupied { get; set; }
         public List<Square> AttackedByPiecesOnSquares { get; set; }
         public bool IsValid { get; set; }
+        public bool IsSelected { get; set; }
 
         public Square(Square originalSquare)
         {
