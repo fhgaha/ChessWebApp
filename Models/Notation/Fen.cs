@@ -188,7 +188,7 @@ namespace ChessWebApp.Models.Notation
             var halfMovesCount = input.Split('/', ' ').SkipLast(1).Last();
             var fullMovesCount = input.Split('/', ' ').Last();
 
-            //input should have 7 '/' cymbols
+            //input should have 7 '/' symbols
             if (input.Trim('/', ' ').Count(c => c == '/') != 7) return false;
 
             //input should contain 5 spaces
@@ -200,7 +200,8 @@ namespace ChessWebApp.Models.Notation
                 if (row.Length == 1 && (!int.TryParse(row, out _) || int.Parse(row) != 8)) return false;
 
                 //row should contain only file characters
-                var filesAsString = string.Concat(typeof(File).GetEnumValues()) ;
+                var files = Enum.GetValues<File>();
+                var filesAsString = string.Concat(files);
                 if (!row.Any(c => filesAsString.Contains(c, StringComparison.OrdinalIgnoreCase))) return false;
             }
 
