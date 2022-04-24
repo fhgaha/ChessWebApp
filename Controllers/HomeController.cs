@@ -30,6 +30,8 @@ namespace ChessWebApp.Controllers
         [HttpPost]
         public IActionResult SetFen(string fenCode)
         {
+            if (game.Fen.ValidateInput(fenCode) == false) return RedirectToAction("Index");
+
             game = new(fenCode);
             savedSquares.Clear();
             return RedirectToAction("Index");

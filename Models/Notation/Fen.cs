@@ -155,9 +155,10 @@ namespace ChessWebApp.Models.Notation
 
         private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
 
+
         internal Dictionary<Location, AbstractPiece> Parse(string value)
         {
-            //  rnbqkbnr / pppppppp / 8 / 8 / 8 / 8 / PPPPPPPP / RNBQKBNR w KQkq -0 1
+            //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
             var pieces = new Dictionary<Location, AbstractPiece>();
 
@@ -169,11 +170,41 @@ namespace ChessWebApp.Models.Notation
 
 
 
+
             //rooks
             //pieces.Add(new Location(File.A, 1), new Rook(PieceColor.Light));
 
 
             return pieces;
+        }
+
+        internal bool ValidateInput(string input)
+        {
+            //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+            var rows = input.Split('/', ' ').Take(8);
+            var whosMoveIsNext = input.Split('/', ' ').Skip(8).First();
+            var castlingAbility = input.Split('/', ' ').Skip(9).First();
+            var halfMovesCount = input.Split('/', ' ').SkipLast(1).Last();
+            var fullMovesCount = input.Split('/', ' ').Last();
+
+            //input should have 7 '/' cymbols
+            if (input.Trim('/', ' ').Count(c => c == '/') != 7) return false;
+
+            //input should contain 5 spaces
+            if (input.Trim('/', ' ').Count(c => c == ' ') != 5) return false;
+
+            foreach (string row in rows)
+            {
+                //row with one character should be digit and should have value '8' 
+                if (row.Length == 1 && (!int.TryParse(row, out _) || int.Parse(row) != 8)) return false;
+
+                //row should contain only file characters
+                var filesAsString = string.Concat(typeof(File).GetEnumValues()) ;
+                if (!row.Any(c => filesAsString.Contains(c, StringComparison.OrdinalIgnoreCase))) return false;
+            }
+
+            return true;
         }
     }
 }
