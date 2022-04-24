@@ -27,14 +27,16 @@ namespace ChessWebApp.Controllers
             return fen.Parse(game.Board);
         }
 
-        [HttpPost]
-        public IActionResult SetFen(string fenCode)
+        public IActionResult SetFenJSON(string fenCode)
         {
-            if (game.Fen.ValidateInput(fenCode) == false) return RedirectToAction("Index");
+            if (game.Fen.ValidateInput(fenCode) == false) return RedirectToAction("UpdateChangedSquaresJSON", null);
 
             game = new(fenCode);
             savedSquares.Clear();
-            return RedirectToAction("Index");
+
+            //should update fen input
+            //and whole board
+            return RedirectToAction("UpdateChangedSquaresJSON", null);
         }
 
         public IActionResult RestartGame()
@@ -62,7 +64,12 @@ namespace ChessWebApp.Controllers
 
         public IActionResult UpdateChangedSquaresJSON(string location)
         {
-            Square currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
+            Square currentSquare;
+
+            if (string.IsNullOrEmpty(location))
+                currentSquare = game.Board.LocationSquareMap[new Location(ChessWebApp.File.A, 1)];
+            else
+                currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
 
             bool isMoveMade = game.HandleClick(currentSquare);
 
@@ -100,9 +107,12 @@ namespace ChessWebApp.Controllers
         private Dictionary<string, string> GetSquareStrings(List<Square> squares, Square square)
         {
             var squareStrings = new Dictionary<string, string>();
+
+            //add to result clicked square
             string firstKey = square.Location.File.ToString() + square.Location.Rank.ToString();
             squareStrings.Add(firstKey, RenderRazorViewToString(this, "UpdateChangedSquares", square));
 
+            //add to result updated squares
             foreach (Square s in squares)
             {
                 Square updatedSquare = game.Board.LocationSquareMap[s.Location];

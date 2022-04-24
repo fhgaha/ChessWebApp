@@ -92,6 +92,27 @@ $(function () {
         })
     })
 
+    $(document).on("submit", ".fen-zone", function () {
+        event.preventDefault();
+
+        var fenValue = $('#fen-input').val();
+
+        $.ajax({
+            type: "text",
+            data: {
+                "fenCode": fenValue
+            },
+            url: "/Home/SetFenJSON",
+            success: function (data) {
+                console.log(data);
+
+                for (var d in data) {
+                    //console.log(data[d]);
+                    $("#" + d).html(data[d]);
+                }
+            }
+        })
+    })
 });
 
 //changing main-grid cells width to match board size

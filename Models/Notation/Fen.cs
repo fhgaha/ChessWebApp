@@ -199,10 +199,13 @@ namespace ChessWebApp.Models.Notation
                 //row with one character should be digit and should have value '8' 
                 if (row.Length == 1 && (!int.TryParse(row, out _) || int.Parse(row) != 8)) return false;
 
-                //row should contain only file characters
+                //row should only contain digits or file characters
                 var files = Enum.GetValues<File>();
                 var filesAsString = string.Concat(files);
-                if (!row.Any(c => filesAsString.Contains(c, StringComparison.OrdinalIgnoreCase))) return false;
+
+                foreach (char c in row)
+                    if (!(char.IsDigit(c) || filesAsString.Contains(c, StringComparison.OrdinalIgnoreCase)))
+                        return false;
             }
 
             return true;
