@@ -41,9 +41,9 @@ namespace ChessWebApp.Models
         public Game()
         {
             var pieces =
-            PieceFactory.GetStandartPiecePositions();
+            //PieceFactory.GetStandartPiecePositions();
             //PieceFactory.GetTwoKings();
-            //PieceFactory.GetCastlingSetup();
+            PieceFactory.GetCastlingSetup();
             //PieceFactory.GetPromotionSetup();
             //PieceFactory.GetEnPassantSetup();
 

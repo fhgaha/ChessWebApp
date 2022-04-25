@@ -131,7 +131,6 @@ namespace ChessWebApp.Models.Notation
                 && rookA.IsFirstMove)
                 result += "Q";
 
-
             //short castling for black king
             if (board.BlackKing.isAbleToCastleKingSide
                 && board.LocationSquareMap[new Location(File.H, 8)].CurrentPiece is Rook rookH_ 
@@ -146,7 +145,7 @@ namespace ChessWebApp.Models.Notation
                 && rookA_.IsFirstMove)
                 result += "q";
 
-            return result == "" ? result + "-" : result;
+            return result == "" ? "-" : result;
         }
 
         private string GetEnPassantCandidate(Board board)
