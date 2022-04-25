@@ -27,7 +27,6 @@ namespace ChessWebApp.Models.Notation
         */
     public class Fen
     {
-        private int halfmoveCount = 0;
         public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         public static Dictionary<char, Type> NotationMap = new Dictionary<char, Type>
@@ -69,7 +68,7 @@ namespace ChessWebApp.Models.Notation
 
             builder.Remove(builder.Length - 1, 1);
 
-            builder.Append(string.Join(' ', new[] 
+            builder.Append(string.Join(' ', new[]
             {
                 GetWhosMoveIsNext(board),
                 GetCastlingLetters(board),
@@ -118,29 +117,29 @@ namespace ChessWebApp.Models.Notation
             string result = "";
 
             //short castling for white king
-            if (board.WhiteKing.isAbleToCastleKingSide 
-                && board.LocationSquareMap[new Location(File.H, 1)].CurrentPiece is Rook rookH 
+            if (board.WhiteKing.isAbleToCastleKingSide
+                && board.LocationSquareMap[new Location(File.H, 1)].CurrentPiece is Rook rookH
                 && rookH is not null
                 && rookH.IsFirstMove)
                 result += "K";
 
             //long castling for white king
             if (board.WhiteKing.isAbleToCastleQueenSide
-                && board.LocationSquareMap[new Location(File.A, 1)].CurrentPiece is Rook rookA 
+                && board.LocationSquareMap[new Location(File.A, 1)].CurrentPiece is Rook rookA
                 && rookA is not null
                 && rookA.IsFirstMove)
                 result += "Q";
 
             //short castling for black king
             if (board.BlackKing.isAbleToCastleKingSide
-                && board.LocationSquareMap[new Location(File.H, 8)].CurrentPiece is Rook rookH_ 
+                && board.LocationSquareMap[new Location(File.H, 8)].CurrentPiece is Rook rookH_
                 && rookH_ is not null
                 && rookH_.IsFirstMove)
                 result += "k";
 
             //long castling for black king
             if (board.BlackKing.isAbleToCastleQueenSide
-                && board.LocationSquareMap[new Location(File.A, 8)].CurrentPiece is Rook rookA_ 
+                && board.LocationSquareMap[new Location(File.A, 8)].CurrentPiece is Rook rookA_
                 && rookA_ is not null
                 && rookA_.IsFirstMove)
                 result += "q";
@@ -154,22 +153,12 @@ namespace ChessWebApp.Models.Notation
             return LocationFactory.Parse(board.PawnToBeTakenEnPassant.Location);
         }
 
-        private string Get50MoveDrawCount(Board board)
-        {
-            if (board.LastMove is null) return "-";
-
-            if (board.LastMove.Item2.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
-                halfmoveCount = 0;
-            else
-                halfmoveCount++;
-
-            return halfmoveCount.ToString();
-        }
+        private string Get50MoveDrawCount(Board board) => board.HalfmoveCount.ToString();
 
         private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
 
 
-        internal Dictionary<Location, AbstractPiece> Parse(string value)
+        internal Board Parse(string value)
         {
             //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
@@ -199,42 +188,36 @@ namespace ChessWebApp.Models.Notation
                         var currentType = NotationMap[char.ToLowerInvariant(c)];
                         var currentLocation = new Location((File)file, rank);
 
-                        pieces.Add(currentLocation, 
+                        pieces.Add(
+                            currentLocation,
                             (AbstractPiece)Activator.CreateInstance(currentType, currentColor));
                     }
                     else
-                        j += int.Parse(c.ToString());
-                    
+                        file += int.Parse(c.ToString()) - 1;
+
                     file++;
                 }
             }
 
             Board board = new(pieces);
+
+            //w
             board.IsWhitesMove = whosMoveIsNext == "w" ? true : false;
 
-            //KQkq Qkq kq q -
-            if (!castlingAbility.Contains('K'))
-            {
-                //if position of king and required rook is not starting then their moves are not first
-                if (board.WhiteKing.Location != new Location(File.E, 1))
-                {
-                    //board.WhiteKing.isAbleToCastle = false;
-                    //board.WhiteKing.IsFirstMove = false;
-                    //board.LocationSquareMap.Values.FirstOrDefault(sq => )
-                }
-            }
-            if (!castlingAbility.Contains('Q'))
-            { }
-            if (!castlingAbility.Contains('k'))
-            { }
-            if (!castlingAbility.Contains('q'))
-            { }
+            //KQkq
+            if (!castlingAbility.Contains('K')) board.WhiteKing.isAbleToCastleKingSide = false;
+            if (!castlingAbility.Contains('Q')) board.WhiteKing.isAbleToCastleQueenSide = false;
+            if (!castlingAbility.Contains('k')) board.BlackKing.isAbleToCastleKingSide = false;
+            if (!castlingAbility.Contains('q')) board.BlackKing.isAbleToCastleKingSide = false;
+
+            //halfmoves
+            board.HalfmoveCount = int.Parse(halfMovesCount);
+
+            //fullmoves
 
 
-            //pieces.Add(new Location(File.A, 1), new Rook(PieceColor.Light));
-
-            return PieceFactory.GetStandartPiecePositions();
-            return pieces;
+            //return PieceFactory.GetStandartPiecePositions();
+            return board;
         }
 
         internal bool ValidateInput(string input)

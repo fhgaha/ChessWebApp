@@ -41,9 +41,9 @@ namespace ChessWebApp.Models
         public Game()
         {
             var pieces =
-            //PieceFactory.GetStandartPiecePositions();
+            PieceFactory.GetStandartPiecePositions();
             //PieceFactory.GetTwoKings();
-            PieceFactory.GetCastlingSetup();
+            //PieceFactory.GetCastlingSetup();
             //PieceFactory.GetPromotionSetup();
             //PieceFactory.GetEnPassantSetup();
 
@@ -55,7 +55,7 @@ namespace ChessWebApp.Models
         public Game(string fenCode)
         {
             Fen = new();
-            Board = new(Fen.Parse(fenCode));
+            Board = Fen.Parse(fenCode);
             MoveManager = new();
         }
 

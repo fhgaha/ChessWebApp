@@ -33,6 +33,12 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare);
 
+            //count halfmoves
+            if (toSquare.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
+                board.HalfmoveCount = 0;
+            else
+                board.HalfmoveCount++;
+
             if (toSquare.CurrentPiece is Pawn pawn)
             {
                 //en passant
@@ -44,6 +50,8 @@ namespace ChessWebApp
                     || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
                     board.RegisterPawnToPromote(pawn);
             }
+
+            
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 

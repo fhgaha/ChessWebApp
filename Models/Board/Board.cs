@@ -21,6 +21,7 @@ namespace ChessWebApp
         public Pawn PawnToBeTakenEnPassant { get; set; }
         public AbstractPiece PieceCapturedOnLastMove { get; internal set; }
         public bool IsWhitesMove = true;
+        public int HalfmoveCount = 0;
         public string message = "";
 
         public Board() : this(PieceFactory.GetStandartPiecePositions()) { }
