@@ -30,6 +30,15 @@ namespace ChessWebApp.Models.Notation
         private int halfmoveCount = 0;
         public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
+        public static Dictionary<char, Type> NotationMap = new Dictionary<char, Type>
+        {
+            ['q'] = typeof(Queen),
+            ['n'] = typeof(Knight),
+            ['r'] = typeof(Rook),
+            ['b'] = typeof(Bishop),
+            ['p'] = typeof(Pawn)
+        };
+
         public string Parse(Board board)
         {
             StringBuilder builder = new();
@@ -162,16 +171,42 @@ namespace ChessWebApp.Models.Notation
 
             var pieces = new Dictionary<Location, AbstractPiece>();
 
-            var rows = value.Split('/', ' ').Take(8);
+            var rows = value.Split('/', ' ').Take(8).ToList();
             var whosMoveIsNext = value.Split('/', ' ').Skip(8).First();
             var castlingAbility = value.Split('/', ' ').Skip(9).First();
             var halfMovesCount = value.Split('/', ' ').SkipLast(1).Last();
             var fullMovesCount = value.Split('/', ' ').Last();
 
 
+            Location currentLocation;
+            Type currentType;
+            PieceColor currentColor;
 
+            for (int i = 0; i < 8; i++)
+            {
+                if (rows[i] == "8") continue;
 
-            //rooks
+                for (int j = 0; j < 8; j++)
+                {
+                    char c = rows[i][j];
+                    File file = (File)j;
+                    int rank = 8 - i;
+
+                    if (!char.IsDigit(c))
+                    {
+                        currentColor = char.IsUpper(c) ? PieceColor.Light : PieceColor.Dark;
+                        currentType = NotationMap[char.ToLowerInvariant(c)];
+                        currentLocation = new Location(file, rank);
+
+                        pieces.Add(currentLocation, (AbstractPiece)Activator.CreateInstance(currentType, currentColor));
+                    }
+                    else
+                        j += int.Parse(c.ToString());
+                }
+            }
+
+            Board board = new(pieces);
+
             //pieces.Add(new Location(File.A, 1), new Rook(PieceColor.Light));
 
             return PieceFactory.GetStandartPiecePositions();

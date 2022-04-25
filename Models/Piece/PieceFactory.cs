@@ -13,7 +13,8 @@ namespace ChessWebApp
             [typeof(Queen).Name] = typeof(Queen),
             [typeof(Knight).Name] = typeof(Knight),
             [typeof(Rook).Name] = typeof(Rook),
-            [typeof(Bishop).Name] = typeof(Bishop)
+            [typeof(Bishop).Name] = typeof(Bishop),
+            [typeof(Pawn).Name] = typeof(Pawn)
         };
 
         public static Dictionary<Location, AbstractPiece> GetStandartPiecePositions()
