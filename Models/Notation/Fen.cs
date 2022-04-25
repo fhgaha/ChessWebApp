@@ -117,31 +117,34 @@ namespace ChessWebApp.Models.Notation
         {
             string result = "";
 
-            if (board.WhiteKing.isAbleToCastle)
-            {
-                //short castling
-                if (board.LocationSquareMap[new Location(File.H, 1)].CurrentPiece is Rook rookH && rookH is not null
-                    && rookH.IsFirstMove)
-                    result += "K";
+            //short castling for white king
+            if (board.WhiteKing.isAbleToCastleKingSide 
+                && board.LocationSquareMap[new Location(File.H, 1)].CurrentPiece is Rook rookH 
+                && rookH is not null
+                && rookH.IsFirstMove)
+                result += "K";
 
-                //long castling
-                if (board.LocationSquareMap[new Location(File.A, 1)].CurrentPiece is Rook rookA && rookA is not null
-                    && rookA.IsFirstMove)
-                    result += "Q";
-            }
+            //long castling for white king
+            if (board.WhiteKing.isAbleToCastleQueenSide
+                && board.LocationSquareMap[new Location(File.A, 1)].CurrentPiece is Rook rookA 
+                && rookA is not null
+                && rookA.IsFirstMove)
+                result += "Q";
 
-            if (board.BlackKing.isAbleToCastle)
-            {
-                //short castling
-                if (board.LocationSquareMap[new Location(File.H, 8)].CurrentPiece is Rook rookH && rookH is not null
-                    && rookH.IsFirstMove)
-                    result += "k";
 
-                //long castling
-                if (board.LocationSquareMap[new Location(File.A, 8)].CurrentPiece is Rook rookA && rookA is not null
-                    && rookA.IsFirstMove)
-                    result += "q";
-            }
+            //short castling for black king
+            if (board.BlackKing.isAbleToCastleKingSide
+                && board.LocationSquareMap[new Location(File.H, 8)].CurrentPiece is Rook rookH_ 
+                && rookH_ is not null
+                && rookH_.IsFirstMove)
+                result += "k";
+
+            //long castling for black king
+            if (board.BlackKing.isAbleToCastleQueenSide
+                && board.LocationSquareMap[new Location(File.A, 8)].CurrentPiece is Rook rookA_ 
+                && rookA_ is not null
+                && rookA_.IsFirstMove)
+                result += "q";
 
             return result == "" ? result + "-" : result;
         }
@@ -216,9 +219,9 @@ namespace ChessWebApp.Models.Notation
                 //if position of king and required rook is not starting then their moves are not first
                 if (board.WhiteKing.Location != new Location(File.E, 1))
                 {
-                    board.WhiteKing.isAbleToCastle = false;
-                    board.WhiteKing.IsFirstMove = false;
-                    board.LocationSquareMap.Values.FirstOrDefault(sq => )
+                    //board.WhiteKing.isAbleToCastle = false;
+                    //board.WhiteKing.IsFirstMove = false;
+                    //board.LocationSquareMap.Values.FirstOrDefault(sq => )
                 }
             }
             if (!castlingAbility.Contains('Q'))

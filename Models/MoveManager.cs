@@ -26,8 +26,8 @@ namespace ChessWebApp
 
             fromSquare.MovePiece(toSquare);
 
-            if (toSquare.CurrentPiece is King king && king.isAbleToCastle)
-                king.isAbleToCastle = false;
+            if (toSquare.CurrentPiece is King king)
+                king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
 
             //castling
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
