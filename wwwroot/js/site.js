@@ -92,10 +92,16 @@ $(function () {
         })
     })
 
+    //FEN
     $(document).on("submit", ".fen-zone", function () {
         event.preventDefault();
 
         var fenValue = $('#fen-input').val();
+
+        //update fen input 
+        //and set the board
+
+        $('fen-input').val(fenValue);
 
         $.ajax({
             type: "text",
@@ -112,6 +118,7 @@ $(function () {
                 }
             }
         })
+
     })
 });
 

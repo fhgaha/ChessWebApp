@@ -36,7 +36,8 @@ namespace ChessWebApp.Controllers
 
             //should update fen input
             //and whole board
-            return RedirectToAction("UpdateChangedSquaresJSON", null);
+            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), 
+                game.Board.LocationSquareMap[new Location(ChessWebApp.File.A, 1)]));
         }
 
         public IActionResult RestartGame()

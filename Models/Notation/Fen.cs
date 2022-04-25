@@ -174,7 +174,7 @@ namespace ChessWebApp.Models.Notation
             //rooks
             //pieces.Add(new Location(File.A, 1), new Rook(PieceColor.Light));
 
-
+            return PieceFactory.GetStandartPiecePositions();
             return pieces;
         }
 
@@ -199,12 +199,11 @@ namespace ChessWebApp.Models.Notation
                 //row with one character should be digit and should have value '8' 
                 if (row.Length == 1 && (!int.TryParse(row, out _) || int.Parse(row) != 8)) return false;
 
-                //row should only contain digits or file characters
-                var files = Enum.GetValues<File>();
-                var filesAsString = string.Concat(files);
+                //row should only contain digits or piece first letter
+                var pieceAbbreviations = "rnbqkp";
 
                 foreach (char c in row)
-                    if (!(char.IsDigit(c) || filesAsString.Contains(c, StringComparison.OrdinalIgnoreCase)))
+                    if (!(char.IsDigit(c) || pieceAbbreviations.Contains(c, StringComparison.OrdinalIgnoreCase)))
                         return false;
             }
 
