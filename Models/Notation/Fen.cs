@@ -33,6 +33,7 @@ namespace ChessWebApp.Models.Notation
         public static Dictionary<char, Type> NotationMap = new Dictionary<char, Type>
         {
             ['q'] = typeof(Queen),
+            ['k'] = typeof(King),
             ['n'] = typeof(Knight),
             ['r'] = typeof(Rook),
             ['b'] = typeof(Bishop),
@@ -107,6 +108,7 @@ namespace ChessWebApp.Models.Notation
 
         private string GetWhosMoveIsNext(Board board)
         {
+            //why dont i bind this to Board.IsWhitesMove?
             bool lastMovePieceColorIsWhite = board.LastMove?.Item2.CurrentPiece.PieceColor == PieceColor.Light;
             return lastMovePieceColorIsWhite ? "b" : " w";
         }
@@ -178,34 +180,54 @@ namespace ChessWebApp.Models.Notation
             var fullMovesCount = value.Split('/', ' ').Last();
 
 
-            Location currentLocation;
-            Type currentType;
-            PieceColor currentColor;
-
             for (int i = 0; i < 8; i++)
             {
                 if (rows[i] == "8") continue;
 
-                for (int j = 0; j < 8; j++)
+                int rank = 8 - i;
+                int file = 0;
+
+                for (int j = 0; j < rows[i].Length; j++)
                 {
                     char c = rows[i][j];
-                    File file = (File)j;
-                    int rank = 8 - i;
 
                     if (!char.IsDigit(c))
                     {
-                        currentColor = char.IsUpper(c) ? PieceColor.Light : PieceColor.Dark;
-                        currentType = NotationMap[char.ToLowerInvariant(c)];
-                        currentLocation = new Location(file, rank);
+                        var currentColor = char.IsUpper(c) ? PieceColor.Light : PieceColor.Dark;
+                        var currentType = NotationMap[char.ToLowerInvariant(c)];
+                        var currentLocation = new Location((File)file, rank);
 
-                        pieces.Add(currentLocation, (AbstractPiece)Activator.CreateInstance(currentType, currentColor));
+                        pieces.Add(currentLocation, 
+                            (AbstractPiece)Activator.CreateInstance(currentType, currentColor));
                     }
                     else
                         j += int.Parse(c.ToString());
+                    
+                    file++;
                 }
             }
 
             Board board = new(pieces);
+            board.IsWhitesMove = whosMoveIsNext == "w" ? true : false;
+
+            //KQkq Qkq kq q -
+            if (!castlingAbility.Contains('K'))
+            {
+                //if position of king and required rook is not starting then their moves are not first
+                if (board.WhiteKing.Location != new Location(File.E, 1))
+                {
+                    board.WhiteKing.isAbleToCastle = false;
+                    board.WhiteKing.IsFirstMove = false;
+                    board.LocationSquareMap.Values.FirstOrDefault(sq => )
+                }
+            }
+            if (!castlingAbility.Contains('Q'))
+            { }
+            if (!castlingAbility.Contains('k'))
+            { }
+            if (!castlingAbility.Contains('q'))
+            { }
+
 
             //pieces.Add(new Location(File.A, 1), new Rook(PieceColor.Light));
 

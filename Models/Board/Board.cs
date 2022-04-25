@@ -20,7 +20,7 @@ namespace ChessWebApp
         public Pawn PawnToPromote { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
         public AbstractPiece PieceCapturedOnLastMove { get; internal set; }
-
+        public bool IsWhitesMove = true;
         public string message = "";
 
         public Board() : this(PieceFactory.GetStandartPiecePositions()) { }

@@ -15,7 +15,7 @@ namespace ChessWebApp.Models
 
         //public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
         public string message = "";
-        public bool IsWhitesMove = true;
+        
         private Square fromSquare;
         private Square FromSquare
         {
@@ -62,7 +62,7 @@ namespace ChessWebApp.Models
         public bool HandleClick(Square square)
         {
             bool isMovePerformed = true;
-            King king = IsWhitesMove ? Board.WhiteKing : Board.BlackKing;
+            King king = Board.IsWhitesMove ? Board.WhiteKing : Board.BlackKing;
 
             Func<bool> FromSquareIsSelected = () => FromSquare != null && FromSquare.CurrentPiece != null;
             Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
@@ -74,8 +74,8 @@ namespace ChessWebApp.Models
                 => FromSquare.CurrentPiece.PieceColor == square.CurrentPiece.PieceColor;
 
             Func<Square, bool> MoveOrderIsWrong = sq
-                 => IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
-                || !IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Dark;
+                 => Board.IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
+                || !Board.IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Dark;
 
 
             if (!FromSquareIsSelected())
@@ -104,7 +104,7 @@ namespace ChessWebApp.Models
                 else if (MoveManager.GetValidMoves().Contains(square.Location))  //selected and moving allowed
                 {
                     isMovePerformed = MoveManager.MakeMove(Board, FromSquare, square);
-                    IsWhitesMove = !IsWhitesMove;
+                    Board.IsWhitesMove = !Board.IsWhitesMove;
                     FromSquare = null;
                 }
                 else
