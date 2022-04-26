@@ -29,7 +29,7 @@ namespace ChessWebApp.Models.Notation
     {
         public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        public static Dictionary<char, Type> NotationMap = new Dictionary<char, Type>
+        public static Dictionary<char, Type> NotationPieceTypeMap = new Dictionary<char, Type>
         {
             ['q'] = typeof(Queen),
             ['k'] = typeof(King),
@@ -76,12 +76,11 @@ namespace ChessWebApp.Models.Notation
                 "-",
                 Get50MoveDrawCount(board),
                 GetFullmovesCount(board)
-            }.Where(e => e != null)
+            }.Where(e => !string.IsNullOrWhiteSpace(e))
             ));
 
             return builder.ToString();
         }
-
 
         private string GetLetter(AbstractPiece piece)
         {
@@ -158,8 +157,7 @@ namespace ChessWebApp.Models.Notation
 
         private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
 
-
-        internal Board Parse(string fenValue)
+        public Board Parse(string fenValue)
         {
             //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
@@ -186,7 +184,7 @@ namespace ChessWebApp.Models.Notation
                     if (!char.IsDigit(c))
                     {
                         var currentColor = char.IsUpper(c) ? PieceColor.Light : PieceColor.Dark;
-                        var currentType = NotationMap[char.ToLowerInvariant(c)];
+                        var currentType = NotationPieceTypeMap[char.ToLowerInvariant(c)];
                         var currentLocation = new Location((File)file, rank);
 
                         pieces.Add(
@@ -221,7 +219,7 @@ namespace ChessWebApp.Models.Notation
             return board;
         }
 
-        internal bool ValidateInput(string input)
+        public bool ValidateInput(string input)
         {
             //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
