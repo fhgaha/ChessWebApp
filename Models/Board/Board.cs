@@ -13,8 +13,6 @@ namespace ChessWebApp
         public Tuple<Square, Square> LastMove { get => PerformedMoves.LastOrDefault(); }
         public Square[,] BoardSquares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
-        public List<AbstractPiece> LightPieces { get; private set; }
-        public List<AbstractPiece> DarkPieces { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
         public Pawn PawnToPromote { get; set; }
@@ -23,14 +21,17 @@ namespace ChessWebApp
         public bool IsWhitesMove = true;
         public int HalfmoveCount = 0;
         public string message = "";
+        public IEnumerable<AbstractPiece> TotalPieces => LocationSquareMap.Values
+            .Select(sq => sq.CurrentPiece)
+            .Where(p => p is not null);
+        public IEnumerable<AbstractPiece> LightPieces => TotalPieces.Where(p => p.PieceColor == PieceColor.Light);
+        public IEnumerable<AbstractPiece> DarkPieces => TotalPieces.Where(p => p.PieceColor == PieceColor.Dark);
 
         public Board() : this(PieceFactory.GetStandartPiecePositions()) { }
 
         public Board(Dictionary<Location, AbstractPiece> pieces)
         {
             BoardSquares = new Square[Global.BoardLength, Global.BoardLength];
-            LightPieces = new List<AbstractPiece>();
-            DarkPieces = new List<AbstractPiece>();
             LocationSquareMap = new Dictionary<Location, Square>();
 
             for (int i = 0; i < BoardSquares.GetLength(0); i++)
@@ -48,16 +49,11 @@ namespace ChessWebApp
                         newSquare.CurrentPiece = piece;
                         newSquare.IsOccupied = true;
 
-                        if (piece.PieceColor == PieceColor.Light)
-                        {
-                            LightPieces.Add(piece);
-                            if (piece is King) WhiteKing = (King)piece;
-                        }
-                        else
-                        {
-                            DarkPieces.Add(piece);
-                            if (piece is King) BlackKing = (King)piece;
-                        }
+                        if (piece.PieceColor == PieceColor.Light && piece is King)
+                            WhiteKing = (King)piece;
+
+                        if (piece.PieceColor == PieceColor.Dark && piece is King)
+                            BlackKing = (King)piece;
                     }
                     BoardSquares[i, column] = newSquare;
                     LocationSquareMap.Add(newSquare.Location, newSquare);

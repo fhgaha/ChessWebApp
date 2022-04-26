@@ -133,104 +133,94 @@
     var squares = Model.BoardSquares;
 }
 
-@*<form>*@
-    <div class="main_grid row ">
-        <div class="board-and-numbers p-0">
-            <div class="ranks">
-                <h6>8</h6>
-                <h6>7</h6>
-                <h6>6</h6>
-                <h6>5</h6>
-                <h6>4</h6>
-                <h6>3</h6>
-                <h6>2</h6>
-                <h6>1</h6>
-            </div>
-            <div class="board-zone col g-0 d-grid">
+<div class="main_grid row ">
 
-                @for (int i = 0; i < squares.GetLength(0); i++)
+    <div class="board-and-numbers p-0">
+        <div class="ranks">
+            <h6>8</h6>
+            <h6>7</h6>
+            <h6>6</h6>
+            <h6>5</h6>
+            <h6>4</h6>
+            <h6>3</h6>
+            <h6>2</h6>
+            <h6>1</h6>
+        </div>
+        <div class="board-zone col g-0 d-grid">
+
+            @for (int i = 0; i < squares.GetLength(0); i++)
+            {
+                var rank = Global.BoardLength - i + " ";
+
+                @* <th class="rank-number">@rank</th>*@
+
+                @for (int j = 0; j < squares.GetLength(1); j++)
                 {
-                    var rank = Global.BoardLength - i + " ";
+                    var squareColor = squares[i, j].SquareColor == SquareColor.Light
+                        ? Global.WhiteSquareColor : Global.BlackSquareColor;
 
-                    @* <th class="rank-number">@rank</th>*@
+                    if (squares[i, j].IsValid)
+                        squareColor = Global.GreenSquareColor;
 
-                    @for (int j = 0; j < squares.GetLength(1); j++)
-                    {
-                        var squareColor = squares[i, j].SquareColor == SquareColor.Light
-                            ? Global.WhiteSquareColor : Global.BlackSquareColor;
+                    if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
+                        squareColor = Global.RedSquareColor;
 
-                        if (squares[i, j].IsValid)
-                            squareColor = Global.GreenSquareColor;
+                    <div class="board-cell" style="background: @squareColor;">
+                        <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
+                            <button class="square-button" name="location"
+                                    value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
+                                    asp-controller="Home" asp-action="HandleButtonClick">
+                                @if (squares[i, j].IsOccupied)
+                                {
+                                    var piece = squares[i, j].CurrentPiece;
 
-                        if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
-                            squareColor = Global.RedSquareColor;
+                                    string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
+                                    string pieceClass = piece.GetType().Name;
+                                    string fileType = ".png";
 
-                        <div class="board-cell" style="background: @squareColor;">
-                            <div class="oneSquare" id="@squares[i, j].Location.File@squares[i, j].Location.Rank">
-                                <button class="square-button" name="location"
-                                        value="@squares[i, j].Location.File@squares[i, j].Location.Rank"
-                                        asp-controller="Home" asp-action="HandleButtonClick">
-                                    @if (squares[i, j].IsOccupied)
-                                    {
-                                        var piece = squares[i, j].CurrentPiece;
-
-                                        string pieceColor = piece.PieceColor == ChessWebApp.PieceColor.Light ? "white" : "black";
-                                        string pieceClass = piece.GetType().Name;
-                                        string fileType = ".png";
-
-                                        <img class="piece-img" width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
-                                    }
-                                </button>
-                            </div>
+                                    <img class="piece-img" width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
+                                }
+                            </button>
                         </div>
-                    }
+                    </div>
                 }
-
-                <!--<tr>
-                <th></th>-->
-                @*ABCDEFGH*@
-                <!--@foreach (var file in Enum.GetValues(typeof(File)))
-                    {
-                        <th class="file-letter">@file</th>
-                    }
-                </tr>-->
-
-            </div>
-            <div class="empty-space-between-ranks-and-files"></div>
-            <div class="files">
-                <h6>A</h6>
-                <h6>B</h6>
-                <h6>C</h6>
-                <h6>D</h6>
-                <h6>E</h6>
-                <h6>F</h6>
-                <h6>G</h6>
-                <h6>H</h6>
-            </div>
+            }
         </div>
 
-        <div class="col fen-zone p-0">
-            <form value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" method="post">
-
-                @*asp-controller="Home" asp-action="SetFen">*@
-                <div class="input-group">
-                    <span class="input-group-text bg-dark text-white" id="basic-addon1">FEN</span>
-                    <input id="fen-input" name="fenCode" type="text" class="form-control bg-dark text-white-50"
-                           value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-                           @*placeholder="" aria-label="Username" aria-describedby="basic-addon1"*@>
-                </div>
-            </form>
+        <div class="empty-space-between-ranks-and-files"></div>
+        <div class="files">
+            <h6>A</h6>
+            <h6>B</h6>
+            <h6>C</h6>
+            <h6>D</h6>
+            <h6>E</h6>
+            <h6>F</h6>
+            <h6>G</h6>
+            <h6>H</h6>
         </div>
+    </div>
 
-        <form>
-            <div class="col buttons-zone p-0">
-                <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
-                    Restart
-                </button>
+    <div class="col fen-zone p-0">
+        <form value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" method="post">
+
+            @*asp-controller="Home" asp-action="SetFen">*@
+            <div class="input-group">
+                <span class="input-group-text bg-dark text-white" id="basic-addon1">FEN</span>
+                <input id="fen-input" name="fenCode" type="text" class="form-control bg-dark text-white-50"
+                        value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+                        @*placeholder="" aria-label="Username" aria-describedby="basic-addon1"*@>
             </div>
         </form>
     </div>
-@*</form>*@
+
+    <form>
+        <div class="col buttons-zone p-0">
+            <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
+                Restart
+            </button>
+        </div>
+    </form>
+</div>
 
 
 <style>
