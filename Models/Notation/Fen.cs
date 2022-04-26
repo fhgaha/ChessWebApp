@@ -235,6 +235,10 @@ namespace ChessWebApp.Models.Notation
             //input should contain 5 spaces
             if (input.Trim('/', ' ').Count(c => c == ' ') != 5) return false;
 
+            //should contain both kings
+            if (!( rows.SelectMany(c => c).Count(c => c == 'K') == 1
+                && rows.SelectMany(c => c).Count(c => c == 'k') == 1)) return false;
+
             foreach (string row in rows)
             {
                 //row with one character should be digit and should have value '8' 
@@ -246,6 +250,17 @@ namespace ChessWebApp.Models.Notation
                 foreach (char c in row)
                     if (!(char.IsDigit(c) || pieceAbbreviations.Contains(c, StringComparison.OrdinalIgnoreCase)))
                         return false;
+
+                //row should have value '8'
+                int count = 0;
+                foreach (char c in row)
+                {
+                    if (char.IsDigit(c))
+                        count += int.Parse(c.ToString());
+                    else
+                        count++;
+                }
+                if (count != 8) return false;
             }
 
             return true;
