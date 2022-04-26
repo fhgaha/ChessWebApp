@@ -68,7 +68,7 @@ namespace ChessWebApp.Models.Notation
 
             builder.Remove(builder.Length - 1, 1);
 
-            builder.Append(string.Join(' ', new[]
+            builder.Append(" " + string.Join(' ', new[]
             {
                 GetWhosMoveIsNext(board),
                 GetCastlingLetters(board),
@@ -105,12 +105,7 @@ namespace ChessWebApp.Models.Notation
             return emptySquareCount;
         }
 
-        private string GetWhosMoveIsNext(Board board)
-        {
-            //why dont i bind this to Board.IsWhitesMove?
-            bool lastMovePieceColorIsWhite = board.LastMove?.Item2.CurrentPiece.PieceColor == PieceColor.Light;
-            return lastMovePieceColorIsWhite ? "b" : " w";
-        }
+        private string GetWhosMoveIsNext(Board board) => board.IsWhitesMove ? "w" : "b";
 
         private string GetCastlingLetters(Board board)
         {
@@ -207,7 +202,7 @@ namespace ChessWebApp.Models.Notation
             if (!castlingAbility.Contains('K')) board.WhiteKing.isAbleToCastleKingSide = false;
             if (!castlingAbility.Contains('Q')) board.WhiteKing.isAbleToCastleQueenSide = false;
             if (!castlingAbility.Contains('k')) board.BlackKing.isAbleToCastleKingSide = false;
-            if (!castlingAbility.Contains('q')) board.BlackKing.isAbleToCastleKingSide = false;
+            if (!castlingAbility.Contains('q')) board.BlackKing.isAbleToCastleQueenSide = false;
 
             //halfmoves
             board.HalfmoveCount = int.Parse(halfMovesCount);

@@ -114,8 +114,11 @@ namespace ChessWebApp
             if (rookH is not null && rookH.IsFirstMove == false)
                 isAbleToCastleKingSide = false;
 
-            moves.Add(GetCastleLeftMove(board, rank));
-            moves.Add(GetCastleRightMove(board, rank));
+            if (isAbleToCastleQueenSide)
+                moves.Add(GetCastleLeftMove(board, rank));
+            
+            if (isAbleToCastleKingSide)
+                moves.Add(GetCastleRightMove(board, rank));
 
             return moves.Where(m => m != null).ToList();
         }
