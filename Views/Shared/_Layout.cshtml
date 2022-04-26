@@ -23,7 +23,11 @@
     <!--This script is needed for page to be displayed only after page is fully loaded-->
     <script>
         document.body.style.opacity = "0";
-        window.onload = function () { setTimeout(function () { document.body.style.opacity = "100"; }, 500); };
+        window.onload = function () {
+            setTimeout(function () {
+                $('body').animate({ 'opacity': '100%' }, 'fast');
+            }, 100);
+        };
     </script>
 
     <header>
