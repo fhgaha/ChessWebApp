@@ -67,25 +67,21 @@ namespace ChessWebApp
             MoveManager fMoveManager = new();
             Square fKingSquare = fBoard.LocationSquareMap[fKing.Location];
 
+            fMoveManager.RemoveAttackerFromAllAttackedByPieceOnSquareLists(fBoard, from);
+            from.MovePiece(to);
+            fBoard.LocationSquareMap.Values.ToList()
+                .ForEach(sq => fMoveManager.UpdateSquaresAttackedByPiece(fBoard, sq));
+
             if (to.IsOccupied && fKingSquare.AttackedByPiecesOnSquares.Contains(to))
             {
-                fMoveManager.RemoveAttackerFromAllAttackedByPieceOnSquareLists(fBoard, from);
-                from.MovePiece(to);
-                fBoard.LocationSquareMap.Values.ToList()
-                    .ForEach(sq => fMoveManager.UpdateSquaresAttackedByPiece(fBoard, sq));
-
-                fKingSquare.AttackedByPiecesOnSquares.Where(p => p.Location != candidate).ToList()
+                fKingSquare.AttackedByPiecesOnSquares
+                    .Where(p => p.Location != candidate).ToList()
                     .ForEach(attacker => fMoveManager.UpdateSquaresAttackedByPiece(fBoard, attacker));
             }
             else
             {
-                fMoveManager.RemoveAttackerFromAllAttackedByPieceOnSquareLists(fBoard, from);
-                from.MovePiece(to);
-                fBoard.LocationSquareMap.Values.ToList()
-                    .ForEach(sq => fMoveManager.UpdateSquaresAttackedByPiece(fBoard, sq));
-
-                fBoard.LocationSquareMap.Values.Where(sq => sq.CurrentPiece != null)
-                    .ToList()
+                fBoard.LocationSquareMap.Values
+                    .Where(sq => sq.CurrentPiece != null).ToList()
                     .ForEach(sq => fMoveManager.UpdateSquaresAttackedByPiece(fBoard, sq));
 
                 List<Square> attackers = new();

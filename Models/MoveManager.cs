@@ -134,7 +134,6 @@ namespace ChessWebApp
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
         }
 
-
         public void UpdateSquaresAttackedByPiece(Board board, Square attacker)
         {
             if (attacker.CurrentPiece == null) return;
@@ -146,19 +145,15 @@ namespace ChessWebApp
             attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPiecesOnSquares.Add(attacker));
         }
 
-
         public void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker) =>
             board.LocationSquareMap.Values
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
 
-
         public void ClearValidMoves() => MoveValidator.ValidMoves.Clear();
-
 
         public void UpdateValidSquares(Board board, King king, Square square)
             => MoveValidator.UpdateValidSquares(board, king, square);
-
 
         public List<Location> GetValidMoves() => MoveValidator.ValidMoves;
     }
