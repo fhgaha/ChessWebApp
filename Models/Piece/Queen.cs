@@ -21,14 +21,14 @@ namespace ChessWebApp
 
         public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {
-            return GetValidMoves(board, attacker);
+            return GetMoves(board, attacker);
         }
 
-        public override List<Location> GetValidMoves(Board board, Square from)
+        public override List<Location> GetMoves(Board board, Square from)
         {
             var moveCandidates = new List<Location>();
-            moveCandidates.AddRange(bishop.GetValidMoves(board, from));
-            moveCandidates.AddRange(rook.GetValidMoves(board, from));
+            moveCandidates.AddRange(bishop.GetMoves(board, from));
+            moveCandidates.AddRange(rook.GetMoves(board, from));
 
             moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 

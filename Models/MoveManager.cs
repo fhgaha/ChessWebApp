@@ -46,12 +46,12 @@ namespace ChessWebApp
                     HandleEnPassant(board, toSquare);
 
                 //pawn promotion
-                if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8 
+                if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
                     || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
                     board.RegisterPawnToPromote(pawn);
             }
 
-            
+
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
@@ -150,11 +150,32 @@ namespace ChessWebApp
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
 
-        public void ClearValidMoves() => MoveValidator.ValidMoves.Clear();
+        public void ClearValidMoves() => MoveValidator.ValidMovesToDisplay.Clear();
 
         public void UpdateValidSquares(Board board, King king, Square square)
             => MoveValidator.UpdateValidSquares(board, king, square);
 
-        public List<Location> GetValidMoves() => MoveValidator.ValidMoves;
+        public List<Location> GetValidMovesToDisplay() => MoveValidator.ValidMovesToDisplay;
+
+        public List<Location> GetValidMoves(Board board, King king, Square defender) 
+            => GetValidMoves(board, king, defender);
+
+        public Dictionary<AbstractPiece, List<Location>> GenerateForAllPieces(Board board)
+        {
+            MoveValidator validator = new();
+            Dictionary<AbstractPiece, List<Location>> pieceMoves = new();
+
+            board.TotalPieces.ToList().ForEach(piece =>
+            {
+                var moves = validator.GetValidMoves(
+                    board,
+                    piece.PieceColor == PieceColor.Light ? board.WhiteKing : board.BlackKing,
+                    board.LocationSquareMap[piece.Location]);
+
+                pieceMoves.Add(piece, moves);
+            });
+
+            return pieceMoves;
+        }
     }
 }

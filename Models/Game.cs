@@ -62,7 +62,7 @@ namespace ChessWebApp.Models
         public bool HandleClick(Square square)
         {
             bool isMovePerformed = true;
-            King king = Board.IsWhitesMove ? Board.WhiteKing : Board.BlackKing;
+            King king = Board.King;
 
             Func<bool> FromSquareIsSelected = () => FromSquare != null && FromSquare.CurrentPiece != null;
             Func<bool> SquareIsEmpty = () => square.CurrentPiece == null;
@@ -101,7 +101,7 @@ namespace ChessWebApp.Models
                     FromSquare = square;
                     MoveManager.UpdateValidSquares(Board, king, FromSquare);
                 }
-                else if (MoveManager.GetValidMoves().Contains(square.Location))  //selected and moving allowed
+                else if (MoveManager.GetValidMovesToDisplay().Contains(square.Location))  //selected and moving allowed
                 {
                     isMovePerformed = MoveManager.MakeMove(Board, FromSquare, square);
                     Board.IsWhitesMove = !Board.IsWhitesMove;
@@ -124,6 +124,6 @@ namespace ChessWebApp.Models
             MoveManager.PromotePawn(Board, piece);
         }
 
-        public List<Location> GetValidMoves() => MoveManager.GetValidMoves();
+        public List<Location> GetValidMoves() => MoveManager.GetValidMovesToDisplay();
     }
 }

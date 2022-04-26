@@ -15,6 +15,7 @@ namespace ChessWebApp
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
+        public King King { get => IsWhitesMove ? WhiteKing : BlackKing; }
         public Pawn PawnToPromote { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
         public AbstractPiece PieceCapturedOnLastMove { get; internal set; }

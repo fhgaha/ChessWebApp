@@ -38,7 +38,7 @@ namespace ChessWebApp
 
         public override int GetHashCode() => (int)Location.File^Location.Rank;
 
-        public abstract List<Location> GetValidMoves(Board board, Square from);
+        public abstract List<Location> GetMoves(Board board, Square from);
 
         public abstract List<Location> GetLocationsAttackedByPiece(Board board, Square attacker);
     }

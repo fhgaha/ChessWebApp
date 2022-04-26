@@ -13,7 +13,7 @@ namespace ChessWebApp
 
         public Rook(Rook piece) : this(piece.PieceColor) { }
 
-        public override List<Location> GetValidMoves(Board board, Square from)
+        public override List<Location> GetMoves(Board board, Square from)
         {
             List<Location> moveCandidates = new();
             GetFileCandidates(moveCandidates, board.LocationSquareMap, from.Location, -1);
@@ -74,7 +74,7 @@ namespace ChessWebApp
 
         public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {
-            return GetValidMoves(board, attacker);
+            return GetMoves(board, attacker);
         }
     }
 }

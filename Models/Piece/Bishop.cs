@@ -13,7 +13,7 @@ namespace ChessWebApp
 
         public Bishop(Bishop piece) : this(piece.PieceColor) { }
 
-        public override List<Location> GetValidMoves(Board board, Square from)
+        public override List<Location> GetMoves(Board board, Square from)
         {
             var moveCandidates = new List<Location>();
             GetMoves(moveCandidates, board.LocationSquareMap, from.Location, 1, 1);
@@ -54,7 +54,7 @@ namespace ChessWebApp
 
         public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
         {
-            return GetValidMoves(board, attacker);
+            return GetMoves(board, attacker);
         }
     }
 }

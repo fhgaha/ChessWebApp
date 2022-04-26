@@ -162,7 +162,7 @@
                     if (squares[i, j].IsValid)
                         squareColor = Global.GreenSquareColor;
 
-                    if (squares[i, j].CurrentPiece is King king && king.IsUnderCheck)
+                    if (squares[i, j].CurrentPiece is King king && king.IsInCheck)
                         squareColor = Global.RedSquareColor;
 
                     <div class="board-cell" style="background: @squareColor;">

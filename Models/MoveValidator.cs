@@ -5,21 +5,20 @@ namespace ChessWebApp
 {
     public class MoveValidator
     {
-        public List<Location> ValidMoves { get; private set; } = new();
+        public List<Location> ValidMovesToDisplay { get; private set; } = new();
 
         public void UpdateValidSquares(Board board, King king, Square square)
         {
-            var legalMoves = MovingPieceBesidesTheseLocsDiscoversCheck(board, king, square);
+            var legalMoves = GetValidMoves(board, king, square);
 
             board.SetAllSquaresNotValid();
             legalMoves.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
-            ValidMoves = legalMoves;
+            ValidMovesToDisplay = legalMoves;
         }
 
-        private List<Location> MovingPieceBesidesTheseLocsDiscoversCheck(Board board, King king, Square defender)
+        public List<Location> GetValidMoves(Board board, King king, Square defender)
         {
-            var moves = defender.CurrentPiece.GetValidMoves(board, defender);
-
+            var moves = defender.CurrentPiece.GetMoves(board, defender);
             moves = FilterMovesToPreventCheck(board, moves, defender.CurrentPiece, king);
 
             return moves;

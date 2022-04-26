@@ -34,5 +34,32 @@ namespace ChessWebApp.Models.Engine
             material += pieces.Where(p => p is Queen && p.PieceColor == color).Count() * queenValue;
             return material;
         }
+
+        private int Search(Board board, int depth)
+        {
+            if (depth == 0) return Evaluate(board);
+
+            MoveManager moveManager = new();
+            var pieceMoves = moveManager.GenerateForAllPieces(board);
+
+            if (pieceMoves.Values.Count() == 0)
+            {
+                if (board.King.IsInCheck) return int.MinValue;
+                return 0;
+            }
+
+            int bestEvaluation = int.MinValue;
+
+            foreach (var piece in pieceMoves.Keys)
+            {
+                foreach (var move in pieceMoves[piece])
+                {
+                    moveManager.GetValidMoves(board, board.King, board.LocationSquareMap[piece.Location]);
+                }
+            }
+
+
+            return 0;
+        }
     }
 }

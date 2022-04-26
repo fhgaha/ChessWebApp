@@ -15,7 +15,7 @@ namespace ChessWebApp
 
         public Pawn(Pawn piece) : this(piece.PieceColor) { }
 
-        public override List<Location> GetValidMoves(Board board, Square start)
+        public override List<Location> GetMoves(Board board, Square start)
         {
             var moveCandidates = new List<Location>();
             var squareMap = board.LocationSquareMap;

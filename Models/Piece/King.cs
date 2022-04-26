@@ -8,17 +8,17 @@ namespace ChessWebApp
     {
         public bool isAbleToCastleKingSide = true;
         public bool isAbleToCastleQueenSide = true;
-        public bool IsUnderCheck = false;
+        public bool IsInCheck = false;
         public bool UpdateIsUnderCheck(Square kingSquare)
         {
             if (kingSquare.AttackedByPiecesOnSquares
                 .Any(attackerSquare => attackerSquare.CurrentPiece.PieceColor != PieceColor))
             {
-                IsUnderCheck = true;
+                IsInCheck = true;
                 return true;
             }
 
-            IsUnderCheck = false;
+            IsInCheck = false;
             return false;
         }
 
@@ -31,7 +31,7 @@ namespace ChessWebApp
         {
             isAbleToCastleKingSide = piece.isAbleToCastleKingSide;
             isAbleToCastleQueenSide = piece.isAbleToCastleQueenSide;
-            IsUnderCheck = piece.IsUnderCheck;
+            IsInCheck = piece.IsInCheck;
         }
 
         public override List<Location> GetLocationsAttackedByPiece(Board board, Square attacker)
@@ -52,7 +52,7 @@ namespace ChessWebApp
             return attackedLocations.Where(loc => loc != null).ToList();
         }
 
-        public override List<Location> GetValidMoves(Board board, Square from)
+        public override List<Location> GetMoves(Board board, Square from)
         {
             var moveCandidates = GetLocationsAttackedByPiece(board, from)
                 .Where(loc =>
@@ -93,7 +93,7 @@ namespace ChessWebApp
         {
             List<Location> moves = new();
 
-            if (IsUnderCheck) return moves;
+            if (IsInCheck) return moves;
 
             //check if king ever moved
             if (!IsFirstMove)
