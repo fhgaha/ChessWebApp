@@ -73,6 +73,7 @@ namespace ChessWebApp.Models.Notation
                 GetWhosMoveIsNext(board),
                 GetCastlingLetters(board),
                 GetEnPassantCandidate(board),
+                "-",
                 Get50MoveDrawCount(board),
                 GetFullmovesCount(board)
             }.Where(e => e != null)
@@ -158,17 +159,17 @@ namespace ChessWebApp.Models.Notation
         private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
 
 
-        internal Board Parse(string value)
+        internal Board Parse(string fenValue)
         {
             //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
             var pieces = new Dictionary<Location, AbstractPiece>();
 
-            var rows = value.Split('/', ' ').Take(8).ToList();
-            var whosMoveIsNext = value.Split('/', ' ').Skip(8).First();
-            var castlingAbility = value.Split('/', ' ').Skip(9).First();
-            var halfMovesCount = value.Split('/', ' ').SkipLast(1).Last();
-            var fullMovesCount = value.Split('/', ' ').Last();
+            var rows = fenValue.Split('/', ' ').Take(8).ToList();
+            var whosMoveIsNext = fenValue.Split('/', ' ').Skip(8).First();
+            var castlingAbility = fenValue.Split('/', ' ').Skip(9).First();
+            var halfMovesCount = fenValue.Split('/', ' ').SkipLast(1).Last();
+            var fullMovesCount = fenValue.Split('/', ' ').Last();
 
 
             for (int i = 0; i < 8; i++)
