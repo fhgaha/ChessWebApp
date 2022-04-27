@@ -22,6 +22,12 @@ namespace ChessWebApp.Controllers
 
         public HomeController(ILogger<HomeController> logger) => _logger = logger;
 
+        public IActionResult Index()
+        {
+            if (game == null) game = new();
+            return View(game.Board);
+        }
+
         public string GetFen()
         {
             return fen.Parse(game.Board);
@@ -47,12 +53,6 @@ namespace ChessWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Index()
-        {
-            if (game == null) game = new();
-            return View(game.Board);
-        }
-
         public IActionResult HandleButtonClick(string location)
         {
             Location loc = game.Board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
@@ -72,7 +72,7 @@ namespace ChessWebApp.Controllers
             else
                 currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
 
-            bool isMoveMade = game.HandleClick(currentSquare);
+            game.HandleClick(currentSquare);
 
             ///this return updates all squares
             //return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
@@ -148,14 +148,12 @@ namespace ChessWebApp.Controllers
             }
         }
 
-
         public IActionResult CheckPromotionJSON(string location)
         {
             Location loc = LocationFactory.Parse(location);
 
             return Json(game.Board.LocationSquareMap[loc].CurrentPiece);
         }
-
 
         public IActionResult PromotePawnJSON(string pieceData)
         {
