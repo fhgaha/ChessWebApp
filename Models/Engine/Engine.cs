@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChessWebApp.Models.Common;
+using ChessWebApp.Models.Notation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,9 +37,9 @@ namespace ChessWebApp.Models.Engine
             return material;
         }
 
-        private int Search(Board board, int depth)
+        private int Search(Board board, int depth, int alpha, int beta)
         {
-            if (depth == 0) return Evaluate(board);
+            if (depth <= 0) return Evaluate(board);
 
             MoveManager moveManager = new();
             var pieceMoves = moveManager.GenerateForAllPieces(board);
@@ -48,18 +50,60 @@ namespace ChessWebApp.Models.Engine
                 return 0;
             }
 
-            int bestEvaluation = int.MinValue;
-
             foreach (var piece in pieceMoves.Keys)
             {
-                foreach (var move in pieceMoves[piece])
+                foreach (Location move in pieceMoves[piece])
                 {
-                    moveManager.GetValidMoves(board, board.King, board.LocationSquareMap[piece.Location]);
+                    //make move, count evaluation, bring board position back
+                    MoveManager moveManager1 = new();
+                    Board fakeBoard = board.Copy();
+
+                    moveManager1.MakeMove(
+                        fakeBoard,
+                        fakeBoard.LocationSquareMap[piece.Location],
+                        fakeBoard.LocationSquareMap[move]);
+
+                    int evaluation = -Search(fakeBoard, depth - 1, -beta, -alpha);
+
+                    if (evaluation >= beta)
+                        //Move was too good, opponent will avoid this position
+                        return beta;    // Snip
+
+                    alpha = Math.Max(alpha, evaluation);
                 }
             }
 
+            return alpha;
+        }
 
-            return 0;
+        public void OrderMoves(List<Move> moves)
+        {
+            foreach (Move move in moves)
+            {
+                int moveScoreGuess = 0;
+                AbstractPiece pieceToMove = move.From.CurrentPiece;
+                AbstractPiece pieceToCapture = move.To.CurrentPiece;
+
+                //Prioritise capturing opponent's most valuable piece with least valuable piece
+                if (pieceToCapture is not null)
+                    moveScoreGuess = 10 * GetPieceValue(pieceToCapture) - GetPieceValue(pieceToMove);
+
+                //promoting a pawn is likely to be good
+                if (pieceToMove is Pawn pawn && pawn.IsPromotingNextMove)
+                    moveScoreGuess += queenValue;
+
+                //penalize moving our piece to a square attacked by opponent pawn
+                if (move.To.AttackedByPiecesOnSquares
+                    .Select(sq => sq.CurrentPiece)
+                    .Where(p => p is Pawn && p.PieceColor != pieceToMove.PieceColor)
+                    .Count() > 0)
+                    moveScoreGuess -= GetPieceValue(pieceToMove);
+            }
+        }
+
+        private int GetPieceValue(AbstractPiece capturePiece)
+        {
+            throw new NotImplementedException();
         }
     }
 }

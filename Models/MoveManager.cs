@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessWebApp.Models.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace ChessWebApp
     {
         public MoveValidator MoveValidator;
         public Square AdditionalSquareToUpdate { get; set; }
+        public Stack<Move> UndoStack { get; set; }
+        public Stack<Move> RedoStack { get; set; }
 
         public MoveManager()
         {
@@ -50,8 +53,6 @@ namespace ChessWebApp
                     || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
                     board.RegisterPawnToPromote(pawn);
             }
-
-
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 

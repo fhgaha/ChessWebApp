@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessWebApp.Models.Notation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -95,5 +96,6 @@ namespace ChessWebApp
 
         public void ApplyToSquares(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
 
+        public Board Copy() => new Fen().Parse(new Fen().Parse(this));
     }
 }

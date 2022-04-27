@@ -8,6 +8,15 @@ namespace ChessWebApp
 {
     public class Pawn : AbstractPiece
     {
+        public bool IsPromotingNextMove 
+        {
+            get 
+            { 
+                return PieceColor == PieceColor.Light 
+                    ? Location.Rank == 7 ? true : false 
+                    : Location.Rank == 2 ? true : false; 
+            }
+        }
         public Pawn(PieceColor pieceColor) : base(pieceColor)
         {
             Name = "Pawn";
@@ -57,7 +66,7 @@ namespace ChessWebApp
             var prevMoveFromSquare = board.LastMove?.Item1;
             var prevMoveToSquare = board.LastMove?.Item2;
 
-            if (prevMoveToSquare?.CurrentPiece is Pawn pawn 
+            if (prevMoveToSquare?.CurrentPiece is Pawn pawn
                 && pawn.PieceColor != PieceColor
                 && Math.Abs(prevMoveFromSquare.Location.Rank - prevMoveToSquare.Location.Rank) == 2)
             {
