@@ -37,47 +37,74 @@ namespace ChessWebApp.Models.Engine
             return material;
         }
 
+
+        public Move GetBestMove(Board board, int depth, int alpha, int beta)
+        {
+            Search(board, depth, alpha, beta);
+
+            return new Move
+            {
+                From = board.LocationSquareMap[bestPiece.Location],
+                To = board.LocationSquareMap[bestTo],
+                Score = bestScore,
+                CapturedPiece = board.LocationSquareMap[bestTo].CurrentPiece,
+                MovingPiece = bestPiece,
+            };
+        }
+
+        private AbstractPiece bestPiece;
+        private Location bestTo;
+        private int bestScore;
+
         private int Search(Board board, int depth, int alpha, int beta)
         {
             if (depth <= 0) return Evaluate(board);
 
             MoveManager moveManager = new();
-            var pieceMoves = moveManager.GenerateForAllPieces(board);
+            var pieceMoves = moveManager.GeneratePossibleMovesForAllPieces(board);
 
             if (pieceMoves.Values.Count() == 0)
             {
-                if (board.King.IsInCheck) return int.MinValue;
+                if (board.King.IsInCheck) 
+                    return int.MinValue;
                 return 0;
             }
 
             foreach (var piece in pieceMoves.Keys)
-            {
                 foreach (Location move in pieceMoves[piece])
                 {
                     //make move, count evaluation, bring board position back
-                    MoveManager moveManager1 = new();
-                    Board fakeBoard = board.Copy();
+                    MoveManager _moveManager = new();
+                    Board _board = board.Copy();
 
-                    moveManager1.MakeMove(
-                        fakeBoard,
-                        fakeBoard.LocationSquareMap[piece.Location],
-                        fakeBoard.LocationSquareMap[move]);
+                    _moveManager.MakeMove(
+                        _board,
+                        _board.LocationSquareMap[piece.Location],
+                        _board.LocationSquareMap[move]);
 
-                    int evaluation = -Search(fakeBoard, depth - 1, -beta, -alpha);
+                    int evaluation = -Search(_board, depth - 1, -beta, -alpha);
 
                     if (evaluation >= beta)
                         //Move was too good, opponent will avoid this position
                         return beta;    // Snip
 
                     alpha = Math.Max(alpha, evaluation);
+
+                    if (alpha > bestScore)
+                    {
+                        bestPiece = piece;
+                        bestScore = alpha;
+                        bestTo = move;
+                    }
                 }
-            }
 
             return alpha;
         }
 
-        public void OrderMoves(List<Move> moves)
+        public int OrderMoves(List<Move> moves)
         {
+            List<int> moveScores = new();
+
             foreach (Move move in moves)
             {
                 int moveScoreGuess = 0;
@@ -98,12 +125,22 @@ namespace ChessWebApp.Models.Engine
                     .Where(p => p is Pawn && p.PieceColor != pieceToMove.PieceColor)
                     .Count() > 0)
                     moveScoreGuess -= GetPieceValue(pieceToMove);
+
+                moveScores.Add(moveScoreGuess);
             }
+            return moveScores.Max();
         }
 
-        private int GetPieceValue(AbstractPiece capturePiece)
+        private int GetPieceValue(AbstractPiece piece)
         {
-            throw new NotImplementedException();
+            switch (piece)
+            {
+                case Pawn: return pawnValue;
+                case Knight: return knightValue;
+                case Bishop: return bishopValue;
+                case Rook: return rookValue;
+                default: return queenValue;
+            }
         }
     }
 }

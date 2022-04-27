@@ -31,7 +31,10 @@ namespace ChessWebApp
             if (obj == null || GetType() != obj.GetType())
                 return false;
 
-            if (((AbstractPiece)obj).Location == Location)
+            if (obj is AbstractPiece piece 
+                && piece.Location == Location 
+                && piece.Name == Name 
+                && piece.PieceColor == PieceColor)
                 return true;
             return false;
         }

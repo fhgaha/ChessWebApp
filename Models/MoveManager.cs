@@ -161,7 +161,7 @@ namespace ChessWebApp
         public List<Location> GetValidMoves(Board board, King king, Square defender) 
             => GetValidMoves(board, king, defender);
 
-        public Dictionary<AbstractPiece, List<Location>> GenerateForAllPieces(Board board)
+        public Dictionary<AbstractPiece, List<Location>> GeneratePossibleMovesForAllPieces(Board board)
         {
             MoveValidator validator = new();
             Dictionary<AbstractPiece, List<Location>> pieceMoves = new();

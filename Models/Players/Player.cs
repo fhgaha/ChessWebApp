@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChessWebApp.Models.Common;
+using ChessWebApp.Models.Engine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,14 +12,14 @@ namespace ChessWebApp.Models.Players
         public int Score { get; set; }
         public List<AbstractPiece> CapturedPieces { get; set; }
 
-        bool MakeMove(Game game, MoveManager moveManager, Square square);
+        bool TryMakeMove(Game game, MoveManager moveManager, Square square);
     }
 
     public class HumanPlayer : Player
     {
         public int Score { get; set; }
         public List<AbstractPiece> CapturedPieces { get; set; }
-        public bool MakeMove(Game game, MoveManager moveManager, Square square)
+        public bool TryMakeMove(Game game, MoveManager moveManager, Square square)
         {
             bool isMovePerformed = false;
             Board board = game.Board;
@@ -80,9 +82,27 @@ namespace ChessWebApp.Models.Players
     {
         public int Score { get; set; }
         public List<AbstractPiece> CapturedPieces { get; set; }
-        public bool MakeMove(Game game, MoveManager moveManager, Square square)
+        private Engine.Engine engine ;
+
+        public MachinePlayer()
         {
-            return false;
+            CapturedPieces = new();
+            engine = new Engine.Engine();
+        }
+
+        public bool TryMakeMove(Game game, MoveManager moveManager, Square square)
+        {
+            bool isMovePerformed = false;
+            Board board = game.Board;
+
+            //need a from-square and to-square
+
+            Move bestMove = engine.GetBestMove(board, 3, int.MinValue, int.MaxValue);
+
+            isMovePerformed = moveManager.MakeMove(board, bestMove.From, bestMove.To);
+            board.IsWhitesMove = !board.IsWhitesMove;
+
+            return isMovePerformed;
         }
     }
 }

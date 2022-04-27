@@ -55,7 +55,7 @@ namespace ChessWebApp.Models
             Board = new(pieces);
             MoveManager = new();
             PlayerWhite = new HumanPlayer();
-            PlayerBlack = new HumanPlayer();
+            PlayerBlack = new MachinePlayer();
             PlayerToMove = PlayerWhite;
         }
 
@@ -65,13 +65,13 @@ namespace ChessWebApp.Models
             Board = Fen.Parse(fenCode);
             MoveManager = new();
             PlayerWhite = new HumanPlayer();
-            PlayerBlack = new HumanPlayer();
+            PlayerBlack = new MachinePlayer();
             PlayerToMove = PlayerWhite;
         }
 
         public void HandleClick(Square square)
         {
-            bool isMovePerformed = PlayerToMove.MakeMove(this, MoveManager, square);
+            bool isMovePerformed = PlayerToMove.TryMakeMove(this, MoveManager, square);
 
             if (isMovePerformed)
                 PlayerToMove = PlayerToMove == PlayerWhite ? PlayerBlack : PlayerWhite;
