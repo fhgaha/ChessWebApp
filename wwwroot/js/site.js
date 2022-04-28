@@ -12,16 +12,21 @@ $(document).ready(function () {
         var squareLoc = $(this).val();
         console.log("%c you clicked on: " + squareLoc, green);
 
-        //$.when(doSquareUpdate(squareLoc)).then(function () {
-        //    doFenUpdate();
+        $.when(doSquareUpdate(squareLoc)).then(doFenUpdate());
+
+        //$.ajax({
+        //    url: doSquareUpdate(squareLoc),
+        //    success: function () {
+        //        doFenUpdate();
+        //    }
         //})
 
-        $.ajax({
-            url: doSquareUpdate(squareLoc),
-            success: function () {
-                doFenUpdate();
-            }
-        })
+        //$.ajax({
+        //    url: doFenUpdate(),
+        //    success: function () {
+        //        GetPlayer();
+        //    }
+        //})
 
     })
 
@@ -93,12 +98,9 @@ function doSquareUpdate(squareLoc) {
         method: "POST",
         url: "/Home/UpdateChangedSquaresJSON",
         data: { "location": squareLoc },
-        error: function (jqXHR) {
-            console.log(jqXHR.statusText, red);
-            console.log(jqXHR, red);
-        },
+        async: false,
         success: function (data) {
-            console.log("entered doSquareUpdate success", green);
+            console.log("doSquareUpdate", green);
             //console.dir(data);
             $("#" + squareLoc).html(data);
 
@@ -137,19 +139,25 @@ function TryOpenPromotionModal(squareLoc) {
 function doFenUpdate() {
     $.ajax({
         url: "/Home/GetFen",
+        async: false,
         success: function (data) {
-            console.log("entered doFenUpdate success", green);
+            console.log("doFenUpdate");
             $('#fen-input').val(data);
         }
     });
+
+    
 }
 
 function GetPlayer() {
     $.ajax({
         url: "/Home/GetPlayer",
         success: function (data) {
-            if (data == "ChessWebApp.Models.Players.MachinePlayer")
-                doSquareUpdate(null);
+            console.log("GetPlayer");
+            if (data == "ChessWebApp.Models.Players.MachinePlayer") {
+                doSquareUpdate('A1');
+            }
         }
     });
 }
+
