@@ -4,16 +4,25 @@ const red = "color: #da5555";
 $(document).ready(function () {
 
     console.log("Page is ready");
-    doFenUpdate();
+    //doFenUpdate();
 
-    $(document).on("click", ".square-button", function UpdateSquares () {
+    $(document).on("click", ".square-button", function () {
         event.preventDefault();
 
         var squareLoc = $(this).val();
         console.log("%c you clicked on: " + squareLoc, green);
 
-        $.when(doSquareUpdate(squareLoc)).then(doFenUpdate());
-        //GetPlayer();
+        //$.when(doSquareUpdate(squareLoc)).then(function () {
+        //    doFenUpdate();
+        //})
+
+        $.ajax({
+            url: doSquareUpdate(squareLoc),
+            success: function () {
+                doFenUpdate();
+            }
+        })
+
     })
 
     $(document).on("click", ".promotion-button", function () {
@@ -89,17 +98,18 @@ function doSquareUpdate(squareLoc) {
             console.log(jqXHR, red);
         },
         success: function (data) {
+            console.log("entered doSquareUpdate success", green);
             //console.dir(data);
             $("#" + squareLoc).html(data);
 
             TryOpenPromotionModal(squareLoc);
 
             for (var d in data) {
-                console.log(data[d]);
+                //console.log(data[d]);
                 $("#" + d).html(data[d]);
             }
         }
-    })
+    });
 }
 
 function TryOpenPromotionModal(squareLoc) {
@@ -108,8 +118,8 @@ function TryOpenPromotionModal(squareLoc) {
         data: { "location": squareLoc },
         url: "/Home/CheckPromotionJSON",
         success: function (data) {
-            console.log("Square data:");
-            console.log(data);
+            //console.log("Square data:");
+            //console.log(data);
 
             if (data != null && data.name == "Pawn"
                 && (data.location.rank == 8 && data.pieceColor == 0
@@ -128,6 +138,7 @@ function doFenUpdate() {
     $.ajax({
         url: "/Home/GetFen",
         success: function (data) {
+            console.log("entered doFenUpdate success", green);
             $('#fen-input').val(data);
         }
     });
