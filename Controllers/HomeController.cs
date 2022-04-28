@@ -28,10 +28,9 @@ namespace ChessWebApp.Controllers
             return View(game.Board);
         }
 
-        public string GetFen()
-        {
-            return fen.Parse(game.Board);
-        }
+        public string GetFen() => fen.Parse(game.Board);
+
+        public string GetPlayer() => game.PlayerToMove.ToString();
 
         public IActionResult SetFenJSON(string fenCode)
         {
@@ -68,6 +67,7 @@ namespace ChessWebApp.Controllers
             Square currentSquare;
 
             if (string.IsNullOrEmpty(location))
+                //is thist causes A1 to become selected?
                 currentSquare = game.Board.LocationSquareMap[new Location(ChessWebApp.File.A, 1)];
             else
                 currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];

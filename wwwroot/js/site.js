@@ -1,21 +1,19 @@
 ﻿const green = "color: #bada55";
 const red = "color: #da5555";
 
-
 $(document).ready(function () {
 
     console.log("Page is ready");
-
     doFenUpdate();
 
-    $(document).on("click", ".square-button", function () {
+    $(document).on("click", ".square-button", function UpdateSquares () {
         event.preventDefault();
 
         var squareLoc = $(this).val();
         console.log("%c you clicked on: " + squareLoc, green);
 
-        doSquareUpdate(squareLoc);
-        doFenUpdate();
+        $.when(doSquareUpdate(squareLoc)).then(doFenUpdate());
+        //GetPlayer();
     })
 
     $(document).on("click", ".promotion-button", function () {
@@ -135,3 +133,12 @@ function doFenUpdate() {
     });
 }
 
+function GetPlayer() {
+    $.ajax({
+        url: "/Home/GetPlayer",
+        success: function (data) {
+            if (data == "ChessWebApp.Models.Players.MachinePlayer")
+                doSquareUpdate(null);
+        }
+    });
+}
