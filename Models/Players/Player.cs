@@ -65,7 +65,6 @@ namespace ChessWebApp.Models.Players
                 else if (moveManager.GetValidMovesToDisplay().Contains(square.Location))  //selected and moving allowed
                 {
                     isMovePerformed = moveManager.MakeMove(board, fromSquare, square);
-                    board.IsWhitesMove = !board.IsWhitesMove;
 
                     game.FromSquare = null;
                 }
@@ -95,12 +94,12 @@ namespace ChessWebApp.Models.Players
             bool isMovePerformed = false;
             Board board = game.Board;
 
-            //need a from-square and to-square
+            Move bestMove = engine.GetBestMove(board);
 
-            Move bestMove = engine.GetBestMove(board, 2, int.MinValue, int.MaxValue);
-
-            isMovePerformed = moveManager.MakeMove(board, bestMove.From, bestMove.To);
-            board.IsWhitesMove = !board.IsWhitesMove;
+            isMovePerformed = moveManager.MakeMove(
+                board,
+                board.LocationSquareMap[bestMove.From],
+                board.LocationSquareMap[bestMove.To]);
 
             return isMovePerformed;
         }

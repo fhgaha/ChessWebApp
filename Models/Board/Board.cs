@@ -96,6 +96,6 @@ namespace ChessWebApp
 
         public void ApplyToSquares(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
 
-        public Board Copy() => new Fen().Parse(new Fen().Parse(this));
+        public Board Copy() => new Fen().Parse( new Fen().Parse(this) );
     }
 }

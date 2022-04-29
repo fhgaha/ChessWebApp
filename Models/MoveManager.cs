@@ -63,6 +63,8 @@ namespace ChessWebApp
 
             if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
 
+            board.IsWhitesMove = !board.IsWhitesMove;
+
             UndoStack.Push(board);
              
             return true;
@@ -171,23 +173,31 @@ namespace ChessWebApp
         public List<Location> GetValidMoves(Board board, King king, Square defender) 
             => GetValidMoves(board, king, defender);
 
-        public Dictionary<AbstractPiece, List<Location>> GeneratePossibleMovesForAllPieces(Board board, PieceColor color)
+        public List<Move> GenerateMovesForAllPieces(Board board, PieceColor color)
         {
             MoveValidator validator = new();
-            Dictionary<AbstractPiece, List<Location>> pieceMoves = new();
+            List<Move> moves = new();
 
-            board.TotalPieces.ToList().ForEach(piece =>
+            foreach (AbstractPiece piece in board.TotalPieces.Where(p => p.PieceColor == color))
             {
-                var moves = validator.GetValidMoves(
+                var locations = validator.GetValidMoves(
                     board,
-                    piece.PieceColor == PieceColor.Light ? board.WhiteKing : board.BlackKing,
+                    color == PieceColor.Light ? board.WhiteKing : board.BlackKing,
                     board.LocationSquareMap[piece.Location]);
 
-                if (moves.Count > 0 && piece.PieceColor == color)
-                    pieceMoves.Add(piece, moves);
-            });
+                foreach (var loc in locations)
+                {
+                    Move move = new Move
+                    {
+                        From = piece.Location,
+                        To = loc,
+                        MovingPiece = piece
+                    };
 
-            return pieceMoves;
+                    moves.Add(move);
+                }
+            }
+            return moves;
         }
     }
 }

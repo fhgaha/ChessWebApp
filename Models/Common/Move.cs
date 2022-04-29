@@ -7,8 +7,8 @@ namespace ChessWebApp.Models.Common
 {
     public class Move
     {
-        public Square From { get; set; }
-        public Square To { get; set; }
+        public Location From { get; set; }
+        public Location To { get; set; }
         public AbstractPiece MovingPiece { get; set; }
         public AbstractPiece CapturedPiece { get; set; }
         public bool PerformedByWhites { get; set; }

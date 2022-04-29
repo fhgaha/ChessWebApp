@@ -15,6 +15,8 @@ namespace ChessWebApp.Models.Engine
         const int rookValue = 500;
         const int queenValue = 900;
 
+        const int depth = 3;
+
         public static int Evaluate(Board board)
         {
             int whiteEval = CountMaterial(board.TotalPieces, PieceColor.Light);
@@ -37,63 +39,126 @@ namespace ChessWebApp.Models.Engine
             return material;
         }
 
+        Move bestMove = new Move { Score = 0 };
 
-        public Move GetBestMove(Board board, int depth, int alpha, int beta)
+        public Move GetBestMove(Board board)
         {
-            MoveManager moveManager = new();
-            var pieceMoves = moveManager.GeneratePossibleMovesForAllPieces(board, PieceColor.Dark);
-
-            foreach (var piece in pieceMoves.Keys)
-            {
-                Search(board, piece, depth, alpha, beta);
-            }
-
-
-
-            Move move = new Move
-            {
-                //bestPiece remains null
-                From = board.LocationSquareMap[bestPiece.Location],
-                To = board.LocationSquareMap[bestTo],
-                Score = bestScore,
-                CapturedPiece = board.LocationSquareMap[bestTo].CurrentPiece,
-                MovingPiece = bestPiece,
-            };
-
-            return move;
+            //AlphaBeta(board, depth, int.MinValue, int.MaxValue);
+            Maximizer(board, depth, int.MinValue, int.MaxValue);
+            return bestMove;
         }
 
-        private AbstractPiece bestPiece;
-        private Location bestTo;
-        private int bestScore;
-
-        private int Search(Board board, AbstractPiece piece, int depth, int alpha, int beta)
+        private int Maximizer(Board board, int depth, int alpha, int beta)
         {
             if (depth == 0) return Evaluate(board);
 
-            var moves = piece.GetMoves(board, board.LocationSquareMap[piece.Location]);
+            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
 
             if (moves.Count() == 0)
             {
                 if (board.King.IsInCheck)
-                    return int.MinValue;
+                    return int.MinValue;    //?
                 return 0;
             }
 
-            foreach (Location move in moves)
+            foreach (Move move in moves)
             {
                 //make move, count evaluation, bring board position back
                 MoveManager _moveManager = new();
+                Board _board = board.Copy();
 
                 var isMoveSuccessfull = _moveManager.MakeMove(
-                    board,
-                    board.LocationSquareMap[piece.Location],
-                    board.LocationSquareMap[move]);
+                    _board,
+                    _board.LocationSquareMap[move.From],
+                    _board.LocationSquareMap[move.To]);
 
-                //why is current piece null
-                int evaluation = -Search(board, board.LocationSquareMap[move].CurrentPiece, depth - 1, -beta, -alpha);
+                int evaluation = Minimizer(_board, depth - 1, alpha, beta);
 
-                _moveManager.UnmakeMove(board);
+                //_moveManager.UnmakeMove(board);
+
+                if (evaluation > alpha)
+                {
+                    alpha = evaluation;
+
+                    if (depth == Engine.depth)
+                        bestMove = move;
+                }
+
+                if (alpha >= beta)
+                    return alpha;
+            }
+
+            return alpha;
+        }
+
+        private int Minimizer(Board board, int depth, int alpha, int beta)
+        {
+            if (depth == 0) return Evaluate(board);
+
+            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
+
+            if (moves.Count() == 0)
+            {
+                if (board.King.IsInCheck)
+                    return int.MinValue;    //?
+                return 0;
+            }
+
+            foreach (Move move in moves)
+            {
+                //make move, count evaluation, bring board position back
+                MoveManager _moveManager = new();
+                Board _board = board.Copy();
+
+                var isMoveSuccessfull = _moveManager.MakeMove(
+                    _board,
+                    _board.LocationSquareMap[move.From],
+                    _board.LocationSquareMap[move.To]);
+
+                int evaluation = Maximizer(_board, depth - 1, alpha, beta);
+
+                //_moveManager.UnmakeMove(board);
+
+                if (evaluation <= beta)
+                    beta = evaluation;
+
+                if (alpha >= beta)
+                    return beta;
+            }
+            return beta;
+        }
+
+        private int AlphaBeta(Board board, int depth, int alpha, int beta)
+        {
+            if (depth == 0) return Evaluate(board);
+
+            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
+
+            var color = board.IsWhitesMove ? PieceColor.Light : PieceColor.Dark;
+
+            moves = moves.Where(m => m.MovingPiece.PieceColor == color).ToList();
+
+            if (moves.Count() == 0)
+            {
+                if (board.King.IsInCheck)
+                    return int.MinValue;    //?
+                return 0;
+            }
+
+            foreach (Move move in moves)
+            {
+                //make move, count evaluation, bring board position back
+                MoveManager _moveManager = new();
+                Board _board = board.Copy();
+
+                var isMoveSuccessfull = _moveManager.MakeMove(
+                    _board,
+                    _board.LocationSquareMap[move.From],
+                    _board.LocationSquareMap[move.To]);
+
+                int evaluation = -AlphaBeta(_board, depth - 1, -beta, -alpha);
+
+                //_moveManager.UnmakeMove(board);
 
                 if (evaluation >= beta)
                     //Move was too good, opponent will avoid this position
@@ -101,46 +166,42 @@ namespace ChessWebApp.Models.Engine
 
                 alpha = Math.Max(alpha, evaluation);
 
-                if (alpha > bestScore)
-                {
-                    bestPiece = piece;
-                    bestScore = alpha;
-                    bestTo = move;
-                }
+                if (depth == 0)
+                    bestMove = move;
             }
 
             return alpha;
         }
 
-        public int OrderMoves(List<Move> moves)
-        {
-            List<int> moveScores = new();
+        //public int OrderMoves(List<Move> moves)
+        //{
+        //    List<int> moveScores = new();
 
-            foreach (Move move in moves)
-            {
-                int moveScoreGuess = 0;
-                AbstractPiece pieceToMove = move.From.CurrentPiece;
-                AbstractPiece pieceToCapture = move.To.CurrentPiece;
+        //    foreach (Move move in moves)
+        //    {
+        //        int moveScoreGuess = 0;
+        //        AbstractPiece pieceToMove = move.From.CurrentPiece;
+        //        AbstractPiece pieceToCapture = move.To.CurrentPiece;
 
-                //Prioritise capturing opponent's most valuable piece with least valuable piece
-                if (pieceToCapture is not null)
-                    moveScoreGuess = 10 * GetPieceValue(pieceToCapture) - GetPieceValue(pieceToMove);
+        //        //Prioritise capturing opponent's most valuable piece with least valuable piece
+        //        if (pieceToCapture is not null)
+        //            moveScoreGuess = 10 * GetPieceValue(pieceToCapture) - GetPieceValue(pieceToMove);
 
-                //promoting a pawn is likely to be good
-                if (pieceToMove is Pawn pawn && pawn.IsPromotingNextMove)
-                    moveScoreGuess += queenValue;
+        //        //promoting a pawn is likely to be good
+        //        if (pieceToMove is Pawn pawn && pawn.IsPromotingNextMove)
+        //            moveScoreGuess += queenValue;
 
-                //penalize moving our piece to a square attacked by opponent pawn
-                if (move.To.AttackedByPiecesOnSquares
-                    .Select(sq => sq.CurrentPiece)
-                    .Where(p => p is Pawn && p.PieceColor != pieceToMove.PieceColor)
-                    .Count() > 0)
-                    moveScoreGuess -= GetPieceValue(pieceToMove);
+        //        //penalize moving our piece to a square attacked by opponent pawn
+        //        if (move.To.AttackedByPiecesOnSquares
+        //            .Select(sq => sq.CurrentPiece)
+        //            .Where(p => p is Pawn && p.PieceColor != pieceToMove.PieceColor)
+        //            .Count() > 0)
+        //            moveScoreGuess -= GetPieceValue(pieceToMove);
 
-                moveScores.Add(moveScoreGuess);
-            }
-            return moveScores.Max();
-        }
+        //        moveScores.Add(moveScoreGuess);
+        //    }
+        //    return moveScores.Max();
+        //}
 
         private int GetPieceValue(AbstractPiece piece)
         {
