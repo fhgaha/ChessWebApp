@@ -10,17 +10,20 @@ namespace ChessWebApp
     {
         public MoveValidator MoveValidator;
         public Square AdditionalSquareToUpdate { get; set; }
-        public Stack<Move> UndoStack { get; set; }
-        public Stack<Move> RedoStack { get; set; }
+        public Stack<Board> UndoStack { get; set; }
+        public Stack<Board> RedoStack { get; set; }
 
         public MoveManager()
         {
             MoveValidator = new();
+            UndoStack = new();
         }
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
         {
-            if (toSquare.CurrentPiece != null) RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
+            if (toSquare.CurrentPiece != null) 
+                RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
+
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, fromSquare);
 
             if (board.PieceCapturedOnLastMove is not null) board.PieceCapturedOnLastMove = null;
@@ -60,6 +63,8 @@ namespace ChessWebApp
 
             if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
 
+            UndoStack.Push(board);
+             
             return true;
         }
 
@@ -91,6 +96,11 @@ namespace ChessWebApp
             board.SetAllSquaresNotValid();
 
             board.PawnToPromote = null;
+        }
+
+        internal void UnmakeMove(Board board)
+        {
+            board = UndoStack.Pop();
         }
 
         public void HandleCastling(Board board, Square square)
@@ -161,7 +171,7 @@ namespace ChessWebApp
         public List<Location> GetValidMoves(Board board, King king, Square defender) 
             => GetValidMoves(board, king, defender);
 
-        public Dictionary<AbstractPiece, List<Location>> GeneratePossibleMovesForAllPieces(Board board)
+        public Dictionary<AbstractPiece, List<Location>> GeneratePossibleMovesForAllPieces(Board board, PieceColor color)
         {
             MoveValidator validator = new();
             Dictionary<AbstractPiece, List<Location>> pieceMoves = new();
@@ -173,7 +183,8 @@ namespace ChessWebApp
                     piece.PieceColor == PieceColor.Light ? board.WhiteKing : board.BlackKing,
                     board.LocationSquareMap[piece.Location]);
 
-                pieceMoves.Add(piece, moves);
+                if (moves.Count > 0 && piece.PieceColor == color)
+                    pieceMoves.Add(piece, moves);
             });
 
             return pieceMoves;

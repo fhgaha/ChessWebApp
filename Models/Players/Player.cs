@@ -97,7 +97,7 @@ namespace ChessWebApp.Models.Players
 
             //need a from-square and to-square
 
-            Move bestMove = engine.GetBestMove(board, 3, int.MinValue, int.MaxValue);
+            Move bestMove = engine.GetBestMove(board, 2, int.MinValue, int.MaxValue);
 
             isMovePerformed = moveManager.MakeMove(board, bestMove.From, bestMove.To);
             board.IsWhitesMove = !board.IsWhitesMove;

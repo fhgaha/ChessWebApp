@@ -75,7 +75,7 @@ namespace ChessWebApp.Controllers
             game.HandleClick(currentSquare);
 
             ///this return updates all squares
-            //return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
+            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
 
             ///this code section updates only changed squares
             savedSquares.Enqueue(GetChangedSquares(currentSquare));

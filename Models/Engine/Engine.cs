@@ -40,63 +40,74 @@ namespace ChessWebApp.Models.Engine
 
         public Move GetBestMove(Board board, int depth, int alpha, int beta)
         {
-            Search(board, depth, alpha, beta);
+            MoveManager moveManager = new();
+            var pieceMoves = moveManager.GeneratePossibleMovesForAllPieces(board, PieceColor.Dark);
 
-            return new Move
+            foreach (var piece in pieceMoves.Keys)
             {
+                Search(board, piece, depth, alpha, beta);
+            }
+
+
+
+            Move move = new Move
+            {
+                //bestPiece remains null
                 From = board.LocationSquareMap[bestPiece.Location],
                 To = board.LocationSquareMap[bestTo],
                 Score = bestScore,
                 CapturedPiece = board.LocationSquareMap[bestTo].CurrentPiece,
                 MovingPiece = bestPiece,
             };
+
+            return move;
         }
 
         private AbstractPiece bestPiece;
         private Location bestTo;
         private int bestScore;
 
-        private int Search(Board board, int depth, int alpha, int beta)
+        private int Search(Board board, AbstractPiece piece, int depth, int alpha, int beta)
         {
-            if (depth <= 0) return Evaluate(board);
+            if (depth == 0) return Evaluate(board);
 
-            MoveManager moveManager = new();
-            var pieceMoves = moveManager.GeneratePossibleMovesForAllPieces(board);
+            var moves = piece.GetMoves(board, board.LocationSquareMap[piece.Location]);
 
-            if (pieceMoves.Values.Count() == 0)
+            if (moves.Count() == 0)
             {
-                if (board.King.IsInCheck) 
+                if (board.King.IsInCheck)
                     return int.MinValue;
                 return 0;
             }
 
-            foreach (var piece in pieceMoves.Keys)
-                foreach (Location move in pieceMoves[piece])
+            foreach (Location move in moves)
+            {
+                //make move, count evaluation, bring board position back
+                MoveManager _moveManager = new();
+
+                var isMoveSuccessfull = _moveManager.MakeMove(
+                    board,
+                    board.LocationSquareMap[piece.Location],
+                    board.LocationSquareMap[move]);
+
+                //why is current piece null
+                int evaluation = -Search(board, board.LocationSquareMap[move].CurrentPiece, depth - 1, -beta, -alpha);
+
+                _moveManager.UnmakeMove(board);
+
+                if (evaluation >= beta)
+                    //Move was too good, opponent will avoid this position
+                    return beta;    // Snip
+
+                alpha = Math.Max(alpha, evaluation);
+
+                if (alpha > bestScore)
                 {
-                    //make move, count evaluation, bring board position back
-                    MoveManager _moveManager = new();
-                    Board _board = board.Copy();
-
-                    _moveManager.MakeMove(
-                        _board,
-                        _board.LocationSquareMap[piece.Location],
-                        _board.LocationSquareMap[move]);
-
-                    int evaluation = -Search(_board, depth - 1, -beta, -alpha);
-
-                    if (evaluation >= beta)
-                        //Move was too good, opponent will avoid this position
-                        return beta;    // Snip
-
-                    alpha = Math.Max(alpha, evaluation);
-
-                    if (alpha > bestScore)
-                    {
-                        bestPiece = piece;
-                        bestScore = alpha;
-                        bestTo = move;
-                    }
+                    bestPiece = piece;
+                    bestScore = alpha;
+                    bestTo = move;
                 }
+            }
 
             return alpha;
         }

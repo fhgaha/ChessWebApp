@@ -9,8 +9,8 @@ namespace ChessWebApp
 {
     public class Board
     {
-        public bool IsReal = true;
-        public List<Tuple<Square, Square>> PerformedMoves = new List<Tuple<Square, Square>>();
+        public bool IsReal { get; set; } = true;
+        public List<Tuple<Square, Square>> PerformedMoves { get; set; } = new List<Tuple<Square, Square>>();
         public Tuple<Square, Square> LastMove { get => PerformedMoves.LastOrDefault(); }
         public Square[,] BoardSquares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
@@ -20,7 +20,7 @@ namespace ChessWebApp
         public Pawn PawnToPromote { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
         public AbstractPiece PieceCapturedOnLastMove { get; internal set; }
-        public bool IsWhitesMove = true;
+        public bool IsWhitesMove { get; set; } = true;
         public int HalfmoveCount = 0;
         public string message = "";
         public IEnumerable<AbstractPiece> TotalPieces => LocationSquareMap.Values
