@@ -43,7 +43,6 @@ namespace ChessWebApp.Models.Engine
 
         public Move GetBestMove(Board board)
         {
-            //AlphaBeta(board, depth, int.MinValue, int.MaxValue);
             Maximizer(board, depth, int.MinValue, int.MaxValue);
             return bestMove;
         }
@@ -126,51 +125,6 @@ namespace ChessWebApp.Models.Engine
                     return beta;
             }
             return beta;
-        }
-
-        private int AlphaBeta(Board board, int depth, int alpha, int beta)
-        {
-            if (depth == 0) return Evaluate(board);
-
-            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
-
-            var color = board.IsWhitesMove ? PieceColor.Light : PieceColor.Dark;
-
-            moves = moves.Where(m => m.MovingPiece.PieceColor == color).ToList();
-
-            if (moves.Count() == 0)
-            {
-                if (board.King.IsInCheck)
-                    return int.MinValue;    //?
-                return 0;
-            }
-
-            foreach (Move move in moves)
-            {
-                //make move, count evaluation, bring board position back
-                MoveManager _moveManager = new();
-                Board _board = board.Copy();
-
-                var isMoveSuccessfull = _moveManager.MakeMove(
-                    _board,
-                    _board.LocationSquareMap[move.From],
-                    _board.LocationSquareMap[move.To]);
-
-                int evaluation = -AlphaBeta(_board, depth - 1, -beta, -alpha);
-
-                //_moveManager.UnmakeMove(board);
-
-                if (evaluation >= beta)
-                    //Move was too good, opponent will avoid this position
-                    return beta;    // Snip
-
-                alpha = Math.Max(alpha, evaluation);
-
-                if (depth == 0)
-                    bestMove = move;
-            }
-
-            return alpha;
         }
 
         //public int OrderMoves(List<Move> moves)

@@ -1,17 +1,16 @@
-﻿using ChessWebApp.Models.Notation;
+﻿using ChessWebApp.Models.Common;
+using ChessWebApp.Models.Notation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessWebApp
 {
     public class Board
     {
         public bool IsReal { get; set; } = true;
-        public List<Tuple<Square, Square>> PerformedMoves { get; set; } = new List<Tuple<Square, Square>>();
-        public Tuple<Square, Square> LastMove { get => PerformedMoves.LastOrDefault(); }
+        public List<Move> PerformedMoves { get; set; } = new List<Move>();
+        public Move LastMove { get => PerformedMoves.LastOrDefault(); }
         public Square[,] BoardSquares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public King WhiteKing { get; private set; }

@@ -63,8 +63,14 @@ namespace ChessWebApp
         private void TryAddEnPassantMove(Board board, List<Location> validLocations)
         {
             //Взятие пешки противника может осуществляться только сразу после её перемещения на два поля
-            var prevMoveFromSquare = board.LastMove?.Item1;
-            var prevMoveToSquare = board.LastMove?.Item2;
+            Square prevMoveFromSquare = null;
+            Square prevMoveToSquare = null;
+
+            if (board.LastMove is not null && board.LastMove.From is not null)
+                prevMoveFromSquare = board.LocationSquareMap[board.LastMove.From];
+
+            if (board.LastMove is not null && board.LastMove.To is not null)
+                prevMoveToSquare = board.LocationSquareMap[board.LastMove?.To];
 
             if (prevMoveToSquare?.CurrentPiece is Pawn pawn
                 && pawn.PieceColor != PieceColor

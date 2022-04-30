@@ -21,7 +21,7 @@ namespace ChessWebApp
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
         {
-            if (toSquare.CurrentPiece != null) 
+            if (toSquare.CurrentPiece != null)
                 RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
 
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, fromSquare);
@@ -59,14 +59,14 @@ namespace ChessWebApp
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
-            board.PerformedMoves.Add(Tuple.Create(fromSquare, toSquare));
+            board.PerformedMoves.Add(new Move { From = fromSquare.Location, To = toSquare.Location });
 
             if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
 
             board.IsWhitesMove = !board.IsWhitesMove;
 
             UndoStack.Push(board);
-             
+
             return true;
         }
 
@@ -170,7 +170,7 @@ namespace ChessWebApp
 
         public List<Location> GetValidMovesToDisplay() => MoveValidator.ValidMovesToDisplay;
 
-        public List<Location> GetValidMoves(Board board, King king, Square defender) 
+        public List<Location> GetValidMoves(Board board, King king, Square defender)
             => GetValidMoves(board, king, defender);
 
         public List<Move> GenerateMovesForAllPieces(Board board, PieceColor color)
