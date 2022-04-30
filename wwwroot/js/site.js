@@ -83,7 +83,7 @@ function doSquareUpdate(squareLoc) {
         method: "POST",
         url: "/Home/UpdateChangedSquaresJSON",
         data: { "location": squareLoc },
-        async: false,
+        //async: false,
         success: function (data) {
             console.log("doSquareUpdate", green);
             //console.dir(data);
