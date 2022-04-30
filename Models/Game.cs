@@ -28,15 +28,15 @@ namespace ChessWebApp.Models
             {
                 if (value is null)
                 {
-                    MoveManager.ClearValidMoves();
+                    //MoveManager.ClearValidMoves();
                     if (fromSquare is not null) fromSquare.IsSelected = false;
-                    Board.SetAllSquaresNotValid();
+                    //Board.SetAllSquaresNotValid();
                     fromSquare = value;
                     return;
                 }
 
                 if (fromSquare is not null) fromSquare.IsSelected = false;
-                Board.SetAllSquaresNotValid();
+                //Board.SetAllSquaresNotValid();
                 value.IsSelected = true;
                 fromSquare = value;
             }
@@ -136,6 +136,24 @@ namespace ChessWebApp.Models
 
         public void PromotePawn(AbstractPiece piece) => MoveManager.PromotePawn(Board, piece);
 
-        public List<Location> GetValidMoves() => MoveManager.GetValidMovesToDisplay();
+        public void SetAllSquaresNotValid() 
+            => Board.LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
+
+        public void SetProperSquaresAsValid()
+        {
+            if (FromSquare is not null)
+            {
+                var moves = MoveManager.GetValidMoves(Board, Board.King, FromSquare);
+                moves.ForEach(loc => Board.LocationSquareMap[loc].IsValid = true);
+            }
+        }
+
+        public List<Location> GetValidMoves()
+        {
+            if (FromSquare is not null)
+                return MoveManager.GetValidMoves(Board, Board.King, FromSquare);
+
+            return new List<Location>();
+        }
     }
 }

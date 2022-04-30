@@ -23,7 +23,7 @@ namespace ChessWebApp
 
             //need castle logic
 
-            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+            //moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 
             return moveCandidates;
         }

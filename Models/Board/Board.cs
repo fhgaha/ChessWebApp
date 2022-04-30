@@ -15,16 +15,15 @@ namespace ChessWebApp
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
-        public King King { get => IsWhitesMove ? WhiteKing : BlackKing; }
+        public King King => IsWhitesMove ? WhiteKing : BlackKing;
         public Pawn PawnToPromote { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
         public AbstractPiece PieceCapturedOnLastMove { get; internal set; }
         public bool IsWhitesMove { get; set; } = true;
         public int HalfmoveCount = 0;
         public string message = "";
-        public IEnumerable<AbstractPiece> TotalPieces => LocationSquareMap.Values
-            .Select(sq => sq.CurrentPiece)
-            .Where(p => p is not null);
+        public IEnumerable<AbstractPiece> TotalPieces 
+            => LocationSquareMap.Values.Select(sq => sq.CurrentPiece).Where(p => p is not null);
         public IEnumerable<AbstractPiece> LightPieces => TotalPieces.Where(p => p.PieceColor == PieceColor.Light);
         public IEnumerable<AbstractPiece> DarkPieces => TotalPieces.Where(p => p.PieceColor == PieceColor.Dark);
 
@@ -89,12 +88,10 @@ namespace ChessWebApp
             Console.WriteLine("\n");
         }
 
-        public void SetAllSquaresNotValid() => LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
-
         public void RegisterPawnToPromote(Pawn pawn) => PawnToPromote = pawn;
 
         public void ApplyToSquares(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
 
-        public Board Copy() => new Fen().Parse( new Fen().Parse(this) );
+        public Board Copy() => new Fen().Parse(new Fen().Parse(this));
     }
 }

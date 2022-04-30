@@ -30,7 +30,7 @@ namespace ChessWebApp
             moveCandidates.AddRange(bishop.GetMoves(board, from));
             moveCandidates.AddRange(rook.GetMoves(board, from));
 
-            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+            //moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 
             return moveCandidates;
         }

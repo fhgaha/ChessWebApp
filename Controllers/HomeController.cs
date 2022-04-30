@@ -74,6 +74,8 @@ namespace ChessWebApp.Controllers
 
             game.HandleClick(currentSquare);
 
+            UpdateSquaresToDislay();
+
             ///this return updates all squares
             return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
 
@@ -86,6 +88,13 @@ namespace ChessWebApp.Controllers
             return Json(GetSquareStrings(squaresToUpdate, currentSquare));
         }
 
+        private static void UpdateSquaresToDislay()
+        {
+            //set all moves as not valid then new valid moves as valid
+            game.SetAllSquaresNotValid();
+            game.SetProperSquaresAsValid();
+        }
+
         private List<Square> GetChangedSquares(Square square)
         {
             var changedSquares = new List<Square>();
@@ -93,6 +102,7 @@ namespace ChessWebApp.Controllers
             changedSquares.AddRange(game.GetValidMoves().Select(loc => game.Board.LocationSquareMap[loc]));
             changedSquares.Add(game.Board.LocationSquareMap[game.Board.WhiteKing.Location]);
             changedSquares.Add(game.Board.LocationSquareMap[game.Board.BlackKing.Location]);
+
 
             //in case of castling update square where castling rook was
             //or in case of en passant update where taken pawn was
@@ -173,6 +183,8 @@ namespace ChessWebApp.Controllers
             game.PromotePawn(newPiece);
 
             Square currentSquare = game.Board.LocationSquareMap[newPiece.Location];
+
+            UpdateSquaresToDislay();
 
             return UpdateChangedSquaresJSON(newPiece.Location.File.ToString() + newPiece.Location.Rank.ToString());
         }

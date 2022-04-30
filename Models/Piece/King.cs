@@ -83,8 +83,8 @@ namespace ChessWebApp
                     .Select(sq => sq.Location));
             }
 
-            board.SetAllSquaresNotValid();
-            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+            //board.SetAllSquaresNotValid();
+            //moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
             return moveCandidates;
         }
 

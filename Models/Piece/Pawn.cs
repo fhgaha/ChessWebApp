@@ -55,7 +55,7 @@ namespace ChessWebApp
 
             TryAddEnPassantMove(board, validLocations);
 
-            validLocations.ForEach(loc => squareMap[loc].IsValid = true);
+            //validLocations.ForEach(loc => squareMap[loc].IsValid = true);
 
             return validLocations;
         }

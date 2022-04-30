@@ -24,7 +24,7 @@ namespace ChessWebApp
             GetMoves(moveCandidates, board.LocationSquareMap, from.Location, 1, -2);
             GetMoves(moveCandidates, board.LocationSquareMap, from.Location, -1, -2);
 
-            moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+            //moveCandidates.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
 
             return moveCandidates;
         }

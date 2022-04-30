@@ -5,16 +5,16 @@ namespace ChessWebApp
 {
     public class MoveValidator
     {
-        public List<Location> ValidMovesToDisplay { get; private set; } = new();
+        //public List<Location> ValidMovesToDisplay { get; private set; } = new();
 
-        public void UpdateValidSquares(Board board, King king, Square square)
-        {
-            var legalMoves = GetValidMoves(board, king, square);
+        //public void UpdateValidSquares(Board board, King king, Square square)
+        //{
+        //    var legalMoves = GetValidMoves(board, king, square);
 
-            board.SetAllSquaresNotValid();
-            legalMoves.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
-            ValidMovesToDisplay = legalMoves;
-        }
+        //    //board.SetAllSquaresNotValid();
+        //    //legalMoves.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
+        //    ValidMovesToDisplay = legalMoves;
+        //}
 
         public List<Location> GetValidMoves(Board board, King king, Square defender)
         {

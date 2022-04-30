@@ -95,7 +95,7 @@ namespace ChessWebApp
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
-            board.SetAllSquaresNotValid();
+            //board.SetAllSquaresNotValid();
 
             board.PawnToPromote = null;
         }
@@ -163,15 +163,16 @@ namespace ChessWebApp
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
 
-        public void ClearValidMoves() => MoveValidator.ValidMovesToDisplay.Clear();
+        //public void ClearValidMoves() => MoveValidator.ValidMovesToDisplay.Clear();
 
-        public void UpdateValidSquares(Board board, King king, Square square)
-            => MoveValidator.UpdateValidSquares(board, king, square);
+        //public void UpdateValidSquares(Board board, King king, Square square)
+        //    => MoveValidator.UpdateValidSquares(board, king, square);
 
-        public List<Location> GetValidMovesToDisplay() => MoveValidator.ValidMovesToDisplay;
+        public List<Location> GetValidMoves(Board board, King king, Square defender) 
+            => MoveValidator.GetValidMoves(board, king, defender);
 
-        public List<Location> GetValidMoves(Board board, King king, Square defender)
-            => GetValidMoves(board, king, defender);
+        //public List<Location> GetValidMoves(Board board, King king, Square defender)
+        //    => GetValidMoves(board, king, defender);
 
         public List<Move> GenerateMovesForAllPieces(Board board, PieceColor color)
         {
