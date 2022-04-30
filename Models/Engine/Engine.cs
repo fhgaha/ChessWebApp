@@ -56,7 +56,7 @@ namespace ChessWebApp.Models.Engine
             if (moves.Count() == 0)
             {
                 if (board.King.IsInCheck)
-                    return int.MinValue;    //?
+                    return int.MaxValue;    //?
                 return 0;
             }
 
@@ -66,12 +66,15 @@ namespace ChessWebApp.Models.Engine
                 MoveManager _moveManager = new();
                 Board _board = board.Copy();
 
+                int evaluation = 0;
+                evaluation += OrderMove(_board, move);
+                
                 var isMoveSuccessfull = _moveManager.MakeMove(
                     _board,
                     _board.LocationSquareMap[move.From],
                     _board.LocationSquareMap[move.To]);
 
-                int evaluation = Minimizer(_board, depth - 1, alpha, beta);
+                evaluation += Minimizer(_board, depth - 1, alpha, beta);
 
                 //_moveManager.UnmakeMove(board);
 
@@ -109,12 +112,15 @@ namespace ChessWebApp.Models.Engine
                 MoveManager _moveManager = new();
                 Board _board = board.Copy();
 
+                int evaluation = 0;
+                evaluation += OrderMove(_board, move);
+
                 var isMoveSuccessfull = _moveManager.MakeMove(
                     _board,
                     _board.LocationSquareMap[move.From],
                     _board.LocationSquareMap[move.To]);
 
-                int evaluation = Maximizer(_board, depth - 1, alpha, beta);
+                evaluation += Maximizer(_board, depth - 1, alpha, beta);
 
                 //_moveManager.UnmakeMove(board);
 
@@ -127,35 +133,31 @@ namespace ChessWebApp.Models.Engine
             return beta;
         }
 
-        //public int OrderMoves(List<Move> moves)
-        //{
-        //    List<int> moveScores = new();
+        public int OrderMove(Board board, Move move)
+        {
+            int moveScoreGuess = 0;
+            Square fromSq = board.LocationSquareMap[move.From];
+            Square toSq = board.LocationSquareMap[move.To];
+            AbstractPiece pieceToMove = fromSq.CurrentPiece;
+            AbstractPiece pieceToCapture = toSq.CurrentPiece;
 
-        //    foreach (Move move in moves)
-        //    {
-        //        int moveScoreGuess = 0;
-        //        AbstractPiece pieceToMove = move.From.CurrentPiece;
-        //        AbstractPiece pieceToCapture = move.To.CurrentPiece;
+            //Prioritise capturing opponent's most valuable piece with least valuable piece
+            if (pieceToCapture is not null)
+                moveScoreGuess = 10 * GetPieceValue(pieceToCapture) - GetPieceValue(pieceToMove);
 
-        //        //Prioritise capturing opponent's most valuable piece with least valuable piece
-        //        if (pieceToCapture is not null)
-        //            moveScoreGuess = 10 * GetPieceValue(pieceToCapture) - GetPieceValue(pieceToMove);
+            //promoting a pawn is likely to be good
+            if (pieceToMove is Pawn pawn && pawn.IsPromotingNextMove)
+                moveScoreGuess += queenValue;
 
-        //        //promoting a pawn is likely to be good
-        //        if (pieceToMove is Pawn pawn && pawn.IsPromotingNextMove)
-        //            moveScoreGuess += queenValue;
+            //penalize moving our piece to a square attacked by opponent pawn
+            if (toSq.AttackedByPiecesOnSquares
+                .Select(sq => sq.CurrentPiece)
+                .Where(p => p is Pawn && p.PieceColor != pieceToMove.PieceColor)
+                .Count() > 0)
+                moveScoreGuess -= GetPieceValue(pieceToMove);
 
-        //        //penalize moving our piece to a square attacked by opponent pawn
-        //        if (move.To.AttackedByPiecesOnSquares
-        //            .Select(sq => sq.CurrentPiece)
-        //            .Where(p => p is Pawn && p.PieceColor != pieceToMove.PieceColor)
-        //            .Count() > 0)
-        //            moveScoreGuess -= GetPieceValue(pieceToMove);
-
-        //        moveScores.Add(moveScoreGuess);
-        //    }
-        //    return moveScores.Max();
-        //}
+            return moveScoreGuess;
+        }
 
         private int GetPieceValue(AbstractPiece piece)
         {

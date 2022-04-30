@@ -13,10 +13,10 @@ namespace ChessWebApp.Models
         public Player PlayerBlack;
         public Player PlayerToMove;
 
-        public bool IsOver = false;
-        public Board Board;
-        public MoveManager MoveManager;
-        public Fen Fen;
+        public bool IsOver { get; set; } = false;
+        public Board Board { get; set; }
+        public MoveManager MoveManager { get; set; }
+        public Fen Fen { get; set; }
 
         public string message = "";
         

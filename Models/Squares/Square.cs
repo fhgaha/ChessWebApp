@@ -23,7 +23,8 @@ namespace ChessWebApp
             CurrentPiece = PieceFactory.BuildPiece(originalSquare.CurrentPiece);
             IsOccupied = originalSquare.IsOccupied;
 
-            AttackedByPiecesOnSquares = new List<Square>();
+            AttackedByPiecesOnSquares = new();
+            //AttackedByPiecesOnSquares = PieceFactory.GetCopies(originalSquare.AttackedByPiecesOnSquares);
             IsValid = originalSquare.IsValid;
         }
 

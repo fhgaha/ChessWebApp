@@ -14,5 +14,6 @@ namespace ChessWebApp
         public const string GreenSquareColor = "#5c9c6f";
         public const string RedSquareColor = "#9c5c5f";
         public const string SelectedPieceColor = "#597963";
+        public const string PreviousLocColor = "##5c9c6fb8";
     }
 }
