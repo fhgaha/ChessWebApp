@@ -93,8 +93,6 @@ namespace ChessWebApp.Controllers
             //set all moves as not valid then new valid moves as valid
             game.SetAllSquaresNotValid();
             game.SetProperSquaresAsValid();
-
-
         }
 
         private List<Square> GetChangedSquares(Square square)

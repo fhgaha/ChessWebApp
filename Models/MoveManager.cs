@@ -12,19 +12,17 @@ namespace ChessWebApp
         public Square AdditionalSquareToUpdate { get; set; }
         public Stack<Board> UndoStack { get; set; }
         public Stack<Board> RedoStack { get; set; }
+        public Square[] PreviousMoveSquares { get; private set; }
 
         public MoveManager()
         {
             MoveValidator = new();
             UndoStack = new();
+            PreviousMoveSquares = new Square[2];
         }
 
-        public bool MakeMove(Board board, Square fromSquare, Square toSquare)
+        private void DoBeforeMove(Board board, Square fromSquare, Square toSquare)
         {
-            var previousPosSquares = board.LocationSquareMap.Values.Where(sq => sq.IsPreviousLoc);
-            if (previousPosSquares.Count() != 0)
-                previousPosSquares.ToList().ForEach(sq => sq.IsPreviousLoc = false);
-
             if (toSquare.CurrentPiece != null)
                 RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
 
@@ -33,11 +31,20 @@ namespace ChessWebApp
             if (board.PieceCapturedOnLastMove is not null) board.PieceCapturedOnLastMove = null;
 
             if (toSquare.IsOccupied) board.PieceCapturedOnLastMove = toSquare.CurrentPiece;
+        }
 
+        public bool MakeMove(Board board, Square fromSquare, Square toSquare)
+        {
+            DoBeforeMove(board, fromSquare, toSquare);
             fromSquare.MovePiece(toSquare);
+            DoAfterMove(board, fromSquare, toSquare);
 
-            fromSquare.IsPreviousLoc = true;
-            toSquare.IsPreviousLoc = true;
+            return true;
+        }
+
+        private void DoAfterMove(Board board, Square fromSquare, Square toSquare)
+        {
+            SetPreviousMoveSquare(fromSquare, toSquare);
 
             if (toSquare.CurrentPiece is King king)
                 king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
@@ -73,8 +80,19 @@ namespace ChessWebApp
             board.IsWhitesMove = !board.IsWhitesMove;
 
             UndoStack.Push(board);
+        }
 
-            return true;
+        private void SetPreviousMoveSquare(Square fromSquare, Square toSquare)
+        {
+            PreviousMoveSquares.ToList()
+                .Where(sq => sq is not null).ToList()
+                .ForEach(sq => sq.IsPreviousLoc = false);
+
+            PreviousMoveSquares[0] = fromSquare;
+            PreviousMoveSquares[1] = toSquare;
+
+            fromSquare.IsPreviousLoc = true;
+            toSquare.IsPreviousLoc = true;
         }
 
         private void HandleEnPassant(Board board, Square toSquare)
@@ -170,16 +188,8 @@ namespace ChessWebApp
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
 
-        //public void ClearValidMoves() => MoveValidator.ValidMovesToDisplay.Clear();
-
-        //public void UpdateValidSquares(Board board, King king, Square square)
-        //    => MoveValidator.UpdateValidSquares(board, king, square);
-
         public List<Location> GetValidMoves(Board board, King king, Square defender)
             => MoveValidator.GetValidMoves(board, king, defender);
-
-        //public List<Location> GetValidMoves(Board board, King king, Square defender)
-        //    => GetValidMoves(board, king, defender);
 
         public List<Move> GenerateMovesForAllPieces(Board board, PieceColor color)
         {
