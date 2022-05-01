@@ -74,7 +74,7 @@ namespace ChessWebApp.Controllers
 
             game.HandleClick(currentSquare);
 
-            UpdateSquaresToDislay();
+            UpdateSquaresToDislayColored();
 
             ///this return updates all squares
             return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), currentSquare));
@@ -88,11 +88,13 @@ namespace ChessWebApp.Controllers
             return Json(GetSquareStrings(squaresToUpdate, currentSquare));
         }
 
-        private static void UpdateSquaresToDislay()
+        private static void UpdateSquaresToDislayColored()
         {
             //set all moves as not valid then new valid moves as valid
             game.SetAllSquaresNotValid();
             game.SetProperSquaresAsValid();
+
+
         }
 
         private List<Square> GetChangedSquares(Square square)
@@ -184,7 +186,7 @@ namespace ChessWebApp.Controllers
 
             Square currentSquare = game.Board.LocationSquareMap[newPiece.Location];
 
-            UpdateSquaresToDislay();
+            UpdateSquaresToDislayColored();
 
             return UpdateChangedSquaresJSON(newPiece.Location.File.ToString() + newPiece.Location.Rank.ToString());
         }

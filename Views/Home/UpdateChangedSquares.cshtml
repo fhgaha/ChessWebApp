@@ -2,24 +2,26 @@
 
 @{
     var squareColor = Model.SquareColor == SquareColor.Light ? Global.WhiteSquareColor : Global.BlackSquareColor;
-    if (Model.IsValid)
-        squareColor = Global.GreenSquareColor;
     if (Model.CurrentPiece is King king && king.IsInCheck)
         squareColor = Global.RedSquareColor;
+    if (Model.IsPreviousLoc)
+        squareColor = Global.PreviousLocColor;
     if (Model.IsSelected)
         squareColor = Global.SelectedPieceColor;
+    if (Model.IsValid)
+        squareColor = Global.GreenSquareColor;
 }
 
 <button class="square-button" type="submit" name="location" value="@Model.Location.File@Model.Location.Rank"
         asp-controller="Home" asp-action="HandleButtonClick"
         style="background: @squareColor;">
     @if (Model.IsOccupied)
-            {
-                var piece = Model.CurrentPiece;
+    {
+        var piece = Model.CurrentPiece;
 
-                string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
-                string pieceClass = piece.GetType().Name;
-                string fileType = ".png";
+        string pieceColor = piece.PieceColor == PieceColor.Light ? "white" : "black";
+        string pieceClass = piece.GetType().Name;
+        string fileType = ".png";
 
         <img class="piece-img" width="40" src="~/img/pieceImgs/@pieceColor@pieceClass@fileType" />
     }

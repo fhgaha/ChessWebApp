@@ -21,6 +21,10 @@ namespace ChessWebApp
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
         {
+            var previousPosSquares = board.LocationSquareMap.Values.Where(sq => sq.IsPreviousLoc);
+            if (previousPosSquares.Count() != 0)
+                previousPosSquares.ToList().ForEach(sq => sq.IsPreviousLoc = false);
+
             if (toSquare.CurrentPiece != null)
                 RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
 
@@ -31,6 +35,9 @@ namespace ChessWebApp
             if (toSquare.IsOccupied) board.PieceCapturedOnLastMove = toSquare.CurrentPiece;
 
             fromSquare.MovePiece(toSquare);
+
+            fromSquare.IsPreviousLoc = true;
+            toSquare.IsPreviousLoc = true;
 
             if (toSquare.CurrentPiece is King king)
                 king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
@@ -168,7 +175,7 @@ namespace ChessWebApp
         //public void UpdateValidSquares(Board board, King king, Square square)
         //    => MoveValidator.UpdateValidSquares(board, king, square);
 
-        public List<Location> GetValidMoves(Board board, King king, Square defender) 
+        public List<Location> GetValidMoves(Board board, King king, Square defender)
             => MoveValidator.GetValidMoves(board, king, defender);
 
         //public List<Location> GetValidMoves(Board board, King king, Square defender)
