@@ -15,11 +15,11 @@ namespace ChessWebApp
             int currentFile = (int)current.File;
 
             int newFileValue = currentFile + fileOffset;
-            if (newFileValue < 0 || newFileValue > Global.BoardLength - 1) 
+            if (newFileValue < 0 || newFileValue > Global.BoardLength - 1)
                 return null;
 
             int newRankValue = current.Rank + rankOffset;
-            if (newRankValue < 1 || newRankValue > Global.BoardLength) 
+            if (newRankValue < 1 || newRankValue > Global.BoardLength)
                 return null;
 
             return new Location(files[newFileValue], newRankValue);
@@ -31,7 +31,8 @@ namespace ChessWebApp
 
             File file = Array.Find(
                 (File[])Enum.GetValues(typeof(File)),
-                f => f.ToString() == location[0].ToString());
+                file => file.ToString() == location[0].ToString()
+            );
 
             int rank = int.Parse(location[1].ToString());
 
