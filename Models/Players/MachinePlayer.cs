@@ -29,7 +29,6 @@ namespace ChessWebApp.Models.Players
 
         public bool TryMakeMove(Game game, MoveManager moveManager, Square square)
         {
-            bool isMovePerformed = false;
             Board board = game.Board;
 
             var positionFen = fen.Parse(board);
@@ -40,7 +39,7 @@ namespace ChessWebApp.Models.Players
 
             Move bestMove = Move.Parse(bestMoveString);
 
-            isMovePerformed = moveManager.MakeMove(
+            bool isMovePerformed = moveManager.MakeMove(
                 board,
                 board.LocationSquareMap[bestMove.From],
                 board.LocationSquareMap[bestMove.To]);

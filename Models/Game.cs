@@ -67,7 +67,7 @@ namespace ChessWebApp.Models
         {
             MoveManager = new();
             PlayerWhite = new HumanPlayer();
-            PlayerBlack = new HumanPlayer();
+            PlayerBlack = new MachinePlayer();
             PlayerToMove = PlayerWhite;
         }
 

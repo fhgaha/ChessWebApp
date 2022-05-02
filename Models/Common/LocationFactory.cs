@@ -31,7 +31,7 @@ namespace ChessWebApp
 
             File file = Array.Find(
                 (File[])Enum.GetValues(typeof(File)),
-                file => file.ToString() == location[0].ToString()
+                file => file.ToString() == location[0].ToString().ToUpper()
             );
 
             int rank = int.Parse(location[1].ToString());
