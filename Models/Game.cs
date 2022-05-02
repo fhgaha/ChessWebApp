@@ -53,19 +53,21 @@ namespace ChessWebApp.Models
 
             Fen = new();
             Board = new(pieces);
-            MoveManager = new();
-            PlayerWhite = new HumanPlayer();
-            PlayerBlack = new MachinePlayer();
-            PlayerToMove = PlayerWhite;
+            SetUp();
         }
 
         public Game(string fenCode)
         {
             Fen = new();
             Board = Fen.Parse(fenCode);
+            SetUp();
+        }
+
+        private void SetUp()
+        {
             MoveManager = new();
             PlayerWhite = new HumanPlayer();
-            PlayerBlack = new MachinePlayer();
+            PlayerBlack = new HumanPlayer();
             PlayerToMove = PlayerWhite;
         }
 
