@@ -21,6 +21,8 @@ namespace ChessWebApp.Models.Players
             Func<Square, bool> MoveOrderIsWrong = sq
                  => board.IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Light
                 || !board.IsWhitesMove && sq.CurrentPiece.PieceColor != PieceColor.Dark;
+            Func<bool> MoveIsNotValid = () 
+                => moveManager.GetValidMoves(board, board.King, game.FromSquare).Contains(square.Location) == false;
 
             //from square is not selected
             if (!FromSquareIsSelected() && SquareIsEmpty()) 
@@ -41,6 +43,9 @@ namespace ChessWebApp.Models.Players
 
             if (!SquareIsEmpty() && SelectedAndTargetPieceAreTheSameColor())
             { game.FromSquare = square; return isMovePerformed; }
+
+            if (MoveIsNotValid())
+            { game.FromSquare = null; return isMovePerformed; }
 
             //all good we can make a move
             isMovePerformed = moveManager.MakeMove(board, game.FromSquare, square);
