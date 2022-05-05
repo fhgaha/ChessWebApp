@@ -23,17 +23,9 @@ namespace ChessWebApp
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
         {
-            //interpreting lichess castling notation
-            if (fromSquare.CurrentPiece is King king
-                && Math.Abs(fromSquare.Location.File - toSquare.Location.File) >= 2)
-            {
-                Move _move = ConvertLichessCastlingToNormal(board, king, fromSquare, toSquare);
-                toSquare = board.LocationSquareMap[_move.To];
-            }
+            toSquare = ConvertLichessCastlingToNormal(board, fromSquare, toSquare);
 
-            if (toSquare.CurrentPiece != null)
-                RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
-
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, fromSquare);
 
             //add to undo stack
@@ -46,6 +38,27 @@ namespace ChessWebApp
             DoAfterMove(board, fromSquare, toSquare);
 
             return true;
+        }
+
+        private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
+        {
+            if (fromSquare.CurrentPiece is King king
+                && Math.Abs(fromSquare.Location.File - toSquare.Location.File) >= 2)
+            {
+                Move move;
+
+                //king's side
+                if (king.Location.File - toSquare.Location.File < 0)
+                    move = new Move { To = LocationFactory.Build(king.Location, 2, 0) };
+
+                //queen's side
+                else
+                    move = new Move { To = LocationFactory.Build(king.Location, -2, 0) };
+
+                toSquare = board.LocationSquareMap[move.To];
+            }
+
+            return toSquare;
         }
 
         private void DoAfterMove(Board board, Square fromSquare, Square toSquare)
@@ -98,9 +111,7 @@ namespace ChessWebApp
             Square currentSquare = board.LocationSquareMap[move.To];
             Square originalSquare = board.LocationSquareMap[move.From];
 
-            if (originalSquare.CurrentPiece != null)
-                RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, originalSquare);
-
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, originalSquare);
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, currentSquare);
 
             currentSquare.MovePiece(originalSquare);
@@ -109,16 +120,6 @@ namespace ChessWebApp
 
 
             RedoStack.Push(move);
-        }
-
-        private Move ConvertLichessCastlingToNormal(Board board, King king, Square fromSquare, Square toSquare)
-        {
-            //king's side
-            if (king.Location.File - toSquare.Location.File < 0)
-                return new Move { To = LocationFactory.Build(king.Location, 2, 0) };
-
-            //queen's side
-            return new Move { To = LocationFactory.Build(king.Location, -2, 0) };
         }
 
         private void SetPreviousMoveSquare(Square fromSquare, Square toSquare)
@@ -217,10 +218,14 @@ namespace ChessWebApp
             attackedLocs.ForEach(loc => board.LocationSquareMap[loc].AttackedByPiecesOnSquares.Add(attacker));
         }
 
-        public void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker) =>
+        public void RemoveAttackerFromAllAttackedByPieceOnSquareLists(Board board, Square attacker)
+        {
+            if (attacker.CurrentPiece is null) return;
+
             board.LocationSquareMap.Values
                 .Where(sq => sq.AttackedByPiecesOnSquares.Contains(attacker)).ToList()
                 .ForEach(sq => sq.AttackedByPiecesOnSquares.Remove(attacker));
+        }
 
         public List<Location> GetValidMoves(Board board, King king, Square defender)
             => MoveValidator.GetValidMoves(board, king, defender);
