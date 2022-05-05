@@ -5,17 +5,6 @@ namespace ChessWebApp
 {
     public class MoveValidator
     {
-        //public List<Location> ValidMovesToDisplay { get; private set; } = new();
-
-        //public void UpdateValidSquares(Board board, King king, Square square)
-        //{
-        //    var legalMoves = GetValidMoves(board, king, square);
-
-        //    //board.SetAllSquaresNotValid();
-        //    //legalMoves.ForEach(loc => board.LocationSquareMap[loc].IsValid = true);
-        //    ValidMovesToDisplay = legalMoves;
-        //}
-
         public List<Location> GetValidMoves(Board board, King king, Square defender)
         {
             var moves = defender.CurrentPiece.GetMoves(board, defender);
@@ -31,19 +20,7 @@ namespace ChessWebApp
 
             foreach (Location candidate in candidates)
             {
-                Board fBoard = new Board() { IsReal = false };
-
-                originalBoard.LocationSquareMap.Keys.ToList()
-                    .ForEach(loc => fBoard.LocationSquareMap[loc] = new Square(originalBoard.LocationSquareMap[loc]));
-
-                //copy attacked by pieces on squares list for each square
-                foreach (Location loc in fBoard.LocationSquareMap.Keys)
-                {
-                    var originalSquareAttackersList = originalBoard.LocationSquareMap[loc].AttackedByPiecesOnSquares;
-                    var fakeSquareAttackersList = fBoard.LocationSquareMap[loc].AttackedByPiecesOnSquares;
-
-                    fBoard.LocationSquareMap[loc].CopyAttackedByPiecesOnSquares(fBoard, originalSquareAttackersList);
-                }
+                Board fBoard = BuildFakeBoard(originalBoard);
 
                 Square squareCandidate = fBoard.LocationSquareMap[candidate];
                 Square fDefenderSquare = fBoard.LocationSquareMap[defender.Location];
@@ -55,6 +32,25 @@ namespace ChessWebApp
                     (King)fKingSquare.CurrentPiece);
             }
             return defendingMoves;
+        }
+
+        private static Board BuildFakeBoard(Board originalBoard)
+        {
+            Board fBoard = new Board() { IsReal = false };
+
+            originalBoard.LocationSquareMap.Keys.ToList()
+                .ForEach(loc => fBoard.LocationSquareMap[loc] = new Square(originalBoard.LocationSquareMap[loc]));
+
+            //copy attacked by pieces on squares list for each square
+            foreach (Location loc in fBoard.LocationSquareMap.Keys)
+            {
+                var originalSquareAttackersList = originalBoard.LocationSquareMap[loc].AttackedByPiecesOnSquares;
+                var fakeSquareAttackersList = fBoard.LocationSquareMap[loc].AttackedByPiecesOnSquares;
+
+                fBoard.LocationSquareMap[loc].CopyAttackedByPiecesOnSquares(fBoard, originalSquareAttackersList);
+            }
+
+            return fBoard;
         }
 
         public void MakeFakeMove(Square from, Square to, List<Location> defendingMoves,

@@ -12,13 +12,11 @@ namespace ChessWebApp
         public Square AdditionalSquareToUpdate { get; set; }
         public Stack<Move> UndoStack { get; set; }
         public Stack<Move> RedoStack { get; set; }
-        public Square[] PreviousMoveSquares { get; private set; }
 
         public MoveManager()
         {
             MoveValidator = new();
             UndoStack = new();
-            //PreviousMoveSquares = new Square[2];
         }
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
@@ -30,34 +28,36 @@ namespace ChessWebApp
 
             //add to undo stack
             var move = new Move { From = fromSquare.Location, To = toSquare.Location };
-            if (toSquare.CurrentPiece is not null) move.CapturedPiece = toSquare.CurrentPiece;
+            if (toSquare.CurrentPiece is not null)
+                move.CapturedPiece = toSquare.CurrentPiece;
+
             UndoStack.Push(move);
 
-
             fromSquare.MovePiece(toSquare);
-            DoAfterMove(board, fromSquare, toSquare);
+            DoAfterMove(board, fromSquare, toSquare, move);
 
             return true;
         }
 
-
-
-        private void DoAfterMove(Board board, Square fromSquare, Square toSquare)
+        private void DoAfterMove(Board board, Square fromSquare, Square toSquare, Move move)
         {
-            //this is for UodateChangedSquares()
+            //this is for UpdateChangedSquares() view
             SetPreviousMoveSquare(board);
 
             if (toSquare.CurrentPiece is King king)
+            {
                 king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
-
-            AbstractPiece capturedPiece = toSquare.CurrentPiece;
+            }
 
             //castling
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
+            {
                 HandleCastling(board, toSquare);
+            }
 
             //count halfmoves
             var prevMove = UndoStack.Peek();
+
             if (toSquare.CurrentPiece is Pawn || prevMove?.CapturedPiece is not null)
                 board.HalfmoveCount = 0;
             else
@@ -82,9 +82,6 @@ namespace ChessWebApp
             if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
 
             board.IsWhitesMove = !board.IsWhitesMove;
-
-
-            
         }
 
         public void UndoMove(Board board)
@@ -97,6 +94,9 @@ namespace ChessWebApp
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, currentSquare);
 
             currentSquare.MovePiece(originalSquare);
+
+            SetPreviousMoveSquare(board);
+
 
 
 
@@ -213,6 +213,12 @@ namespace ChessWebApp
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
         }
 
+        /// <summary>
+        /// Remove attacker from every square's AttackedByPieceOnSquareLists 
+        /// then add attacker to squares that are under attack right now
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="attacker"></param>
         public void UpdateSquaresAttackedByPiece(Board board, Square attacker)
         {
             if (attacker.CurrentPiece == null) return;

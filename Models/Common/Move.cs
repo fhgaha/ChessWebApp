@@ -5,14 +5,28 @@ using System.Threading.Tasks;
 
 namespace ChessWebApp.Models.Common
 {
+    public enum MoveKind
+    {
+        //will not tie to capturing here, look at CapturedPiece field
+        Simple,
+        CastlingKingSide,
+        CastlingQueenSide,
+        PawnToQueenPromotion,
+        PawnToRookPromotion,
+        PawnToKnightPromotion,
+        PawnToBishopPromotion
+    }
+
     public class Move
     {
+        public MoveKind Kind { get; set; }
         public Location From { get; set; }
         public Location To { get; set; }
         public AbstractPiece MovingPiece { get; set; }
         public AbstractPiece CapturedPiece { get; set; }
         public bool PerformedByWhites { get; set; }
         public int Score { get; set; }
+
 
         public override string ToString()
         {
