@@ -8,10 +8,10 @@ namespace ChessWebApp
 {
     public class MoveManager
     {
-        public MoveValidator MoveValidator;
+        public MoveValidator MoveValidator { get; set; }
         public Square AdditionalSquareToUpdate { get; set; }
-        public Stack<Board> UndoStack { get; set; }
-        public Stack<Board> RedoStack { get; set; }
+        public Stack<Move> UndoStack { get; set; }
+        public Stack<Move> RedoStack { get; set; }
         public Square[] PreviousMoveSquares { get; private set; }
 
         public MoveManager()
@@ -21,21 +21,27 @@ namespace ChessWebApp
             PreviousMoveSquares = new Square[2];
         }
 
-        private void DoBeforeMove(Board board, Square fromSquare, Square toSquare)
+        public bool MakeMove(Board board, Square fromSquare, Square toSquare)
         {
+            //interpreting lichess castling notation
+            if (fromSquare.CurrentPiece is King king
+                && Math.Abs(fromSquare.Location.File - toSquare.Location.File) >= 2)
+            {
+                Move _move = ConvertLichessCastlingToNormal(board, king, fromSquare, toSquare);
+                toSquare = board.LocationSquareMap[_move.To];
+            }
+
             if (toSquare.CurrentPiece != null)
                 RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, toSquare);
 
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, fromSquare);
 
-            if (board.PieceCapturedOnLastMove is not null) board.PieceCapturedOnLastMove = null;
+            //add to undo stack
+            var move = new Move { From = fromSquare.Location, To = toSquare.Location };
+            if (toSquare.CurrentPiece is not null) move.CapturedPiece = toSquare.CurrentPiece;
+            UndoStack.Push(move);
 
-            if (toSquare.IsOccupied) board.PieceCapturedOnLastMove = toSquare.CurrentPiece;
-        }
 
-        public bool MakeMove(Board board, Square fromSquare, Square toSquare)
-        {
-            DoBeforeMove(board, fromSquare, toSquare);
             fromSquare.MovePiece(toSquare);
             DoAfterMove(board, fromSquare, toSquare);
 
@@ -49,12 +55,15 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is King king)
                 king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
 
+            AbstractPiece capturedPiece = toSquare.CurrentPiece;
+
             //castling
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare);
 
             //count halfmoves
-            if (toSquare.CurrentPiece is Pawn || board.PieceCapturedOnLastMove != null)
+            var prevMove = UndoStack.Peek();
+            if (toSquare.CurrentPiece is Pawn || prevMove?.CapturedPiece is not null)
                 board.HalfmoveCount = 0;
             else
                 board.HalfmoveCount++;
@@ -79,7 +88,37 @@ namespace ChessWebApp
 
             board.IsWhitesMove = !board.IsWhitesMove;
 
-            UndoStack.Push(board);
+
+            
+        }
+
+        public void UndoMove(Board board)
+        {
+            var move = UndoStack.Pop();
+            Square currentSquare = board.LocationSquareMap[move.To];
+            Square originalSquare = board.LocationSquareMap[move.From];
+
+            if (originalSquare.CurrentPiece != null)
+                RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, originalSquare);
+
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, currentSquare);
+
+            currentSquare.MovePiece(originalSquare);
+
+
+
+
+            RedoStack.Push(move);
+        }
+
+        private Move ConvertLichessCastlingToNormal(Board board, King king, Square fromSquare, Square toSquare)
+        {
+            //king's side
+            if (king.Location.File - toSquare.Location.File < 0)
+                return new Move { To = LocationFactory.Build(king.Location, 2, 0) };
+
+            //queen's side
+            return new Move { To = LocationFactory.Build(king.Location, -2, 0) };
         }
 
         private void SetPreviousMoveSquare(Square fromSquare, Square toSquare)
@@ -123,11 +162,6 @@ namespace ChessWebApp
             //board.SetAllSquaresNotValid();
 
             board.PawnToPromote = null;
-        }
-
-        internal void UnmakeMove(Board board)
-        {
-            board = UndoStack.Pop();
         }
 
         public void HandleCastling(Board board, Square square)

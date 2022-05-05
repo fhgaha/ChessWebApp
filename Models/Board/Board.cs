@@ -18,7 +18,6 @@ namespace ChessWebApp
         public King King => IsWhitesMove ? WhiteKing : BlackKing;
         public Pawn PawnToPromote { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
-        public AbstractPiece PieceCapturedOnLastMove { get; internal set; }
         public bool IsWhitesMove { get; set; } = true;
         public int HalfmoveCount = 0;
         public string message = "";

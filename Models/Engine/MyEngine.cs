@@ -79,7 +79,7 @@ namespace ChessWebApp.Models.Engine
 
                 evaluation += Minimizer(_board, depth - 1, alpha, beta);
 
-                //_moveManager.UnmakeMove(board);
+                _moveManager.UndoMove(board);
 
                 if (depth == MyEngine.depth)
                 {
