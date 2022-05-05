@@ -18,7 +18,7 @@ namespace ChessWebApp
         {
             MoveValidator = new();
             UndoStack = new();
-            PreviousMoveSquares = new Square[2];
+            //PreviousMoveSquares = new Square[2];
         }
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
@@ -40,30 +40,12 @@ namespace ChessWebApp
             return true;
         }
 
-        private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
-        {
-            if (fromSquare.CurrentPiece is King king
-                && Math.Abs(fromSquare.Location.File - toSquare.Location.File) >= 2)
-            {
-                Move move;
 
-                //king's side
-                if (king.Location.File - toSquare.Location.File < 0)
-                    move = new Move { To = LocationFactory.Build(king.Location, 2, 0) };
-
-                //queen's side
-                else
-                    move = new Move { To = LocationFactory.Build(king.Location, -2, 0) };
-
-                toSquare = board.LocationSquareMap[move.To];
-            }
-
-            return toSquare;
-        }
 
         private void DoAfterMove(Board board, Square fromSquare, Square toSquare)
         {
-            SetPreviousMoveSquare(fromSquare, toSquare);
+            //this is for UodateChangedSquares()
+            SetPreviousMoveSquare(board);
 
             if (toSquare.CurrentPiece is King king)
                 king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
@@ -122,17 +104,41 @@ namespace ChessWebApp
             RedoStack.Push(move);
         }
 
-        private void SetPreviousMoveSquare(Square fromSquare, Square toSquare)
+        private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
         {
-            PreviousMoveSquares.ToList()
-                .Where(sq => sq is not null).ToList()
+            if (fromSquare.CurrentPiece is King king
+                && Math.Abs(fromSquare.Location.File - toSquare.Location.File) >= 2)
+            {
+                Move move;
+
+                //king's side
+                if (king.Location.File - toSquare.Location.File < 0)
+                    move = new Move { To = LocationFactory.Build(king.Location, 2, 0) };
+
+                //queen's side
+                else
+                    move = new Move { To = LocationFactory.Build(king.Location, -2, 0) };
+
+                toSquare = board.LocationSquareMap[move.To];
+            }
+
+            return toSquare;
+        }
+
+        private void SetPreviousMoveSquare(Board board)
+        {
+            //set all as not previous
+            board.LocationSquareMap.Values.ToList()
+                .Where(sq => sq.IsPreviousLoc == true).ToList()
                 .ForEach(sq => sq.IsPreviousLoc = false);
 
-            PreviousMoveSquares[0] = fromSquare;
-            PreviousMoveSquares[1] = toSquare;
+            var move = UndoStack.Peek();
+            
+            var from = board.LocationSquareMap[move.From];
+            var to = board.LocationSquareMap[move.To];
 
-            fromSquare.IsPreviousLoc = true;
-            toSquare.IsPreviousLoc = true;
+            from.IsPreviousLoc = true;
+            to.IsPreviousLoc = true;
         }
 
         private void HandleEnPassant(Board board, Square toSquare)

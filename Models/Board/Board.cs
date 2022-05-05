@@ -11,7 +11,7 @@ namespace ChessWebApp
         public bool IsReal { get; set; } = true;
         public List<Move> PerformedMoves { get; set; } = new List<Move>();
         public Move LastMove { get => PerformedMoves.LastOrDefault(); }
-        public Square[,] BoardSquares { get; private set; }
+        public Square[,] Squares { get; private set; }
         public Dictionary<Location, Square> LocationSquareMap { get; private set; }
         public King WhiteKing { get; private set; }
         public King BlackKing { get; private set; }
@@ -30,10 +30,10 @@ namespace ChessWebApp
 
         public Board(Dictionary<Location, AbstractPiece> pieces)
         {
-            BoardSquares = new Square[Global.BoardLength, Global.BoardLength];
+            Squares = new Square[Global.BoardLength, Global.BoardLength];
             LocationSquareMap = new Dictionary<Location, Square>();
 
-            for (int i = 0; i < BoardSquares.GetLength(0); i++)
+            for (int i = 0; i < Squares.GetLength(0); i++)
             {
                 var column = 0;
                 var currentColor = i % 2 == 0 ? SquareColor.Light : SquareColor.Dark;
@@ -54,7 +54,7 @@ namespace ChessWebApp
                         if (piece.PieceColor == PieceColor.Dark && piece is King)
                             BlackKing = (King)piece;
                     }
-                    BoardSquares[i, column] = newSquare;
+                    Squares[i, column] = newSquare;
                     LocationSquareMap.Add(newSquare.Location, newSquare);
                     currentColor = currentColor == SquareColor.Light ? SquareColor.Dark : SquareColor.Light;
                     column++;
@@ -65,14 +65,14 @@ namespace ChessWebApp
 
         public void PrintBoard()
         {
-            for (int i = 0; i < BoardSquares.GetLength(0); i++)
+            for (int i = 0; i < Squares.GetLength(0); i++)
             {
                 Console.Write(Global.BoardLength - i + " ");
-                for (int j = 0; j < BoardSquares.GetLength(1); j++)
+                for (int j = 0; j < Squares.GetLength(1); j++)
                 {
-                    if (BoardSquares[i, j].IsOccupied)
+                    if (Squares[i, j].IsOccupied)
                     {
-                        var piece = BoardSquares[i, j].CurrentPiece;
+                        var piece = Squares[i, j].CurrentPiece;
                         if (piece is Knight) Console.Write("N ");
                         else Console.Write(piece.Name[0] + " ");
                     }

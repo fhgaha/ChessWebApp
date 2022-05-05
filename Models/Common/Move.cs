@@ -12,7 +12,6 @@ namespace ChessWebApp.Models.Common
         public AbstractPiece MovingPiece { get; set; }
         public AbstractPiece CapturedPiece { get; set; }
         public bool PerformedByWhites { get; set; }
-        public Pawn PawnToBeTakenEnPassant { get; set; }
         public int Score { get; set; }
 
         public override string ToString()

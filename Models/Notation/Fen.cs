@@ -48,7 +48,7 @@ namespace ChessWebApp.Models.Notation
             {
                 for (int col = 0; col < Global.BoardLength; col++)
                 {
-                    var square = board.BoardSquares[row, col];
+                    var square = board.Squares[row, col];
 
                     if (!square.IsOccupied)
                     {
