@@ -42,23 +42,22 @@ namespace ChessWebApp
         private void DoAfterMove(Board board, Square fromSquare, Square toSquare, Move move)
         {
             //this is for UpdateChangedSquares() view
-            SetPreviousMoveSquare(board);
+            SetPreviousMoveSquares(board);
 
             if (toSquare.CurrentPiece is King king)
             {
                 king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
+                move.SetNotAbleToCastle(king);
             }
 
             //castling
             if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
             {
-                HandleCastling(board, toSquare);
+                HandleCastling(board, toSquare, move);
             }
 
             //count halfmoves
-            var prevMove = UndoStack.Peek();
-
-            if (toSquare.CurrentPiece is Pawn || prevMove?.CapturedPiece is not null)
+            if (toSquare.CurrentPiece is Pawn || move?.CapturedPiece is not null)
                 board.HalfmoveCount = 0;
             else
                 board.HalfmoveCount++;
@@ -77,6 +76,7 @@ namespace ChessWebApp
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
+            //!
             board.PerformedMoves.Add(new Move { From = fromSquare.Location, To = toSquare.Location });
 
             if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
@@ -95,7 +95,7 @@ namespace ChessWebApp
 
             currentSquare.MovePiece(originalSquare);
 
-            SetPreviousMoveSquare(board);
+            SetPreviousMoveSquares(board);
 
 
 
@@ -125,7 +125,7 @@ namespace ChessWebApp
             return toSquare;
         }
 
-        private void SetPreviousMoveSquare(Board board)
+        private void SetPreviousMoveSquares(Board board)
         {
             //set all as not previous
             board.LocationSquareMap.Values.ToList()
@@ -171,13 +171,13 @@ namespace ChessWebApp
             board.PawnToPromote = null;
         }
 
-        public void HandleCastling(Board board, Square square)
+        public void HandleCastling(Board board, Square to, Move move)
         {
             Square FromRookSquare = null;
             Square ToRookSquare = null;
 
             //bottom left
-            if (square.Location == new Location(File.C, 1))
+            if (to.Location == new Location(File.C, 1))
             {
                 //absent square are validated in king class logic
 
@@ -187,19 +187,19 @@ namespace ChessWebApp
                 ToRookSquare = board.LocationSquareMap[new Location(File.D, 1)];
             }
             //bottom right
-            else if (square.Location == new Location(File.G, 1))
+            else if (to.Location == new Location(File.G, 1))
             {
                 FromRookSquare = board.LocationSquareMap[new Location(File.H, 1)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.F, 1)];
             }
             //top left
-            else if (square.Location == new Location(File.C, 8))
+            else if (to.Location == new Location(File.C, 8))
             {
                 FromRookSquare = board.LocationSquareMap[new Location(File.A, 8)];
                 ToRookSquare = board.LocationSquareMap[new Location(File.D, 8)];
             }
             //top right
-            else if (square.Location == new Location(File.G, 8))
+            else if (to.Location == new Location(File.G, 8))
             {
                 if (board.LocationSquareMap[new Location(File.F, 8)].IsOccupied) return;
 
@@ -211,6 +211,8 @@ namespace ChessWebApp
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, FromRookSquare);
             FromRookSquare.MovePiece(ToRookSquare);
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
+
+            move.SetNotAbleToCastle(board.King);
         }
 
         /// <summary>

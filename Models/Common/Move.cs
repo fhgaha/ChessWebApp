@@ -9,12 +9,10 @@ namespace ChessWebApp.Models.Common
     {
         //will not tie to capturing here, look at CapturedPiece field
         Simple,
-        CastlingKingSide,
-        CastlingQueenSide,
-        PawnToQueenPromotion,
-        PawnToRookPromotion,
-        PawnToKnightPromotion,
-        PawnToBishopPromotion
+        PawnToQueen,
+        PawnToRook,
+        PawnToKnight,
+        PawnToBishop
     }
 
     public class Move
@@ -26,7 +24,8 @@ namespace ChessWebApp.Models.Common
         public AbstractPiece CapturedPiece { get; set; }
         public bool PerformedByWhites { get; set; }
         public int Score { get; set; }
-
+        public string[] WhiteCastlingAbility { get; set; } = new string[2];
+        public string[] BlackCastlingAbility { get; set; } = new string[2];
 
         public override string ToString()
         {
@@ -45,6 +44,16 @@ namespace ChessWebApp.Models.Common
                 From = LocationFactory.Parse(string.Concat(val[0], val[1])),
                 To = LocationFactory.Parse(string.Concat(val[2], val[3]))
             };
+        }
+
+        public void SetNotAbleToCastle(King king)
+        {
+            if (king.PieceColor == PieceColor.Light)
+                for (int i = 0; i < WhiteCastlingAbility.Length; i++)
+                    WhiteCastlingAbility[i] = "-";
+            else
+                for (int i = 0; i < BlackCastlingAbility.Length; i++)
+                    BlackCastlingAbility[i] = "-";
         }
     }
 }
