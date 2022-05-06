@@ -203,9 +203,10 @@ namespace ChessWebApp.Controllers
         public IActionResult UndoMove()
         {
             game.MoveManager.UndoMove(game.Board);
-
             return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), null));
         }
+
+        //need redo move method
     }
 
 

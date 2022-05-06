@@ -15,6 +15,14 @@ namespace ChessWebApp.Models.Common
         PawnToBishop
     }
 
+    public enum CastlingAbilityEnum
+    {
+        WhiteKingSide,
+        WhiteQueenSide,
+        BlackKingSide,
+        BlackQueenSide
+    }
+
     public class Move
     {
         public MoveKind Kind { get; set; }
@@ -24,8 +32,14 @@ namespace ChessWebApp.Models.Common
         public AbstractPiece CapturedPiece { get; set; }
         public bool PerformedByWhites { get; set; }
         public int Score { get; set; }
-        public string[] WhiteCastlingAbility { get; set; } = new string[2];
-        public string[] BlackCastlingAbility { get; set; } = new string[2];
+        public Dictionary<CastlingAbilityEnum, bool> CastlingAbilityBefore { get; set; } 
+            = new Dictionary<CastlingAbilityEnum, bool> 
+        {
+            [CastlingAbilityEnum.WhiteKingSide] = true,
+            [CastlingAbilityEnum.WhiteQueenSide] = true,
+            [CastlingAbilityEnum.BlackKingSide] = true,
+            [CastlingAbilityEnum.BlackQueenSide] = true,
+        };
         public Pawn PawnToBeTakenEnPassant { get; set; }
 
         public override string ToString()
@@ -50,11 +64,14 @@ namespace ChessWebApp.Models.Common
         public void SetNotAbleToCastle(King king)
         {
             if (king.PieceColor == PieceColor.Light)
-                for (int i = 0; i < WhiteCastlingAbility.Length; i++)
-                    WhiteCastlingAbility[i] = "-";
-            else
-                for (int i = 0; i < BlackCastlingAbility.Length; i++)
-                    BlackCastlingAbility[i] = "-";
+            {
+                CastlingAbilityBefore[CastlingAbilityEnum.WhiteKingSide] = false;
+                CastlingAbilityBefore[CastlingAbilityEnum.WhiteQueenSide] = false;
+                return;
+            }
+
+            CastlingAbilityBefore[CastlingAbilityEnum.BlackKingSide] = false;
+            CastlingAbilityBefore[CastlingAbilityEnum.BlackQueenSide] = false;
         }
     }
 }

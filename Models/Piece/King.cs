@@ -6,8 +6,8 @@ namespace ChessWebApp
 {
     public class King : AbstractPiece
     {
-        public bool isAbleToCastleKingSide = true;
-        public bool isAbleToCastleQueenSide = true;
+        public bool IsAbleToCastleKingSide = true;
+        public bool IsAbleToCastleQueenSide = true;
         public bool IsInCheck = false;
         public bool UpdateIsUnderCheck(Square kingSquare)
         {
@@ -29,8 +29,8 @@ namespace ChessWebApp
 
         public King(King piece) : this(piece.PieceColor) 
         {
-            isAbleToCastleKingSide = piece.isAbleToCastleKingSide;
-            isAbleToCastleQueenSide = piece.isAbleToCastleQueenSide;
+            IsAbleToCastleKingSide = piece.IsAbleToCastleKingSide;
+            IsAbleToCastleQueenSide = piece.IsAbleToCastleQueenSide;
             IsInCheck = piece.IsInCheck;
         }
 
@@ -75,7 +75,7 @@ namespace ChessWebApp
                     ))
                 .ToList();
 
-            if (isAbleToCastleKingSide || isAbleToCastleQueenSide)
+            if (IsAbleToCastleKingSide || IsAbleToCastleQueenSide)
             {
                 moveCandidates.AddRange(GetCastlingMoves(board)
                     .Select(cm => board.LocationSquareMap[cm])
@@ -98,8 +98,8 @@ namespace ChessWebApp
             //check if king ever moved
             if (!IsFirstMove)
             {
-                isAbleToCastleKingSide = false;
-                isAbleToCastleQueenSide = false;
+                IsAbleToCastleKingSide = false;
+                IsAbleToCastleQueenSide = false;
                 return moves;
             }
 
@@ -109,15 +109,15 @@ namespace ChessWebApp
             var rookH = board.LocationSquareMap[new Location(File.H, rank)].CurrentPiece;
 
             if (rookA is not null && rookA.IsFirstMove == false)
-                isAbleToCastleQueenSide = false;
+                IsAbleToCastleQueenSide = false;
 
             if (rookH is not null && rookH.IsFirstMove == false)
-                isAbleToCastleKingSide = false;
+                IsAbleToCastleKingSide = false;
 
-            if (isAbleToCastleQueenSide)
+            if (IsAbleToCastleQueenSide)
                 moves.Add(GetCastleLeftMove(board, rank));
             
-            if (isAbleToCastleKingSide)
+            if (IsAbleToCastleKingSide)
                 moves.Add(GetCastleRightMove(board, rank));
 
             return moves.Where(m => m != null).ToList();

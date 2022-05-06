@@ -40,11 +40,11 @@ namespace ChessWebApp
         private void DoAfterMove(Board board, Square fromSquare, Square toSquare, Move move)
         {
             //this is for UpdateChangedSquares() view
-            SetPreviousMoveSquares(board, move);
+            SetPreviousMoveSquares(board, move, true);
 
             if (toSquare.CurrentPiece is King king)
             {
-                king.isAbleToCastleKingSide = king.isAbleToCastleQueenSide = false;
+                king.IsAbleToCastleKingSide = king.IsAbleToCastleQueenSide = false;
                 move.SetNotAbleToCastle(king);
             }
 
@@ -94,6 +94,8 @@ namespace ChessWebApp
         {
             if (UndoStack.Count == 0) return;
 
+            board.IsWhitesMove = !board.IsWhitesMove;
+
             var move = UndoStack.Pop();
 
             Square currentSquare = board.LocationSquareMap[move.To];
@@ -104,15 +106,31 @@ namespace ChessWebApp
 
             currentSquare.MovePiece(originalSquare);
 
+            SetPreviousMoveSquares(board, move, false);
+
+            //if castling state changed bring it back
+            King king = board.King;
+            if (king.PieceColor == PieceColor.Light)
+            {
+                king.IsAbleToCastleKingSide = move.CastlingAbilityBefore[CastlingAbilityEnum.WhiteKingSide];
+                king.IsAbleToCastleQueenSide = move.CastlingAbilityBefore[CastlingAbilityEnum.WhiteQueenSide];
+            }
+
+            if (king.PieceColor == PieceColor.Dark)
+            {
+                king.IsAbleToCastleKingSide = move.CastlingAbilityBefore[CastlingAbilityEnum.BlackKingSide];
+                king.IsAbleToCastleQueenSide = move.CastlingAbilityBefore[CastlingAbilityEnum.BlackQueenSide];
+            }
 
 
-            SetPreviousMoveSquares(board, move);
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
 
 
             RedoStack.Push(move);
+
+            
         }
 
         private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
@@ -136,7 +154,7 @@ namespace ChessWebApp
             return toSquare;
         }
 
-        private void SetPreviousMoveSquares(Board board, Move move)
+        private void SetPreviousMoveSquares(Board board, Move move, bool value)
         {
             //set all as not previous
             board.LocationSquareMap.Values.ToList()
@@ -146,8 +164,8 @@ namespace ChessWebApp
             var from = board.LocationSquareMap[move.From];
             var to = board.LocationSquareMap[move.To];
 
-            from.IsPreviousLoc = true;
-            to.IsPreviousLoc = true;
+            from.IsPreviousLoc = value;
+            to.IsPreviousLoc = value;
         }
 
         private void HandleEnPassant(Board board, Square toSquare)

@@ -112,28 +112,28 @@ namespace ChessWebApp.Models.Notation
             string result = "";
 
             //short castling for white king
-            if (board.WhiteKing.isAbleToCastleKingSide
+            if (board.WhiteKing.IsAbleToCastleKingSide
                 && board.LocationSquareMap[new Location(File.H, 1)].CurrentPiece is Rook rookH
                 && rookH is not null
                 && rookH.IsFirstMove)
                 result += "K";
 
             //long castling for white king
-            if (board.WhiteKing.isAbleToCastleQueenSide
+            if (board.WhiteKing.IsAbleToCastleQueenSide
                 && board.LocationSquareMap[new Location(File.A, 1)].CurrentPiece is Rook rookA
                 && rookA is not null
                 && rookA.IsFirstMove)
                 result += "Q";
 
             //short castling for black king
-            if (board.BlackKing.isAbleToCastleKingSide
+            if (board.BlackKing.IsAbleToCastleKingSide
                 && board.LocationSquareMap[new Location(File.H, 8)].CurrentPiece is Rook rookH_
                 && rookH_ is not null
                 && rookH_.IsFirstMove)
                 result += "k";
 
             //long castling for black king
-            if (board.BlackKing.isAbleToCastleQueenSide
+            if (board.BlackKing.IsAbleToCastleQueenSide
                 && board.LocationSquareMap[new Location(File.A, 8)].CurrentPiece is Rook rookA_
                 && rookA_ is not null
                 && rookA_.IsFirstMove)
@@ -199,10 +199,10 @@ namespace ChessWebApp.Models.Notation
             board.IsWhitesMove = whosMoveIsNext == "w" ? true : false;
 
             //KQkq
-            if (!castlingAbility.Contains('K')) board.WhiteKing.isAbleToCastleKingSide = false;
-            if (!castlingAbility.Contains('Q')) board.WhiteKing.isAbleToCastleQueenSide = false;
-            if (!castlingAbility.Contains('k')) board.BlackKing.isAbleToCastleKingSide = false;
-            if (!castlingAbility.Contains('q')) board.BlackKing.isAbleToCastleQueenSide = false;
+            if (!castlingAbility.Contains('K')) board.WhiteKing.IsAbleToCastleKingSide = false;
+            if (!castlingAbility.Contains('Q')) board.WhiteKing.IsAbleToCastleQueenSide = false;
+            if (!castlingAbility.Contains('k')) board.BlackKing.IsAbleToCastleKingSide = false;
+            if (!castlingAbility.Contains('q')) board.BlackKing.IsAbleToCastleQueenSide = false;
 
             //halfmoves
             board.HalfmoveCount = int.Parse(halfMovesCount);
