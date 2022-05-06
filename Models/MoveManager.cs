@@ -17,6 +17,7 @@ namespace ChessWebApp
         {
             MoveValidator = new();
             UndoStack = new();
+            RedoStack = new();
         }
 
         public bool MakeMove(Board board, Square fromSquare, Square toSquare)
@@ -42,7 +43,7 @@ namespace ChessWebApp
         private void DoAfterMove(Board board, Square fromSquare, Square toSquare, Move move)
         {
             //this is for UpdateChangedSquares() view
-            SetPreviousMoveSquares(board);
+            SetPreviousMoveSquares(board, move);
 
             if (toSquare.CurrentPiece is King king)
             {
@@ -66,7 +67,10 @@ namespace ChessWebApp
             {
                 //set PawnToBeTakenEnPassant 
                 if (Math.Abs(fromSquare.Location.Rank - toSquare.Location.Rank) == 2)
+                {
                     board.PawnToBeTakenEnPassant = pawn;
+                    move.PawnToBeTakenEnPassant = pawn;
+                }
 
                 //en passant
                 if (fromSquare.Location.File != toSquare.Location.File && board.PawnToBeTakenEnPassant is not null)
@@ -91,7 +95,10 @@ namespace ChessWebApp
 
         public void UndoMove(Board board)
         {
+            if (UndoStack.Count == 0) return;
+
             var move = UndoStack.Pop();
+
             Square currentSquare = board.LocationSquareMap[move.To];
             Square originalSquare = board.LocationSquareMap[move.From];
 
@@ -100,9 +107,9 @@ namespace ChessWebApp
 
             currentSquare.MovePiece(originalSquare);
 
-            SetPreviousMoveSquares(board);
+            SetPreviousMoveSquares(board, move);
 
-
+            board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
 
 
@@ -130,14 +137,12 @@ namespace ChessWebApp
             return toSquare;
         }
 
-        private void SetPreviousMoveSquares(Board board)
+        private void SetPreviousMoveSquares(Board board, Move move)
         {
             //set all as not previous
             board.LocationSquareMap.Values.ToList()
                 .Where(sq => sq.IsPreviousLoc == true).ToList()
                 .ForEach(sq => sq.IsPreviousLoc = false);
-
-            var move = UndoStack.Peek();
 
             var from = board.LocationSquareMap[move.From];
             var to = board.LocationSquareMap[move.To];
@@ -148,8 +153,8 @@ namespace ChessWebApp
 
         private void HandleEnPassant(Board board, Square toSquare)
         {
-            Location candidateLoc = LocationFactory.Build(toSquare.Location, 0,
-                                    toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
+            Location candidateLoc = LocationFactory.Build(
+                toSquare.Location, 0, toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
 
             Square candidateSquare = board.LocationSquareMap[candidateLoc];
 

@@ -74,6 +74,35 @@ $(document).ready(function () {
             'grid-template-columns': $('.board-zone').outerWidth() + 'px', //adjust the css rule for margin-top to equal the element height - 10px and add the measurement unit "px" for valid CSS
         });
     });
+
+    //left arrow key
+    $(document).keydown(function (e) {
+        if (e.which == 37) {
+            console.log("left pressed");
+
+            $.ajax({
+                type: "text",
+                url: "/Home/UndoMove",
+                success: function (data) {
+                    console.log(data);
+
+                    for (var d in data) {
+                        //console.log(data[d]);
+                        $("#" + d).html(data[d]);
+                    }
+                }
+            })
+            return false;
+        }
+    });
+
+    //right arrow key
+    $(document).keydown(function (e) {
+        if (e.which == 39) {
+            console.log("right pressed");
+            return false;
+        }
+    });
 });
 
 

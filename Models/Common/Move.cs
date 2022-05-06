@@ -26,6 +26,7 @@ namespace ChessWebApp.Models.Common
         public int Score { get; set; }
         public string[] WhiteCastlingAbility { get; set; } = new string[2];
         public string[] BlackCastlingAbility { get; set; } = new string[2];
+        public Pawn PawnToBeTakenEnPassant { get; set; }
 
         public override string ToString()
         {

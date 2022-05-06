@@ -68,11 +68,14 @@ namespace ChessWebApp.Models
             MoveManager = new();
             PlayerWhite = new HumanPlayer();
             PlayerBlack = new HumanPlayer();
+            //PlayerBlack = new MachinePlayer();
             PlayerToMove = PlayerWhite;
         }
 
         public void HandleClick(Square square)
         {
+            if (square is null) return;
+
             bool isMovePerformed = PlayerToMove.TryMakeMove(this, MoveManager, square);
 
             if (isMovePerformed)

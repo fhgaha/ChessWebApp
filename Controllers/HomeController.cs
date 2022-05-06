@@ -41,7 +41,7 @@ namespace ChessWebApp.Controllers
 
             //should update fen input
             //and whole board
-            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), 
+            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(),
                 game.Board.LocationSquareMap[new Location(ChessWebApp.File.A, 1)]));
         }
 
@@ -64,13 +64,10 @@ namespace ChessWebApp.Controllers
 
         public IActionResult UpdateChangedSquaresJSON(string location)
         {
-            Square currentSquare;
+            Location loc = LocationFactory.Parse(location);
+            if (loc is null) return RedirectToAction("Index");
 
-            if (string.IsNullOrEmpty(location))
-                //is thist causes A1 to become selected?
-                currentSquare = game.Board.LocationSquareMap[new Location(ChessWebApp.File.A, 1)];
-            else
-                currentSquare = game.Board.LocationSquareMap[LocationFactory.Parse(location)];
+            Square currentSquare = game.Board.LocationSquareMap[loc];
 
             game.HandleClick(currentSquare);
 
@@ -178,7 +175,7 @@ namespace ChessWebApp.Controllers
                 type,
                 color == "white" ? PieceColor.Light : PieceColor.Dark);
 
-            newPiece.Location = game.Board.PawnToPromote.Location; 
+            newPiece.Location = game.Board.PawnToPromote.Location;
 
             game.PromotePawn(newPiece);
 
@@ -199,5 +196,14 @@ namespace ChessWebApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult UndoMove()
+        {
+            game.MoveManager.UndoMove(game.Board);
+
+            return RedirectToAction("UpdateChangedSquaresJSON", "");
+        }
     }
+
+
 }
