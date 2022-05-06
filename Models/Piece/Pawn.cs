@@ -8,13 +8,13 @@ namespace ChessWebApp
 {
     public class Pawn : AbstractPiece
     {
-        public bool IsPromotingNextMove 
+        public bool IsPromotingNextMove
         {
-            get 
-            { 
-                return PieceColor == PieceColor.Light 
-                    ? Location.Rank == 7 ? true : false 
-                    : Location.Rank == 2 ? true : false; 
+            get
+            {
+                return PieceColor == PieceColor.Light
+                    ? Location.Rank == 7 ? true : false
+                    : Location.Rank == 2 ? true : false;
             }
         }
         public Pawn(PieceColor pieceColor) : base(pieceColor)
@@ -63,30 +63,22 @@ namespace ChessWebApp
         private void TryAddEnPassantMove(Board board, List<Location> validLocations)
         {
             //Взятие пешки противника может осуществляться только сразу после её перемещения на два поля
-            Square prevMoveFromSquare = null;
-            Square prevMoveToSquare = null;
 
-            if (board.LastMove is not null && board.LastMove.From is not null)
-                prevMoveFromSquare = board.LocationSquareMap[board.LastMove.From];
+            if (board.PawnToBeTakenEnPassant is null) return;
 
-            if (board.LastMove is not null && board.LastMove.To is not null)
-                prevMoveToSquare = board.LocationSquareMap[board.LastMove?.To];
+            Location locToRight = LocationFactory.Build(Location, 1, 0);
+            Location locToLeft = LocationFactory.Build(Location, -1, 0);
+            AbstractPiece pieceToRight = null;
+            AbstractPiece pieceToLeft = null; 
+            if (locToRight is not null) pieceToRight = board.LocationSquareMap[locToRight].CurrentPiece;
+            if (locToLeft is not null) pieceToLeft = board.LocationSquareMap[locToLeft].CurrentPiece;
 
-            if (prevMoveToSquare?.CurrentPiece is Pawn pawn
-                && pawn.PieceColor != PieceColor
-                && Math.Abs(prevMoveFromSquare.Location.Rank - prevMoveToSquare.Location.Rank) == 2)
+            if (board.PawnToBeTakenEnPassant == pieceToRight
+                || board.PawnToBeTakenEnPassant == pieceToLeft)
             {
-                if (LocationFactory.Build(Location, 1, 0) is Location loc && pawn.Location == loc)
-                {
-                    validLocations.Add(LocationFactory.Build(loc, 0, PieceColor == PieceColor.Light ? 1 : -1));
-                    board.PawnToBeTakenEnPassant = pawn;
-                }
-
-                else if (LocationFactory.Build(Location, -1, 0) is Location otherLoc && pawn.Location == otherLoc)
-                {
-                    validLocations.Add(LocationFactory.Build(otherLoc, 0, PieceColor == PieceColor.Light ? 1 : -1));
-                    board.PawnToBeTakenEnPassant = pawn;
-                }
+                Location locToMoveTo = LocationFactory.Build(
+                    board.PawnToBeTakenEnPassant.Location, 0, PieceColor == PieceColor.Light ? 1 : -1);
+                validLocations.Add(locToMoveTo);
             }
         }
 

@@ -64,6 +64,10 @@ namespace ChessWebApp
 
             if (toSquare.CurrentPiece is Pawn pawn)
             {
+                //set PawnToBeTakenEnPassant 
+                if (Math.Abs(fromSquare.Location.Rank - toSquare.Location.Rank) == 2)
+                    board.PawnToBeTakenEnPassant = pawn;
+
                 //en passant
                 if (fromSquare.Location.File != toSquare.Location.File && board.PawnToBeTakenEnPassant is not null)
                     HandleEnPassant(board, toSquare);
@@ -74,12 +78,13 @@ namespace ChessWebApp
                     board.RegisterPawnToPromote(pawn);
             }
 
+            if (toSquare.CurrentPiece is not Pawn) board.PawnToBeTakenEnPassant = null;
+
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
             //!
             board.PerformedMoves.Add(new Move { From = fromSquare.Location, To = toSquare.Location });
 
-            if (board.PawnToBeTakenEnPassant is not null) board.PawnToBeTakenEnPassant = null;
 
             board.IsWhitesMove = !board.IsWhitesMove;
         }
@@ -133,7 +138,7 @@ namespace ChessWebApp
                 .ForEach(sq => sq.IsPreviousLoc = false);
 
             var move = UndoStack.Peek();
-            
+
             var from = board.LocationSquareMap[move.From];
             var to = board.LocationSquareMap[move.To];
 
