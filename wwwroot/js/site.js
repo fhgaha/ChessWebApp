@@ -12,7 +12,7 @@ $(document).ready(function () {
         var squareLoc = $(this).val();
         console.log("%c you clicked on: " + squareLoc, green);
 
-        $.when(doSquareUpdate(squareLoc)).then(doFenUpdate()).then(GetPlayer());
+        $.when(doSquaresUpdate(squareLoc)).then(doFenUpdate()).then(GetPlayer());
     })
 
     $(document).on("click", ".promotion-button", function () {
@@ -106,7 +106,7 @@ $(document).ready(function () {
 });
 
 
-function doSquareUpdate(squareLoc) {
+function doSquaresUpdate(squareLoc) {
     $.ajax({
         //dataType: "json",
         method: "POST",
@@ -168,7 +168,7 @@ function GetPlayer() {
         success: function (data) {
             console.log("GetPlayer");
             if (data == "ChessWebApp.Models.Players.MachinePlayer") {
-                doSquareUpdate('A1');
+                doSquaresUpdate('A1');
             }
         }
     });

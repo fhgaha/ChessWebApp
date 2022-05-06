@@ -117,8 +117,11 @@ namespace ChessWebApp.Controllers
             var squareStrings = new Dictionary<string, string>();
 
             //add to result clicked square
-            string firstKey = square.Location.File.ToString() + square.Location.Rank.ToString();
-            squareStrings.Add(firstKey, RenderRazorViewToString(this, "UpdateChangedSquares", square));
+            if (square is not null)
+            {
+                string firstKey = square.Location.File.ToString() + square.Location.Rank.ToString();
+                squareStrings.Add(firstKey, RenderRazorViewToString(this, "UpdateChangedSquares", square));
+            }
 
             //add to result updated squares
             foreach (Square s in squares)
@@ -201,7 +204,7 @@ namespace ChessWebApp.Controllers
         {
             game.MoveManager.UndoMove(game.Board);
 
-            return RedirectToAction("UpdateChangedSquaresJSON", "");
+            return Json(GetSquareStrings(game.Board.LocationSquareMap.Values.ToList(), null));
         }
     }
 

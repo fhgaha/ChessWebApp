@@ -29,14 +29,11 @@ namespace ChessWebApp
 
             //add to undo stack
             var move = new Move { From = fromSquare.Location, To = toSquare.Location };
-            if (toSquare.CurrentPiece is not null)
-                move.CapturedPiece = toSquare.CurrentPiece;
-
+            if (toSquare.CurrentPiece is not null) move.CapturedPiece = toSquare.CurrentPiece;
             UndoStack.Push(move);
 
             fromSquare.MovePiece(toSquare);
             DoAfterMove(board, fromSquare, toSquare, move);
-
             return true;
         }
 
@@ -106,6 +103,8 @@ namespace ChessWebApp
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, currentSquare);
 
             currentSquare.MovePiece(originalSquare);
+
+
 
             SetPreviousMoveSquares(board, move);
 
