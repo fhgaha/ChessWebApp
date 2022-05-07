@@ -1,4 +1,4 @@
-﻿using ChessWebApp.Models.Common;
+﻿using ChessWebApp.Models.MoveModel;
 using ChessWebApp.Models.Notation;
 using System;
 using System.Collections.Generic;

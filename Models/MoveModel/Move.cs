@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace ChessWebApp.Models.Common
+namespace ChessWebApp.Models.MoveModel
 {
     public enum MoveKind
     {
@@ -12,7 +9,10 @@ namespace ChessWebApp.Models.Common
         PawnToQueen,
         PawnToRook,
         PawnToKnight,
-        PawnToBishop
+        PawnToBishop,
+        //castling ability can be changed by kings or both rooks move so in case of actual castling 
+        //look at this value
+        Castling
     }
 
     public enum CastlingAbilityEnum
@@ -40,6 +40,8 @@ namespace ChessWebApp.Models.Common
             [CastlingAbilityEnum.BlackKingSide] = true,
             [CastlingAbilityEnum.BlackQueenSide] = true,
         };
+        public Location RookPositionBeforeCastling { get; set; }
+        public Location RookPositionAfterCastling { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
 
         public override string ToString()

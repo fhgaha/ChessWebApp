@@ -1,9 +1,6 @@
-﻿using ChessWebApp.Models.Common;
-using ChessWebApp.Models.Notation;
-using System;
+﻿using ChessWebApp.Models.MoveModel;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChessWebApp.Models.Engine
 {
@@ -39,21 +36,21 @@ namespace ChessWebApp.Models.Engine
             return material;
         }
 
-        Move bestMove = new Move { Score = 0 };
+        MoveModel.Move bestMove = new MoveModel.Move { Score = 0 };
 
-        public Move GetBestMove(Board board)
+        public MoveModel.Move GetBestMove(Board board)
         {
             Maximizer(board, depth, int.MinValue, int.MaxValue);
             movesWithScores = movesWithScores.OrderByDescending(m => m.Score).ToList();
             return bestMove;
         }
 
-        List<Move> movesWithScores = new();
+        List<MoveModel.Move> movesWithScores = new();
         private int Maximizer(Board board, int depth, int alpha, int beta)
         {
             if (depth == 0) return Evaluate(board);
 
-            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
+            List<MoveModel.Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
 
             if (moves.Count() == 0)
             {
@@ -62,7 +59,7 @@ namespace ChessWebApp.Models.Engine
                 return 0;
             }
 
-            foreach (Move move in moves)
+            foreach (MoveModel.Move move in moves)
             {
                 //C6 -> D4
                 //make move, count evaluation, bring board position back
@@ -106,7 +103,7 @@ namespace ChessWebApp.Models.Engine
         {
             if (depth == 0) return Evaluate(board);
 
-            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
+            List<MoveModel.Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
 
             if (moves.Count() == 0)
             {
@@ -115,7 +112,7 @@ namespace ChessWebApp.Models.Engine
                 return 0;
             }
 
-            foreach (Move move in moves)
+            foreach (MoveModel.Move move in moves)
             {
                 //make move, count evaluation, bring board position back
                 MoveManager _moveManager = new();
@@ -142,7 +139,7 @@ namespace ChessWebApp.Models.Engine
             return beta;
         }
 
-        public int OrderMove(Board board, Move move)
+        public int OrderMove(Board board, MoveModel.Move move)
         {
             int moveScoreGuess = 0;
             Square fromSq = board.LocationSquareMap[move.From];

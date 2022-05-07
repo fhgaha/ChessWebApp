@@ -1,8 +1,8 @@
-﻿using ChessWebApp.Models.Common;
+﻿
+using ChessWebApp.Models.MoveModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChessWebApp
 {
@@ -110,19 +110,15 @@ namespace ChessWebApp
 
             //if castling state changed bring it back
             King king = board.King;
-            if (king.PieceColor == PieceColor.Light)
-            {
-                king.IsAbleToCastleKingSide = move.CastlingAbilityBefore[CastlingAbilityEnum.WhiteKingSide];
-                king.IsAbleToCastleQueenSide = move.CastlingAbilityBefore[CastlingAbilityEnum.WhiteQueenSide];
-            }
 
-            if (king.PieceColor == PieceColor.Dark)
-            {
-                king.IsAbleToCastleKingSide = move.CastlingAbilityBefore[CastlingAbilityEnum.BlackKingSide];
-                king.IsAbleToCastleQueenSide = move.CastlingAbilityBefore[CastlingAbilityEnum.BlackQueenSide];
-            }
+            king.IsAbleToCastleKingSide = move.CastlingAbilityBefore[king.PieceColor == PieceColor.Light
+                ? CastlingAbilityEnum.WhiteKingSide : CastlingAbilityEnum.BlackKingSide];
 
+            king.IsAbleToCastleQueenSide = move.CastlingAbilityBefore[king.PieceColor == PieceColor.Light
+                ? CastlingAbilityEnum.WhiteQueenSide : CastlingAbilityEnum.BlackQueenSide];
 
+            //should bring king and rook on positions before castling
+            UndoCastling(board, move);
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
@@ -130,7 +126,20 @@ namespace ChessWebApp
 
             RedoStack.Push(move);
 
-            
+
+        }
+
+        private void UndoCastling(Board board, Move move)
+        {
+            if (move.Kind != MoveKind.Castling) return;
+
+            Square rookCurrentSq = board.LocationSquareMap[move.RookPositionAfterCastling];
+            Square rookOriginalSq = board.LocationSquareMap[move.RookPositionBeforeCastling];
+
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, rookCurrentSq);
+            RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, rookOriginalSq);
+
+            rookCurrentSq.MovePiece(rookOriginalSq);
         }
 
         private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
@@ -239,7 +248,10 @@ namespace ChessWebApp
             FromRookSquare.MovePiece(ToRookSquare);
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
 
+            move.Kind = MoveKind.Castling;
             move.SetNotAbleToCastle(board.King);
+            move.RookPositionBeforeCastling = FromRookSquare.Location;
+            move.RookPositionAfterCastling = ToRookSquare.Location;
         }
 
         /// <summary>
@@ -285,7 +297,7 @@ namespace ChessWebApp
 
                 foreach (var loc in locations)
                 {
-                    Move move = new Move
+                    Move move = new()
                     {
                         From = piece.Location,
                         To = loc,
