@@ -32,12 +32,12 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is not null) move.CapturedPiece = toSquare.CurrentPiece;
             UndoStack.Push(move);
 
+            move.WasFirstMove = fromSquare.CurrentPiece.IsFirstMove;
+
             if (fromSquare.CurrentPiece is King king)
             {
                 move.SaveKingData(king);
             }
-
-            move.WasFirstMove = fromSquare.CurrentPiece.IsFirstMove;
 
             //castling
             if (fromSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
@@ -46,10 +46,7 @@ namespace ChessWebApp
             fromSquare.MovePiece(toSquare);
 
             if (toSquare.CurrentPiece is King _king)
-            {
-                //check if both rooks ever moved
                 _king.SetIsAbleToCastle(board);
-            }
 
             //this is for UpdateChangedSquares() view
             SetPreviousMoveSquares(board, move, true);
@@ -60,24 +57,7 @@ namespace ChessWebApp
             else
                 board.HalfmoveCount++;
 
-            if (toSquare.CurrentPiece is Pawn pawn)
-            {
-                //set PawnToBeTakenEnPassant 
-                if (Math.Abs(fromSquare.Location.Rank - toSquare.Location.Rank) == 2)
-                {
-                    board.PawnToBeTakenEnPassant = pawn;
-                    move.PawnToBeTakenEnPassant = pawn;
-                }
-
-                //en passant
-                if (fromSquare.Location.File != toSquare.Location.File && board.PawnToBeTakenEnPassant is not null)
-                    HandleEnPassant(board, toSquare);
-
-                //pawn promotion
-                if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
-                    || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
-                    board.RegisterPawnToPromote(pawn);
-            }
+            HandlePawnMove(board, fromSquare, toSquare, move);
 
             if (toSquare.CurrentPiece is not Pawn) board.PawnToBeTakenEnPassant = null;
 
@@ -89,6 +69,31 @@ namespace ChessWebApp
             board.IsWhitesMove = !board.IsWhitesMove;
 
             return true;
+        }
+
+        private void HandlePawnMove(Board board, Square fromSquare, Square toSquare, Move move)
+        {
+            if (toSquare.CurrentPiece is not Pawn pawn)
+            {
+                board.PawnToBeTakenEnPassant = null;
+                return;
+            }
+
+            //set PawnToBeTakenEnPassant 
+            if (Math.Abs(fromSquare.Location.Rank - toSquare.Location.Rank) == 2)
+            {
+                board.PawnToBeTakenEnPassant = pawn;
+                move.PawnToBeTakenEnPassant = pawn;
+            }
+            else
+                board.PawnToBeTakenEnPassant = null;
+
+            HandleEnPassant(board, fromSquare, toSquare);
+
+            //pawn promotion
+            if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
+                || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
+                board.RegisterPawnToPromote(pawn);
         }
 
         public void UndoMove(Board board)
@@ -176,10 +181,12 @@ namespace ChessWebApp
             to.IsPreviousLoc = value;
         }
 
-        private void HandleEnPassant(Board board, Square toSquare)
+        private void HandleEnPassant(Board board, Square from, Square to)
         {
+            if (from.Location.File == to.Location.File || board.PawnToBeTakenEnPassant is null) return;
+            
             Location candidateLoc = LocationFactory.Build(
-                toSquare.Location, 0, toSquare.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
+                to.Location, 0, to.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
 
             Square candidateSquare = board.LocationSquareMap[candidateLoc];
 
