@@ -43,6 +43,7 @@ namespace ChessWebApp.Models.MoveModel
         public Location RookPositionBeforeCastling { get; set; }
         public Location RookPositionAfterCastling { get; set; }
         public Pawn PawnToBeTakenEnPassant { get; set; }
+        public bool WasFirstMove { get; set; }
 
         public override string ToString()
         {
@@ -76,7 +77,7 @@ namespace ChessWebApp.Models.MoveModel
             CastlingAbilityBefore[CastlingAbilityEnum.BlackQueenSide] = false;
         }
 
-        public void SetKingData(King king)
+        public void RestoreKingData(King king)
         {
             var castlingAbilityKingSide = king.PieceColor == PieceColor.Light
                     ? CastlingAbilityEnum.WhiteKingSide : CastlingAbilityEnum.BlackKingSide;

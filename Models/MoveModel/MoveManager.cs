@@ -37,6 +37,8 @@ namespace ChessWebApp
                 move.SaveKingData(king);
             }
 
+            move.WasFirstMove = fromSquare.CurrentPiece.IsFirstMove;
+
             //castling
             if (fromSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare, move);
@@ -84,7 +86,6 @@ namespace ChessWebApp
             //!
             board.PerformedMoves.Add(new Move { From = fromSquare.Location, To = toSquare.Location });
 
-
             board.IsWhitesMove = !board.IsWhitesMove;
 
             return true;
@@ -111,20 +112,17 @@ namespace ChessWebApp
             //if castling state changed bring it back
             if (originalSquare.CurrentPiece is King king)
             {
-                move.SetKingData(king);
+                move.RestoreKingData(king);
 
                 //should bring king and rook on positions before castling
                 UndoCastling(board, move, king);
             }
 
+            originalSquare.CurrentPiece.IsFirstMove = move.WasFirstMove;
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
-
-
             RedoStack.Push(move);
-
-
         }
 
         private void UndoCastling(Board board, Move move, King king)
@@ -140,9 +138,7 @@ namespace ChessWebApp
 
             rookCurrentSq.MovePiece(rookOriginalSq);
             rook.IsFirstMove = true;
-
             king.IsFirstMove = true;
-            king.SetIsAbleToCastle(board);
         }
 
         private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
