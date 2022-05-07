@@ -46,10 +46,7 @@ namespace ChessWebApp
 
         public override string ToString()
         {
-            return "Location{" +
-                "file = " + File +
-                ", rank = " + Rank +
-                "}";
+            return "" + File + Rank + "";
         }
     }
 }
