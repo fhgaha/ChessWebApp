@@ -33,6 +33,7 @@ namespace ChessWebApp
             UndoStack.Push(move);
 
             move.WasFirstMove = fromSquare.CurrentPiece.IsFirstMove;
+            move.CapturedPiece = toSquare.CurrentPiece;
 
             if (fromSquare.CurrentPiece is King king)
                 move.SaveKingData(king);
@@ -84,7 +85,7 @@ namespace ChessWebApp
             //pawn promotion
             if (pawn.PieceColor == PieceColor.Light && pawn.Location.Rank == 8
                 || pawn.PieceColor == PieceColor.Dark && pawn.Location.Rank == 1)
-                board.RegisterPawnToPromote(pawn);
+                board.PawnToPromote = pawn;
         }
 
         public void UndoMove(Board board)
@@ -112,6 +113,22 @@ namespace ChessWebApp
 
                 //should bring king and rook on positions before castling
                 UndoCastling(board, move, king);
+            }
+
+            //undo propmotion
+            if (move.Kind == MoveKind.PawnToQueen 
+                || move.Kind == MoveKind.PawnToRook
+                || move.Kind == MoveKind.PawnToBishop
+                || move.Kind == MoveKind.PawnToKnight)
+            {
+                originalSquare.CurrentPiece = new Pawn(board.King.PieceColor) 
+                { Location = originalSquare.Location, IsFirstMove = false };
+            }
+
+            //restore catured piece
+            if (move.CapturedPiece is AbstractPiece captured && captured is not null)
+            {
+                currentSquare.CurrentPiece = captured;
             }
 
             originalSquare.CurrentPiece.IsFirstMove = move.WasFirstMove;
@@ -189,19 +206,32 @@ namespace ChessWebApp
             }
         }
 
+        //called from controller
         public void PromotePawn(Board board, AbstractPiece piece)
         {
             var square = board.LocationSquareMap[piece.Location];
-
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, square);
-
             square.CurrentPiece = piece;
-
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
-
-            //board.SetAllSquaresNotValid();
-
             board.PawnToPromote = null;
+
+            var move = UndoStack.Peek();
+
+            switch (piece)
+            {
+                case Queen:
+                    move.Kind = MoveKind.PawnToQueen;
+                    break;
+                case Rook:
+                    move.Kind = MoveKind.PawnToRook;
+                    break;
+                case Bishop:
+                    move.Kind = MoveKind.PawnToBishop;
+                    break;
+                case Knight:
+                    move.Kind = MoveKind.PawnToKnight;
+                    break;
+            }
         }
 
         public void HandleCastling(Board board, Square to, Move move)

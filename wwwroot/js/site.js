@@ -101,18 +101,18 @@ $(document).ready(function () {
         if (e.which == 39) {
             console.log("right pressed");
 
-            $.ajax({
-                type: "text",
-                url: "/Home/UndoMove",
-                success: function (data) {
-                    console.log(data);
+            //$.ajax({
+            //    type: "text",
+            //    url: "/Home/UndoMove",
+            //    success: function (data) {
+            //        console.log(data);
 
-                    for (var d in data) {
-                        //console.log(data[d]);
-                        $("#" + d).html(data[d]);
-                    }
-                }
-            })
+            //        for (var d in data) {
+            //            //console.log(data[d]);
+            //            $("#" + d).html(data[d]);
+            //        }
+            //    }
+            //})
             return false;
         }
     });

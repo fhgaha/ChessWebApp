@@ -139,9 +139,8 @@ namespace ChessWebApp.Controllers
             controller.ViewData.Model = model;
             using (var sw = new StringWriter())
             {
-                IViewEngine viewEngine =
-                    controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as
-                        ICompositeViewEngine;
+                IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) 
+                    as ICompositeViewEngine;
                 ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
 
                 ViewContext viewContext = new ViewContext(
