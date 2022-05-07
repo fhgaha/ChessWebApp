@@ -129,6 +129,7 @@ namespace ChessWebApp
             if (move.CapturedPiece is AbstractPiece captured && captured is not null)
             {
                 currentSquare.CurrentPiece = captured;
+                currentSquare.IsOccupied = true;
             }
 
             originalSquare.CurrentPiece.IsFirstMove = move.WasFirstMove;
