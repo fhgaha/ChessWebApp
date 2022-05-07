@@ -150,7 +150,7 @@ namespace ChessWebApp.Models.Notation
 
         private string Get50MoveDrawCount(Board board) => board.HalfmoveCount.ToString();
 
-        private string GetFullmovesCount(Board board) => (board.PerformedMoves.Count / 2).ToString();
+        private string GetFullmovesCount(Board board) => (board.FullMoveCount).ToString();
 
         public Board Parse(string fenValue)
         {

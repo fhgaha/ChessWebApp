@@ -35,9 +35,7 @@ namespace ChessWebApp
             move.WasFirstMove = fromSquare.CurrentPiece.IsFirstMove;
 
             if (fromSquare.CurrentPiece is King king)
-            {
                 move.SaveKingData(king);
-            }
 
             //castling
             if (fromSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
@@ -60,12 +58,9 @@ namespace ChessWebApp
             HandlePawnMove(board, fromSquare, toSquare, move);
 
             if (toSquare.CurrentPiece is not Pawn) board.PawnToBeTakenEnPassant = null;
-
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
-            //!
-            board.PerformedMoves.Add(new Move { From = fromSquare.Location, To = toSquare.Location });
-
+            board.LastMove = move;
             board.IsWhitesMove = !board.IsWhitesMove;
 
             return true;
@@ -73,20 +68,16 @@ namespace ChessWebApp
 
         private void HandlePawnMove(Board board, Square fromSquare, Square toSquare, Move move)
         {
-            if (toSquare.CurrentPiece is not Pawn pawn)
-            {
+            var rankDifference = Math.Abs(fromSquare.Location.Rank - toSquare.Location.Rank);
+
+            if (toSquare.CurrentPiece is not Pawn || rankDifference != 2)
                 board.PawnToBeTakenEnPassant = null;
-                return;
-            }
+
+            if (toSquare.CurrentPiece is not Pawn pawn) return;
 
             //set PawnToBeTakenEnPassant 
-            if (Math.Abs(fromSquare.Location.Rank - toSquare.Location.Rank) == 2)
-            {
-                board.PawnToBeTakenEnPassant = pawn;
-                move.PawnToBeTakenEnPassant = pawn;
-            }
-            else
-                board.PawnToBeTakenEnPassant = null;
+            board.PawnToBeTakenEnPassant = pawn;
+            move.PawnToBeTakenEnPassant = pawn;
 
             HandleEnPassant(board, fromSquare, toSquare);
 
@@ -184,7 +175,7 @@ namespace ChessWebApp
         private void HandleEnPassant(Board board, Square from, Square to)
         {
             if (from.Location.File == to.Location.File || board.PawnToBeTakenEnPassant is null) return;
-            
+
             Location candidateLoc = LocationFactory.Build(
                 to.Location, 0, to.CurrentPiece.PieceColor == PieceColor.Light ? -1 : 1);
 
