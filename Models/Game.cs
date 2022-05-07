@@ -160,5 +160,13 @@ namespace ChessWebApp.Models
 
             return new List<Location>();
         }
+
+        public void UndoMove()
+        {
+            MoveManager.UndoMove(Board);
+
+            Board.WhiteKing.UpdateIsUnderCheck(Board.LocationSquareMap[Board.WhiteKing.Location]);
+            Board.BlackKing.UpdateIsUnderCheck(Board.LocationSquareMap[Board.BlackKing.Location]);
+        }
     }
 }
