@@ -75,5 +75,27 @@ namespace ChessWebApp.Models.MoveModel
             CastlingAbilityBefore[CastlingAbilityEnum.BlackKingSide] = false;
             CastlingAbilityBefore[CastlingAbilityEnum.BlackQueenSide] = false;
         }
+
+        public void SetKingData(King king)
+        {
+            var castlingAbilityKingSide = king.PieceColor == PieceColor.Light
+                    ? CastlingAbilityEnum.WhiteKingSide : CastlingAbilityEnum.BlackKingSide;
+            var castlingAbilityQueenSide = king.PieceColor == PieceColor.Light
+                ? CastlingAbilityEnum.WhiteQueenSide : CastlingAbilityEnum.BlackQueenSide;
+
+            king.IsAbleToCastleKingSide = CastlingAbilityBefore[castlingAbilityKingSide];
+            king.IsAbleToCastleQueenSide = CastlingAbilityBefore[castlingAbilityQueenSide];
+        }
+
+        public void SaveKingData(King king)
+        {
+            var castlingAbilityKingSide = king.PieceColor == PieceColor.Light
+                    ? CastlingAbilityEnum.WhiteKingSide : CastlingAbilityEnum.BlackKingSide;
+            var castlingAbilityQueenSide = king.PieceColor == PieceColor.Light
+                ? CastlingAbilityEnum.WhiteQueenSide : CastlingAbilityEnum.BlackQueenSide;
+
+            CastlingAbilityBefore[castlingAbilityKingSide] = king.IsAbleToCastleKingSide;
+            CastlingAbilityBefore[castlingAbilityQueenSide] = king.IsAbleToCastleQueenSide;
+        }
     }
 }

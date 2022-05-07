@@ -32,27 +32,25 @@ namespace ChessWebApp
             if (toSquare.CurrentPiece is not null) move.CapturedPiece = toSquare.CurrentPiece;
             UndoStack.Push(move);
 
-            fromSquare.MovePiece(toSquare);
-            DoAfterMove(board, fromSquare, toSquare, move);
-            return true;
-        }
-
-        private void DoAfterMove(Board board, Square fromSquare, Square toSquare, Move move)
-        {
-            //this is for UpdateChangedSquares() view
-            SetPreviousMoveSquares(board, move, true);
-
-            if (toSquare.CurrentPiece is King king)
+            if (fromSquare.CurrentPiece is King king)
             {
-                king.IsAbleToCastleKingSide = king.IsAbleToCastleQueenSide = false;
-                move.SetNotAbleToCastle(king);
+                move.SaveKingData(king);
             }
 
             //castling
-            if (toSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
-            {
+            if (fromSquare.CurrentPiece is King && Math.Abs(fromSquare.Location.File - toSquare.Location.File) == 2)
                 HandleCastling(board, toSquare, move);
+
+            fromSquare.MovePiece(toSquare);
+
+            if (toSquare.CurrentPiece is King _king)
+            {
+                //check if both rooks ever moved
+                _king.SetIsAbleToCastle(board);
             }
+
+            //this is for UpdateChangedSquares() view
+            SetPreviousMoveSquares(board, move, true);
 
             //count halfmoves
             if (toSquare.CurrentPiece is Pawn || move?.CapturedPiece is not null)
@@ -88,6 +86,8 @@ namespace ChessWebApp
 
 
             board.IsWhitesMove = !board.IsWhitesMove;
+
+            return true;
         }
 
         public void UndoMove(Board board)
@@ -109,16 +109,14 @@ namespace ChessWebApp
             SetPreviousMoveSquares(board, move, false);
 
             //if castling state changed bring it back
-            King king = board.King;
+            if (originalSquare.CurrentPiece is King king)
+            {
+                move.SetKingData(king);
 
-            king.IsAbleToCastleKingSide = move.CastlingAbilityBefore[king.PieceColor == PieceColor.Light
-                ? CastlingAbilityEnum.WhiteKingSide : CastlingAbilityEnum.BlackKingSide];
+                //should bring king and rook on positions before castling
+                UndoCastling(board, move, king);
+            }
 
-            king.IsAbleToCastleQueenSide = move.CastlingAbilityBefore[king.PieceColor == PieceColor.Light
-                ? CastlingAbilityEnum.WhiteQueenSide : CastlingAbilityEnum.BlackQueenSide];
-
-            //should bring king and rook on positions before castling
-            UndoCastling(board, move);
 
             board.ApplyToSquares(sq => UpdateSquaresAttackedByPiece(board, sq));
 
@@ -129,17 +127,22 @@ namespace ChessWebApp
 
         }
 
-        private void UndoCastling(Board board, Move move)
+        private void UndoCastling(Board board, Move move, King king)
         {
             if (move.Kind != MoveKind.Castling) return;
 
             Square rookCurrentSq = board.LocationSquareMap[move.RookPositionAfterCastling];
             Square rookOriginalSq = board.LocationSquareMap[move.RookPositionBeforeCastling];
+            AbstractPiece rook = rookCurrentSq.CurrentPiece;
 
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, rookCurrentSq);
             RemoveAttackerFromAllAttackedByPieceOnSquareLists(board, rookOriginalSq);
 
             rookCurrentSq.MovePiece(rookOriginalSq);
+            rook.IsFirstMove = true;
+
+            king.IsFirstMove = true;
+            king.SetIsAbleToCastle(board);
         }
 
         private Square ConvertLichessCastlingToNormal(Board board, Square fromSquare, Square toSquare)
@@ -249,7 +252,7 @@ namespace ChessWebApp
             UpdateSquaresAttackedByPiece(board, ToRookSquare);
 
             move.Kind = MoveKind.Castling;
-            move.SetNotAbleToCastle(board.King);
+            //move.SetNotAbleToCastle(board.King);
             move.RookPositionBeforeCastling = FromRookSquare.Location;
             move.RookPositionAfterCastling = ToRookSquare.Location;
         }

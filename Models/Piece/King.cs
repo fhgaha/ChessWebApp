@@ -6,9 +6,9 @@ namespace ChessWebApp
 {
     public class King : AbstractPiece
     {
-        public bool IsAbleToCastleKingSide = true;
-        public bool IsAbleToCastleQueenSide = true;
-        public bool IsInCheck = false;
+        public bool IsAbleToCastleKingSide { get; set; } = true;
+        public bool IsAbleToCastleQueenSide { get; set; } = true;
+        public bool IsInCheck { get; set; } = false;
         public bool UpdateIsUnderCheck(Square kingSquare)
         {
             if (kingSquare.AttackedByPiecesOnSquares
@@ -27,7 +27,7 @@ namespace ChessWebApp
             Name = "King";
         }
 
-        public King(King piece) : this(piece.PieceColor) 
+        public King(King piece) : this(piece.PieceColor)
         {
             IsAbleToCastleKingSide = piece.IsAbleToCastleKingSide;
             IsAbleToCastleQueenSide = piece.IsAbleToCastleQueenSide;
@@ -98,8 +98,8 @@ namespace ChessWebApp
             //check if king ever moved
             if (!IsFirstMove)
             {
-                IsAbleToCastleKingSide = false;
-                IsAbleToCastleQueenSide = false;
+                //IsAbleToCastleKingSide = false;
+                //IsAbleToCastleQueenSide = false;
                 return moves;
             }
 
@@ -108,15 +108,15 @@ namespace ChessWebApp
             var rookA = board.LocationSquareMap[new Location(File.A, rank)].CurrentPiece;
             var rookH = board.LocationSquareMap[new Location(File.H, rank)].CurrentPiece;
 
-            if (rookA is not null && rookA.IsFirstMove == false)
-                IsAbleToCastleQueenSide = false;
+            //if (rookA is not null && rookA.IsFirstMove == false)
+            //    IsAbleToCastleQueenSide = false;
 
-            if (rookH is not null && rookH.IsFirstMove == false)
-                IsAbleToCastleKingSide = false;
+            //if (rookH is not null && rookH.IsFirstMove == false)
+            //    IsAbleToCastleKingSide = false;
 
             if (IsAbleToCastleQueenSide)
                 moves.Add(GetCastleLeftMove(board, rank));
-            
+
             if (IsAbleToCastleKingSide)
                 moves.Add(GetCastleRightMove(board, rank));
 
@@ -192,6 +192,32 @@ namespace ChessWebApp
                     : PieceColor == PieceColor.Light
                         ? new Location(File.C, 1)
                         : new Location(File.C, 8);
+        }
+
+        public void SetIsAbleToCastle(Board board)
+        {
+            if (!IsFirstMove)
+            {
+                IsAbleToCastleKingSide = false;
+                IsAbleToCastleQueenSide = false;
+                return;
+            }
+
+            var rank = PieceColor == PieceColor.Light ? 1 : 8;
+            var rookA = board.LocationSquareMap[new Location(File.A, rank)].CurrentPiece;
+            var rookH = board.LocationSquareMap[new Location(File.H, rank)].CurrentPiece;
+
+            //if (rookA?.IsFirstMove == false)
+            if (rookA is null || rookA is not null && rookA.IsFirstMove == false)
+                IsAbleToCastleQueenSide = false;
+            else 
+                IsAbleToCastleQueenSide = true;
+
+            //if (rookH?.IsFirstMove == false)
+            if (rookH is null || rookH is not null && rookH.IsFirstMove == false)
+                IsAbleToCastleKingSide = false;
+            else 
+                IsAbleToCastleKingSide = true;
         }
     }
 }
