@@ -29,6 +29,7 @@ namespace ChessWebApp.Models.Players
             //stockfish = new Stockfish.NET.Stockfish(winPath, depth: 3, settings);
         }
 
+        ////using stockfish
         //public bool TryMakeMove(Game game, MoveManager moveManager, Square square)
         //{
         //    Board board = game.Board;

@@ -6,12 +6,14 @@ $(document).ready(function () {
     console.log("Page is ready");
     //doFenUpdate();
 
+    GetPlayer();
+
     $(document).on("click", ".square-button", function () {
         event.preventDefault();
 
         var squareLoc = $(this).val();
         console.log("%c you clicked on: " + squareLoc, green);
-
+        
         $.when(doSquaresUpdate(squareLoc)).then(doFenUpdate()).then(GetPlayer());
     })
 
@@ -137,6 +139,10 @@ function doSquaresUpdate(squareLoc) {
                 //console.log(data[d]);
                 $("#" + d).html(data[d]);
             }
+
+            setTimeout(function () {
+                GetPlayer();
+            }, 1000);
         }
     });
 }
@@ -174,6 +180,7 @@ function doFenUpdate() {
     });
 }
 
+//if player is machine let it make a move
 function GetPlayer() {
     $.ajax({
         url: "/Home/GetPlayer",
@@ -181,7 +188,7 @@ function GetPlayer() {
         success: function (data) {
             console.log("GetPlayer");
             if (data == "ChessWebApp.Models.Players.MachinePlayer") {
-                doSquaresUpdate('A1');
+                doSquaresUpdate(null);
             }
         }
     });

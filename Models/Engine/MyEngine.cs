@@ -12,7 +12,7 @@ namespace ChessWebApp.Models.Engine
         const int rookValue = 500;
         const int queenValue = 900;
 
-        const int depth = 3;
+        const int depth = 1;
 
         public static int Evaluate(Board board)
         {
@@ -36,21 +36,22 @@ namespace ChessWebApp.Models.Engine
             return material;
         }
 
-        MoveModel.Move bestMove = new MoveModel.Move { Score = 0 };
+        Move bestMove = new Move { Score = 0 };
 
-        public MoveModel.Move GetBestMove(Board board)
+        public Move GetBestMove(Board board)
         {
             Maximizer(board, depth, int.MinValue, int.MaxValue);
             movesWithScores = movesWithScores.OrderByDescending(m => m.Score).ToList();
             return bestMove;
         }
 
-        List<MoveModel.Move> movesWithScores = new();
+        List<Move> movesWithScores = new();
         private int Maximizer(Board board, int depth, int alpha, int beta)
         {
             if (depth == 0) return Evaluate(board);
 
-            List<MoveModel.Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
+            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(
+                board, board.IsWhitesMove ? PieceColor.Light : PieceColor.Dark);
 
             if (moves.Count() == 0)
             {
@@ -59,23 +60,20 @@ namespace ChessWebApp.Models.Engine
                 return 0;
             }
 
-            foreach (MoveModel.Move move in moves)
+            foreach (Move move in moves)
             {
                 //C6 -> D4
                 //make move, count evaluation, bring board position back
                 MoveManager _moveManager = new();
-                Board _board = board.Copy();
-
                 int evaluation = 0;
-                evaluation += OrderMove(_board, move);
+                evaluation += OrderMove(board, move);
 
                 var isMoveSuccessfull = _moveManager.MakeMove(
-                    _board,
-                    _board.LocationSquareMap[move.From],
-                    _board.LocationSquareMap[move.To]);
+                    board,
+                    board.LocationSquareMap[move.From],
+                    board.LocationSquareMap[move.To]);
 
-                evaluation += Minimizer(_board, depth - 1, alpha, beta);
-
+                evaluation += Minimizer(board, depth - 1, alpha, beta);
                 _moveManager.UndoMove(board);
 
                 if (depth == MyEngine.depth)
@@ -103,7 +101,8 @@ namespace ChessWebApp.Models.Engine
         {
             if (depth == 0) return Evaluate(board);
 
-            List<MoveModel.Move> moves = new MoveManager().GenerateMovesForAllPieces(board, PieceColor.Dark);
+            List<Move> moves = new MoveManager().GenerateMovesForAllPieces(
+                board, board.IsWhitesMove ? PieceColor.Light : PieceColor.Dark);
 
             if (moves.Count() == 0)
             {
@@ -112,21 +111,19 @@ namespace ChessWebApp.Models.Engine
                 return 0;
             }
 
-            foreach (MoveModel.Move move in moves)
+            foreach (Move move in moves)
             {
                 //make move, count evaluation, bring board position back
                 MoveManager _moveManager = new();
-                Board _board = board.Copy();
-
                 int evaluation = 0;
-                evaluation += OrderMove(_board, move);
+                evaluation += OrderMove(board, move);
 
                 var isMoveSuccessfull = _moveManager.MakeMove(
-                    _board,
-                    _board.LocationSquareMap[move.From],
-                    _board.LocationSquareMap[move.To]);
+                    board,
+                    board.LocationSquareMap[move.From],
+                    board.LocationSquareMap[move.To]);
 
-                evaluation += Maximizer(_board, depth - 1, alpha, beta);
+                evaluation += Maximizer(board, depth - 1, alpha, beta);
 
                 //_moveManager.UnmakeMove(board);
 
@@ -139,7 +136,7 @@ namespace ChessWebApp.Models.Engine
             return beta;
         }
 
-        public int OrderMove(Board board, MoveModel.Move move)
+        public int OrderMove(Board board, Move move)
         {
             int moveScoreGuess = 0;
             Square fromSq = board.LocationSquareMap[move.From];

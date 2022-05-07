@@ -1,44 +1,39 @@
 ﻿using ChessWebApp.Models.Notation;
 using ChessWebApp.Models.Players;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
+public enum GameState
+{
+    ReadyForInput,
+    NotReadyForInput,
+    Finished
+}
 
 namespace ChessWebApp.Models
 {
     public class Game
     {
+        private GameState state;
         public Player PlayerWhite;
         public Player PlayerBlack;
         public Player PlayerToMove;
-
-        public bool IsOver { get; set; } = false;
         public Board Board { get; set; }
         public MoveManager MoveManager { get; set; }
         public Fen Fen { get; set; }
 
         public string message = "";
-        
+
         private Square fromSquare;
         public Square FromSquare
         {
             get => fromSquare;
             set
             {
-                if (value is null)
-                {
-                    //MoveManager.ClearValidMoves();
-                    if (fromSquare is not null) fromSquare.IsSelected = false;
-                    //Board.SetAllSquaresNotValid();
-                    fromSquare = value;
-                    return;
-                }
-
                 if (fromSquare is not null) fromSquare.IsSelected = false;
-                //Board.SetAllSquaresNotValid();
-                value.IsSelected = true;
                 fromSquare = value;
+                if (value is null) return;
+                value.IsSelected = true;
             }
         }
 
@@ -66,16 +61,18 @@ namespace ChessWebApp.Models
         private void SetUp()
         {
             MoveManager = new();
-            PlayerWhite = new HumanPlayer();
-            PlayerBlack = new HumanPlayer();
+            PlayerWhite = new MachinePlayer();
+            PlayerBlack = new MachinePlayer();
             //PlayerBlack = new MachinePlayer();
             PlayerToMove = PlayerWhite;
         }
 
         public void HandleClick(Square square)
         {
-            if (square is null) return;
+            //square is null in case of machine making a move
+            if (state == GameState.NotReadyForInput) return;
 
+            state = GameState.NotReadyForInput;
             bool isMovePerformed = PlayerToMove.TryMakeMove(this, MoveManager, square);
 
             if (isMovePerformed)
@@ -83,6 +80,8 @@ namespace ChessWebApp.Models
 
             Board.WhiteKing.UpdateIsUnderCheck(Board.LocationSquareMap[Board.WhiteKing.Location]);
             Board.BlackKing.UpdateIsUnderCheck(Board.LocationSquareMap[Board.BlackKing.Location]);
+
+            state = GameState.ReadyForInput;
         }
 
         //private bool HandleClickAsHuman(Square square, bool isMovePerformed)
@@ -141,7 +140,7 @@ namespace ChessWebApp.Models
 
         public void PromotePawn(AbstractPiece piece) => MoveManager.PromotePawn(Board, piece);
 
-        public void SetAllSquaresNotValid() 
+        public void SetAllSquaresNotValid()
             => Board.LocationSquareMap.Values.ToList().ForEach(sq => sq.IsValid = false);
 
         public void SetProperSquaresAsValid()

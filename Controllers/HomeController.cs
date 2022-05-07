@@ -1,5 +1,6 @@
 ﻿using ChessWebApp.Models;
 using ChessWebApp.Models.Notation;
+using ChessWebApp.Models.Players;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -52,6 +53,7 @@ namespace ChessWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        //this is used only on the first move
         public IActionResult HandleButtonClick(string location)
         {
             Location loc = game.Board.LocationSquareMap.Keys.Single(l => l.ToString() == location);
@@ -64,13 +66,14 @@ namespace ChessWebApp.Controllers
 
         public IActionResult UpdateChangedSquaresJSON(string location)
         {
-            Location loc = LocationFactory.Parse(location);
-            if (loc is null) return RedirectToAction("Index");
+            if (string.IsNullOrEmpty(location) && game.PlayerToMove is not MachinePlayer)
+                return RedirectToAction("Index");
 
-            Square currentSquare = game.Board.LocationSquareMap[loc];
+            Location loc = LocationFactory.Parse(location);
+            Square currentSquare = null;
+            if (!string.IsNullOrEmpty(location)) currentSquare = game.Board.LocationSquareMap[loc];
 
             game.HandleClick(currentSquare);
-
             UpdateSquaresToDislayColored();
 
             ///this return updates all squares
@@ -139,7 +142,7 @@ namespace ChessWebApp.Controllers
             controller.ViewData.Model = model;
             using (var sw = new StringWriter())
             {
-                IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) 
+                IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine))
                     as ICompositeViewEngine;
                 ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
 
@@ -159,8 +162,9 @@ namespace ChessWebApp.Controllers
 
         public IActionResult CheckPromotionJSON(string location)
         {
-            Location loc = LocationFactory.Parse(location);
+            if (string.IsNullOrEmpty(location)) return RedirectToAction("Index");
 
+            Location loc = LocationFactory.Parse(location);
             return Json(game.Board.LocationSquareMap[loc].CurrentPiece);
         }
 
