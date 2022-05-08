@@ -3,6 +3,7 @@ using ChessWebApp.Models.Notation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace ChessWebApp
 {
@@ -92,5 +93,33 @@ namespace ChessWebApp
         public void ApplyToSquares(Action<Square> action) => LocationSquareMap.Values.ToList().ForEach(action);
 
         public Board Copy() => new Fen().Parse(new Fen().Parse(this));
+
+        public override string ToString()
+        {
+            return new Fen().Parse(this);
+
+            //StringBuilder builder = new();
+            //var dict = Fen.PieceTypeNotationMap;
+
+            //for (int i = 0; i < Squares.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < Squares.GetLength(1); j++)
+            //    {
+            //        var piece = Squares[i, j].CurrentPiece;
+            //        if (piece is null)
+            //        {
+            //            builder.Append('.');
+            //            continue;
+            //        }
+
+            //        string letter = dict[piece.GetType()].ToString();
+            //        if (piece.PieceColor == PieceColor.Light) letter = letter.ToUpper();
+            //        builder.Append(letter);
+            //    }
+            //    builder.AppendLine();
+            //}
+
+            //return builder.ToString();
+        }
     }
 }

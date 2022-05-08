@@ -9,7 +9,6 @@ namespace ChessWebApp
         {
             var moves = defender.CurrentPiece.GetMoves(board, defender);
             moves = FilterMovesToPreventCheck(board, moves, defender.CurrentPiece, king);
-
             return moves;
         }
 

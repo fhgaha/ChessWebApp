@@ -29,7 +29,7 @@ namespace ChessWebApp.Models.Notation
     {
         public string Default { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        public static Dictionary<char, Type> NotationPieceTypeMap = new Dictionary<char, Type>
+        public static Dictionary<char, Type> NotationPieceTypeMap = new()
         {
             ['q'] = typeof(Queen),
             ['k'] = typeof(King),
@@ -37,6 +37,16 @@ namespace ChessWebApp.Models.Notation
             ['r'] = typeof(Rook),
             ['b'] = typeof(Bishop),
             ['p'] = typeof(Pawn)
+        };
+
+        public static Dictionary<Type, char> PieceTypeNotationMap = new()
+        {
+            [typeof(Queen)] = 'q',
+            [typeof(King)] = 'k',
+            [typeof(Knight)] = 'n',
+            [typeof(Rook)] = 'r',
+            [typeof(Bishop)] = 'b',
+            [typeof(Pawn)] = 'p'
         };
 
         public string Parse(Board board)

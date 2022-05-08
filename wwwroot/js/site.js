@@ -120,7 +120,6 @@ $(document).ready(function () {
     });
 });
 
-
 function doSquaresUpdate(squareLoc) {
     $.ajax({
         //dataType: "json",
@@ -142,7 +141,7 @@ function doSquaresUpdate(squareLoc) {
 
             setTimeout(function () {
                 GetPlayer();
-            }, 1000);
+            }, 500);
         }
     });
 }
@@ -193,4 +192,3 @@ function GetPlayer() {
         }
     });
 }
-

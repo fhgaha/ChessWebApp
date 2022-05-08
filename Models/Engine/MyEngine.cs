@@ -12,7 +12,9 @@ namespace ChessWebApp.Models.Engine
         const int rookValue = 500;
         const int queenValue = 900;
 
-        const int depth = 1;
+        const int depth = 3;
+
+        private MoveManager moveManager;
 
         public static int Evaluate(Board board)
         {
@@ -40,6 +42,7 @@ namespace ChessWebApp.Models.Engine
 
         public Move GetBestMove(Board board)
         {
+            moveManager = new();
             Maximizer(board, depth, int.MinValue, int.MaxValue);
             movesWithScores = movesWithScores.OrderByDescending(m => m.Score).ToList();
             return bestMove;
@@ -56,25 +59,24 @@ namespace ChessWebApp.Models.Engine
             if (moves.Count() == 0)
             {
                 if (board.King.IsInCheck)
-                    return int.MaxValue;    //?
+                    return int.MinValue;    //?
                 return 0;
             }
 
             foreach (Move move in moves)
             {
-                //C6 -> D4
                 //make move, count evaluation, bring board position back
-                MoveManager _moveManager = new();
+                
                 int evaluation = 0;
                 evaluation += OrderMove(board, move);
 
-                var isMoveSuccessfull = _moveManager.MakeMove(
+                var isMoveSuccessfull = moveManager.MakeMove(
                     board,
                     board.LocationSquareMap[move.From],
                     board.LocationSquareMap[move.To]);
 
                 evaluation += Minimizer(board, depth - 1, alpha, beta);
-                _moveManager.UndoMove(board);
+                moveManager.UndoMove(board);
 
                 if (depth == MyEngine.depth)
                 {
@@ -114,18 +116,17 @@ namespace ChessWebApp.Models.Engine
             foreach (Move move in moves)
             {
                 //make move, count evaluation, bring board position back
-                MoveManager _moveManager = new();
                 int evaluation = 0;
                 evaluation += OrderMove(board, move);
 
-                var isMoveSuccessfull = _moveManager.MakeMove(
+                var isMoveSuccessfull = moveManager.MakeMove(
                     board,
                     board.LocationSquareMap[move.From],
                     board.LocationSquareMap[move.To]);
 
                 evaluation += Maximizer(board, depth - 1, alpha, beta);
 
-                //_moveManager.UnmakeMove(board);
+                moveManager.UndoMove(board);
 
                 if (evaluation <= beta)
                     beta = evaluation;
