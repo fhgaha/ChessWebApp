@@ -14,7 +14,7 @@ namespace ChessWebApp.Models
 {
     public class Game
     {
-        private GameState state;
+        public GameState State { get; private set; } = GameState.ReadyForInput;
         public Player PlayerWhite;
         public Player PlayerBlack;
         public Player PlayerToMove;
@@ -70,9 +70,9 @@ namespace ChessWebApp.Models
         public void HandleClick(Square square)
         {
             //square is null in case of machine making a move
-            if (state == GameState.NotReadyForInput) return;
+            if (State == GameState.NotReadyForInput) return;
 
-            state = GameState.NotReadyForInput;
+            State = GameState.NotReadyForInput;
 
             bool isMovePerformed = PlayerToMove.TryMakeMove(this, MoveManager, square);
 
@@ -82,7 +82,7 @@ namespace ChessWebApp.Models
             Board.WhiteKing.UpdateIsUnderCheck(Board.LocationSquareMap[Board.WhiteKing.Location]);
             Board.BlackKing.UpdateIsUnderCheck(Board.LocationSquareMap[Board.BlackKing.Location]);
 
-            state = GameState.ReadyForInput;
+            State = GameState.ReadyForInput;
         }
 
         //private bool HandleClickAsHuman(Square square, bool isMovePerformed)

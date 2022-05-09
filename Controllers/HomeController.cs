@@ -31,7 +31,15 @@ namespace ChessWebApp.Controllers
 
         public string GetFen() => fen.Parse(game.Board);
 
-        public string GetPlayer() => game.PlayerToMove.ToString();
+        public string GetPlayer()
+        {
+            //if (game.PlayerToMove is MachinePlayer && game.State == GameState.NotReadyForInput) return "not ready";
+            if ((game.PlayerToMove == game.PlayerWhite && game.Board.IsWhitesMove
+                || game.PlayerToMove == game.PlayerBlack && !game.Board.IsWhitesMove)
+                && game.State == GameState.ReadyForInput)
+                return "ready";
+            return "not ready";
+        }
 
         public IActionResult SetFenJSON(string fenCode)
         {

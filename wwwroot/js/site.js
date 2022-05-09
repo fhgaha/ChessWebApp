@@ -4,17 +4,14 @@ const red = "color: #da5555";
 $(document).ready(function () {
 
     console.log("Page is ready");
-    //doFenUpdate();
-
-    GetPlayer();
 
     $(document).on("click", ".square-button", function () {
         event.preventDefault();
 
         var squareLoc = $(this).val();
         console.log("%c you clicked on: " + squareLoc, green);
-        
-        $.when(doSquaresUpdate(squareLoc)).then(doFenUpdate()).then(GetPlayer());
+
+        doSquaresUpdate(squareLoc);
     })
 
     $(document).on("click", ".promotion-button", function () {
@@ -141,7 +138,7 @@ function doSquaresUpdate(squareLoc) {
 
             setTimeout(function () {
                 GetPlayer();
-            }, 500);
+            }, 0);
         }
     });
 }
@@ -180,13 +177,15 @@ function doFenUpdate() {
 }
 
 //if player is machine let it make a move
+//view should not update until controller returns ready
 function GetPlayer() {
     $.ajax({
         url: "/Home/GetPlayer",
         async: false,
         success: function (data) {
-            console.log("GetPlayer");
-            if (data == "ChessWebApp.Models.Players.MachinePlayer") {
+            console.log("GetPlayer: ", data);
+            if (data == "ready") {
+                doFenUpdate();
                 doSquaresUpdate(null);
             }
         }

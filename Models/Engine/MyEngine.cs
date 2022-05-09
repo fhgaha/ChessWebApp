@@ -12,7 +12,7 @@ namespace ChessWebApp.Models.Engine
         const int rookValue = 500;
         const int queenValue = 900;
 
-        const int depth = 3;
+        const int depth = 2;
 
         private MoveManager moveManager;
 
