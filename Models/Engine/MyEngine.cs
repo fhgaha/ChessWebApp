@@ -75,7 +75,7 @@ namespace ChessWebApp.Models.Engine
                     board.LocationSquareMap[move.From],
                     board.LocationSquareMap[move.To]);
 
-                evaluation += Minimizer(board, depth - 1, alpha, beta);
+                evaluation = Minimizer(board, depth - 1, alpha, beta);
                 moveManager.UndoMove(board);
 
                 if (depth == MyEngine.depth)
@@ -117,7 +117,7 @@ namespace ChessWebApp.Models.Engine
             {
                 //make move, count evaluation, bring board position back
                 int evaluation = 0;
-                evaluation += OrderMove(board, move);
+                evaluation = OrderMove(board, move);
 
                 var isMoveSuccessfull = moveManager.MakeMove(
                     board,

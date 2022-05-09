@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessWebApp.Models.Notation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,6 +164,21 @@ namespace ChessWebApp
 
             pieces.Remove(new Location(File.E, 2));
             pieces.Add(new Location(File.E, 4), new Pawn(PieceColor.Light));
+
+            return pieces;
+        }
+
+        public static Dictionary<Location, AbstractPiece> GetLaguePosition1()
+        {
+            string fenString = "r3k2r/p1ppqpbp/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+            Board board = new Fen().Parse(fenString);
+            var pieces = new Dictionary<Location, AbstractPiece>();
+
+            foreach (var item in board.LocationSquareMap)
+            {
+                if (item.Value.CurrentPiece is not null)
+                    pieces.Add(item.Key, item.Value.CurrentPiece);
+            }
 
             return pieces;
         }

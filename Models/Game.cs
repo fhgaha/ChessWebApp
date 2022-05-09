@@ -40,11 +40,12 @@ namespace ChessWebApp.Models
         public Game()
         {
             var pieces =
-            PieceFactory.GetStandartPiecePositions();
+            //PieceFactory.GetStandartPiecePositions();
             //PieceFactory.GetTwoKings();
             //PieceFactory.GetCastlingSetup();
             //PieceFactory.GetPromotionSetup();
             //PieceFactory.GetEnPassantSetup();
+            PieceFactory.GetLaguePosition1();
 
             Fen = new();
             Board = new(pieces);
@@ -61,7 +62,7 @@ namespace ChessWebApp.Models
         private void SetUp()
         {
             MoveManager = new();
-            PlayerWhite = new MachinePlayer();
+            PlayerWhite = new HumanPlayer();
             PlayerBlack = new MachinePlayer();
             PlayerToMove = PlayerWhite;
         }
@@ -72,6 +73,7 @@ namespace ChessWebApp.Models
             if (state == GameState.NotReadyForInput) return;
 
             state = GameState.NotReadyForInput;
+
             bool isMovePerformed = PlayerToMove.TryMakeMove(this, MoveManager, square);
 
             if (isMovePerformed)
