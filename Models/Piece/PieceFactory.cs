@@ -176,8 +176,17 @@ namespace ChessWebApp
 
             foreach (var item in board.LocationSquareMap)
             {
-                if (item.Value.CurrentPiece is not null)
-                    pieces.Add(item.Key, item.Value.CurrentPiece);
+                var piece = item.Value.CurrentPiece;
+                if (piece is not null)
+                {
+                    //set IsFirstMove = false for pawns not on default positions
+                    if (piece is Pawn)
+                        piece.IsFirstMove = piece.PieceColor == PieceColor.Light
+                            ? piece.Location.Rank == 2
+                            : piece.Location.Rank == 7;
+
+                    pieces.Add(item.Key, piece);
+                }
             }
 
             return pieces;

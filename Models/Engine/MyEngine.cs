@@ -1,6 +1,8 @@
 ﻿using ChessWebApp.Models.MoveModel;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Timers;
 
 namespace ChessWebApp.Models.Engine
 {
@@ -12,7 +14,7 @@ namespace ChessWebApp.Models.Engine
         const int rookValue = 500;
         const int queenValue = 900;
 
-        const int depth = 2;
+        const int depth = 4;
 
         private MoveManager moveManager;
 
@@ -40,10 +42,18 @@ namespace ChessWebApp.Models.Engine
 
         Move bestMove = new Move { Score = 0 };
 
+        //with order: 71809 evals, took 00:01:50.9678175
+        //with no order: 71809 evals, took 00:01:51.0505512
+        List<int> evaluations = new();  
+
         public Move GetBestMove(Board board)
         {
+            Stopwatch timer = new();
             moveManager = new();
+            timer.Start();
             Maximizer(board, depth, int.MinValue, int.MaxValue);
+            timer.Stop();
+            var t = timer.Elapsed;
             movesWithScores = movesWithScores.OrderByDescending(m => m.Score).ToList();
             return bestMove;
         }
@@ -68,7 +78,7 @@ namespace ChessWebApp.Models.Engine
                 //make move, count evaluation, bring board position back
                 
                 int evaluation = 0;
-                evaluation += OrderMove(board, move);
+                //evaluation += OrderMove(board, move);
 
                 var isMoveSuccessfull = moveManager.MakeMove(
                     board,
@@ -76,6 +86,7 @@ namespace ChessWebApp.Models.Engine
                     board.LocationSquareMap[move.To]);
 
                 evaluation = Minimizer(board, depth - 1, alpha, beta);
+                evaluations.Add(evaluation);
                 moveManager.UndoMove(board);
 
                 if (depth == MyEngine.depth)
@@ -117,15 +128,15 @@ namespace ChessWebApp.Models.Engine
             {
                 //make move, count evaluation, bring board position back
                 int evaluation = 0;
-                evaluation = OrderMove(board, move);
+                //evaluation = OrderMove(board, move);
 
                 var isMoveSuccessfull = moveManager.MakeMove(
                     board,
                     board.LocationSquareMap[move.From],
                     board.LocationSquareMap[move.To]);
 
-                evaluation += Maximizer(board, depth - 1, alpha, beta);
-
+                evaluation = Maximizer(board, depth - 1, alpha, beta);
+                evaluations.Add(evaluation);
                 moveManager.UndoMove(board);
 
                 if (evaluation <= beta)
@@ -165,13 +176,13 @@ namespace ChessWebApp.Models.Engine
                 moveScoreGuess -= GetPieceValue(pieceToMove);
 
             //develop pieces
-            if (pieceToMove.IsFirstMove)
-            {
-                if (pieceToMove is Pawn) moveScoreGuess += 4;
-                if (pieceToMove is Knight || pieceToMove is Bishop) moveScoreGuess += 3;
-                if (pieceToMove is Rook) moveScoreGuess += 2;
-                if (pieceToMove is Queen) moveScoreGuess += 1;
-            }
+            //if (pieceToMove.IsFirstMove)
+            //{
+            //    if (pieceToMove is Pawn) moveScoreGuess += 4;
+            //    if (pieceToMove is Knight || pieceToMove is Bishop) moveScoreGuess += 3;
+            //    if (pieceToMove is Rook) moveScoreGuess += 2;
+            //    if (pieceToMove is Queen) moveScoreGuess += 1;
+            //}
 
             return moveScoreGuess;
         }
