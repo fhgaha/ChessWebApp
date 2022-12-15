@@ -220,9 +220,12 @@
         </form>
 
         <div class="col buttons-zone p-0">
-            <button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
+            @*<button class="btn btn-secondary fw-bold text-white" asp-controller="Home" asp-action="RestartGame">
                 Restart
-            </button>
+            </button>*@
+            
+            @*Why brevious three lines stopped working? Have to use this instead.*@ 
+            @Html.ActionLink("Restart", "RestartGame", "Home", new object { }, new { @class = "btn btn-secondary fw-bold text-white" })
         </div>
     </div>
 @*</form>*@
